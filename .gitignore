@@ -1,0 +1,42 @@
+# ── Sanitization gate (PUBLIC repo) ──────────────────────────────
+# This repo is/​will be PUBLIC. Never commit secrets or private material.
+# When in doubt, add it here BEFORE the first commit that touches it.
+
+# Secrets & env
+.env
+.env.*
+*.key
+*.pem
+*.p12
+secrets/
+**/secrets.*
+.dev.vars
+wrangler.toml.local
+
+# Supabase / API credentials (must never appear in this public repo)
+**/*service-role*
+**/*supabase*key*
+**/*anon-key*
+
+# Personal / financial / employer (US3) material — never in the public storefront
+private/
+vault/
+**/*us3*
+**/*resume-private*
+
+# Build / deps / tooling
+node_modules/
+dist/
+.wrangler/
+.cache/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
