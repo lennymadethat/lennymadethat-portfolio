@@ -1,0 +1,18 @@
+# Ian Leonard (Lenny) — lennymadethat.com
+
+> Manufacturing operations leader and AI systems builder based in San Diego, California. Runs production operations day to day and designs and ships the AI agents, automation engines, and internal tools that run businesses. Designer by training, operator by trade.
+
+## What he does
+- Manufacturing & operations leadership: teams, throughput, cost, quality, and the systems that hold production together.
+- AI systems & agent infrastructure: a custom knowledge base + MCP server his agents read and write, automation engines, dashboards, and live web apps — built and deployed, not slideware.
+- Tools: packaging the systems behind his work so others can use them (in progress).
+
+## Links
+- Portfolio: https://lennymadethat.com
+- Machine-readable resume (JSON Resume): https://lennymadethat.com/resume.json
+
+## Contact
+- Email: hello@lennymadethat.com
+
+## Hiring
+Open to manufacturing/operations leadership roles, and AI-systems / agent-infrastructure roles and consulting engagements.
