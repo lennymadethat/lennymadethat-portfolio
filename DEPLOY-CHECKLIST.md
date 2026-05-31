@@ -69,26 +69,38 @@ Only do this once the Pages project exists and the `dev` branch has deployed.
 
 `lennymadethat.com` today serves the old Squarespace page. To cut over:
 
-**Option A — move DNS to Cloudflare (recommended, cleanest):**
-1. At your domain registrar, find where `lennymadethat.com` nameservers point
-   (likely Squarespace / Google Domains / Squarespace Domains).
-2. In Cloudflare dashboard → **Add a site** → `lennymadethat.com` → Free plan.
+> **Likely already on Cloudflare DNS.** `os.lennymadethat.com` is already a live
+> Cloudflare Pages custom domain (on the `lenny-os` project). Pages custom
+> domains require the zone to be on Cloudflare — so `lennymadethat.com` is almost
+> certainly **already a Cloudflare zone**. If so, you can skip the nameserver
+> migration entirely and just re-point the apex/www DNS records inside Cloudflare
+> (Option A2 below). **Verify first:** Cloudflare dashboard → does
+> `lennymadethat.com` appear in your list of sites/zones? If yes → Option A2. If
+> no → Option A1.
+
+**Option A2 — zone already on Cloudflare (most likely; cleanest):**
+1. Cloudflare dashboard → `lennymadethat.com` zone → **DNS** → **Records**.
+2. Find the existing apex (`@`) and `www` records pointing at Squarespace
+   (A records to Squarespace IPs, or CNAME to a Squarespace host). Note them
+   down in case you need to roll back.
+3. Do **not** hand-edit these yet — instead use steps 2 & 3 above (Pages →
+   Custom domains → add `lennymadethat.com` / `www`). Cloudflare will update the
+   apex/www records to point at the Pages project automatically.
+4. The old Squarespace records get replaced. The Squarespace site goes dark for
+   this domain once propagation completes.
+
+**Option A1 — zone NOT yet on Cloudflare (move DNS to Cloudflare):**
+1. At your domain registrar, find where `lennymadethat.com` nameservers point.
+2. Cloudflare dashboard → **Add a site** → `lennymadethat.com` → Free plan.
 3. Cloudflare scans existing DNS — review the imported records.
 4. Cloudflare gives you two nameservers. At the **registrar**, replace the
-   nameservers with Cloudflare's.
-5. Wait for activation (minutes–hours). Then steps 2 & 3 above can auto-create
-   the Pages DNS records.
-6. **Before** flipping, confirm the new site looks right on the `*.pages.dev`
-   URL so the apex doesn't briefly serve a half-built site.
+   nameservers with Cloudflare's. Wait for activation (minutes–hours).
+5. Then steps 2 & 3 above can auto-create the Pages DNS records.
 
-**Option B — keep DNS at Squarespace (more manual, partial CF features):**
-1. Add CNAME/records at Squarespace pointing the relevant hostnames to
-   `lennymadethat-portfolio.pages.dev`. Apex CNAME may not be supported at
-   Squarespace — Option A avoids that limitation.
-
-⚠️ **Sequencing:** verify the new site on `*.pages.dev` first, THEN point the
-apex. Don't take down the Squarespace page until the Pages deploy is confirmed
-good on its own URL.
+⚠️ **Sequencing (both options):** verify the new site on the `*.pages.dev` URL
+first, THEN point the apex. Don't replace the Squarespace records until the Pages
+production deploy is confirmed good on its own URL — otherwise the apex briefly
+serves a half-built site.
 
 ---
 
