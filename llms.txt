@@ -4,8 +4,24 @@
 
 ## What he does
 - Manufacturing & operations leadership: teams, throughput, cost, quality, and the systems that hold production together.
-- AI systems & agent infrastructure: a custom knowledge base + MCP server his agents read and write, automation engines, dashboards, and live web apps — built and deployed, not slideware.
-- Tools: packaging the systems behind his work so others can use them (in progress).
+- AI systems & agent infrastructure: a custom knowledge base + MCP server his agents read and write, multi-agent automation, dashboards, and live web apps — built and deployed, not slideware.
+- Tools: packaging the systems behind his work into downloadable distribution kits so others can run them (the Distribution Kit Foundry, in progress).
+
+## The Foundry — builds shipped
+- The Content Operative — AI content agent; ramble in, on-brand draft out; learns a voice fingerprint, runs voice + compliance checks, drafts to a newsletter platform, never auto-publishes. (Live)
+- Vault Agent Fleet — a fleet of specialized AI agents that reads any dropped file (notes, PDFs, images, audio, video), classifies/tags/links/extracts, and files it into one searchable knowledge base; runs in the cloud on a schedule. (Live)
+- The Harvester — YouTube URL + lens in; AI watches the video, synthesizes a structured briefing, routes action items to the right project. (Live)
+- The Forge — visual workflow builder + generic execution engine; draw an automation as a graph, one interpreter runs any graph; self-hostable. (Shipped)
+- Retail Investor Platform — live income-investing web app: screening, return simulator, fund-flow intelligence, AI research dossier, brokerage sync, member area. (Live)
+- Yield Observatory — static dashboard of stablecoin/RWA yields with reliability scoring and AI-authored risk dossiers, on public data. (Shipped)
+- Podcast Studio — browser recording studio; record audio/video, edit by editing the transcript, AI cover art, publish. (Live)
+- Field Ops Console — operations console syncing live jobs, sites, and field devices into one app. (Live)
+- Income Data API — paid API for programmatic/agent access to the income-ETF dataset; tiered keys, free tier, metered agent wall. (In build)
+- The Vault System — markdown knowledge base + database + semantic search + a server any AI assistant reads/writes; the backbone the rest run on. (Live)
+- dev → live Starter Kit — the repo template behind every build: branch structure, deploy config, sanitization gate. (In build)
+
+## Distribution Kit Foundry
+Each build is being packaged into a downloadable distribution kit with setup instructions and licensing. Download buttons on lennymadethat.com surface kits as they ship; honest status (Live / Shipped / In build / Coming soon) is shown on every build.
 
 ## Links
 - Portfolio: https://lennymadethat.com

@@ -201,6 +201,158 @@ img{ max-width:100%; height:auto; display:block; border-radius:var(--radius); bo
 .log__date{ flex:0 0 6rem; font-family:var(--font-mono); font-size:.85rem; color:var(--ink-soft); font-variant-numeric:tabular-nums; }
 .log__entry{ color:var(--ink); }
 
+/* ============================================================
+   THE FOUNDRY — build catalog grid, cards, kit buttons, modal
+   ============================================================ */
+
+/* ───────────── Filter chips ───────────── */
+.foundry-filters{ display:flex; flex-wrap:wrap; gap:.5rem; margin:0 0 2rem; }
+.filter-chip{
+  font-family:var(--font-mono); font-size:.78rem; letter-spacing:.02em;
+  padding:.5rem .9rem; border-radius:999px; cursor:pointer;
+  background:transparent; color:var(--ink-soft);
+  border:1px solid var(--line);
+  transition:background .15s ease, color .15s ease, border-color .15s ease;
+}
+.filter-chip:hover{ color:var(--ink); border-color:var(--ink-soft); }
+.filter-chip.is-active{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+
+/* ───────────── Build grid ───────────── */
+.foundry-grid{ display:grid; gap:1.5rem; grid-template-columns:1fr; }
+
+.foundry-card{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+  padding:1.5rem; display:flex; flex-direction:column; gap:.7rem;
+  position:relative; overflow:hidden;
+  transition:border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.foundry-card::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--accent); opacity:.5; transition:opacity .18s ease;
+}
+.foundry-card:hover{ transform:translateY(-2px); border-color:var(--accent);
+  box-shadow:0 10px 30px -18px rgba(20,86,78,.45); }
+.foundry-card:hover::before{ opacity:1; }
+
+.foundry-card__head{ display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+.foundry-card__icon{
+  display:grid; place-items:center; width:2.6rem; height:2.6rem;
+  border-radius:12px; background:var(--surface); border:1px solid var(--line);
+  font-size:1.3rem; line-height:1;
+}
+
+.foundry-card__status{
+  font-family:var(--font-mono); font-size:.66rem; text-transform:uppercase;
+  letter-spacing:.06em; padding:.28rem .55rem; border-radius:999px;
+  border:1px solid var(--line); color:var(--ink-soft); white-space:nowrap;
+}
+.foundry-card__status.is-live{ color:var(--accent); border-color:var(--accent); }
+.foundry-card__status.is-live::before{ content:"● "; }
+.foundry-card__status.is-shipped{ color:var(--ink); border-color:var(--ink-soft); }
+.foundry-card__status.is-build{ color:var(--ember); border-color:var(--ember); }
+.foundry-card__status.is-soon{ color:var(--ink-soft); }
+
+.foundry-card__title{ font-size:1.2rem; line-height:1.2; margin:.2rem 0 0; }
+.foundry-card__hook{ font-family:var(--font-mono); font-size:.82rem; color:var(--ember); margin:0; }
+.foundry-card__desc{ color:var(--ink-soft); font-size:.95rem; flex:1; margin:0; }
+
+.foundry-card__tags{ list-style:none; display:flex; flex-wrap:wrap; gap:.4rem; padding:0; margin:.2rem 0 0; }
+.foundry-card__tag{
+  font-family:var(--font-mono); font-size:.68rem; letter-spacing:.02em;
+  color:var(--ink-soft); background:var(--surface); border:1px solid var(--line);
+  padding:.22rem .5rem; border-radius:6px;
+}
+
+/* ───────────── Kit action buttons (Download / Instructions / Agent) ───────────── */
+.foundry-card__actions{
+  display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.6rem;
+  padding-top:1rem; border-top:1px solid var(--line);
+}
+.kit-btn{
+  display:inline-flex; align-items:center; gap:.4rem;
+  font-family:var(--font-mono); font-size:.76rem; letter-spacing:.01em;
+  padding:.5rem .7rem; border-radius:8px; cursor:pointer;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line);
+  transition:background .15s ease, border-color .15s ease, color .15s ease;
+}
+.kit-btn:hover{ border-color:var(--accent); color:var(--accent); text-decoration:none; }
+.kit-ic{ width:15px; height:15px; flex:0 0 auto; fill:none; stroke:currentColor;
+  stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.kit-btn__hint{
+  font-size:.62rem; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--ink-soft); background:var(--paper); border:1px solid var(--line);
+  border-radius:5px; padding:.05rem .3rem;
+}
+.kit-btn__count{
+  display:grid; place-items:center; min-width:1.1rem; height:1.1rem; padding:0 .25rem;
+  font-size:.66rem; border-radius:999px; background:var(--accent); color:var(--on-accent);
+}
+.kit-btn--download{ }
+.kit-btn--agent:hover{ border-color:var(--ember); color:var(--ember); }
+.kit-btn--agent .kit-btn__count{ background:var(--ember); }
+.kit-btn--na{ cursor:not-allowed; color:var(--ink-soft); opacity:.7; }
+.kit-btn--na:hover{ border-color:var(--line); color:var(--ink-soft); }
+
+/* ───────────── Foundry footnote ───────────── */
+.foundry-note{
+  margin:2rem 0 0; padding:1.1rem 1.25rem; border-radius:var(--radius);
+  background:var(--surface); border:1px solid var(--line);
+  font-size:.92rem; color:var(--ink-soft); display:flex; gap:.6rem; align-items:baseline;
+}
+.foundry-note strong{ color:var(--ink); }
+.foundry-note__dot{ flex:0 0 auto; width:.55rem; height:.55rem; margin-top:.35rem;
+  border-radius:50%; background:var(--accent); }
+
+/* ───────────── Build detail modal ───────────── */
+.modal{
+  position:fixed; inset:0; z-index:200; display:none;
+  background:rgba(15,17,21,.55); padding:1.25rem;
+  align-items:flex-start; justify-content:center; overflow-y:auto;
+}
+.modal.is-open{ display:flex; animation:modal-fade .15s ease; }
+@keyframes modal-fade{ from{ opacity:0; } to{ opacity:1; } }
+.modal__content{
+  position:relative; width:100%; max-width:620px; margin:max(2rem, 6vh) 0 2rem;
+  background:var(--paper); border:1px solid var(--line); border-radius:14px;
+  padding:2rem clamp(1.25rem, 4vw, 2.25rem); box-shadow:0 30px 80px -30px rgba(0,0,0,.5);
+}
+.modal__close{
+  position:absolute; top:.75rem; right:.9rem; width:2.2rem; height:2.2rem;
+  display:grid; place-items:center; font-size:1.5rem; line-height:1;
+  background:transparent; border:1px solid transparent; border-radius:8px;
+  color:var(--ink-soft); cursor:pointer;
+}
+.modal__close:hover{ color:var(--ink); border-color:var(--line); }
+.modal__head{ display:flex; align-items:center; gap:1rem; margin:0 2.5rem .25rem 0; }
+.modal__title{ font-size:1.5rem; line-height:1.15; margin:0 0 .4rem; }
+.modal__hook{ font-family:var(--font-mono); font-size:.9rem; color:var(--ember); margin:.75rem 0 0; }
+.modal__desc{ color:var(--ink-soft); margin:.85rem 0 1.25rem; }
+.modal__subhead{
+  display:flex; align-items:center; gap:.45rem; font-size:1.02rem;
+  margin:1.5rem 0 .6rem; color:var(--ink);
+}
+.modal__subhead .kit-ic{ width:18px; height:18px; color:var(--accent); }
+.modal__agent{ list-style:none; padding:0; margin:0; display:grid; gap:.5rem; }
+.modal__agent li{
+  position:relative; padding:.55rem .75rem .55rem 2rem; color:var(--ink);
+  background:var(--surface); border:1px solid var(--line); border-radius:8px; font-size:.93rem;
+}
+.modal__agent li::before{
+  content:""; position:absolute; left:.75rem; top:.95rem;
+  width:.5rem; height:.5rem; border-radius:50%; background:var(--ember);
+}
+.modal__muted{ color:var(--ink-soft); font-size:.93rem; margin:0; }
+.modal__kit{
+  margin-top:1.5rem; padding:1.1rem 1.25rem; border-radius:var(--radius);
+  background:var(--surface); border:1px dashed var(--line); display:grid; gap:.6rem;
+}
+.modal__kit-label{
+  display:flex; align-items:center; gap:.45rem; font-family:var(--font-mono);
+  font-size:.8rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink);
+}
+.modal__kit-label .kit-ic{ width:16px; height:16px; color:var(--accent); }
+.modal__kit .btn{ justify-self:start; }
+
 /* ───────────────────────── Footer ───────────────────────── */
 .site-footer{ border-top:1px solid var(--line); padding:3rem 0; background:var(--paper); }
 .site-footer__inner{ display:flex; flex-direction:column; gap:.4rem; }
@@ -211,6 +363,12 @@ img{ max-width:100%; height:auto; display:block; border-radius:var(--radius); bo
 @media (min-width:40rem){
   .stat-row{ grid-template-columns:repeat(3, 1fr); }
 }
+@media (min-width:40rem){
+  .foundry-grid{ grid-template-columns:repeat(2, 1fr); }
+}
 @media (min-width:48rem){
   .card-grid{ grid-template-columns:repeat(3, 1fr); }
+}
+@media (min-width:64rem){
+  .foundry-grid{ grid-template-columns:repeat(3, 1fr); }
 }

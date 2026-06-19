@@ -35,8 +35,7 @@
       </button>
       <ul class="nav__menu" id="nav-menu">
         <li><a href="#operator">The Operator</a></li>
-        <li><a href="#builder">AI Systems</a></li>
-        <li><a href="#tools">Tools</a></li>
+        <li><a href="#foundry">The Foundry</a></li>
         <li><a href="#how-i-work">How I Work</a></li>
         <li><a href="#proof">Proof</a></li>
         <li><a href="#contact">Hire / Contact</a></li>
@@ -60,8 +59,8 @@
         </p>
         <div class="hero__ctas">
           <a class="btn btn--primary" href="#operator">Hire me to run operations</a>
-          <a class="btn btn--secondary" href="#builder">Hire me for AI &amp; agents</a>
-          <a class="btn btn--secondary" href="#tools">Use my tools</a>
+          <a class="btn btn--secondary" href="#foundry">See what I've built</a>
+          <a class="btn btn--secondary" href="#contact">Get the tools</a>
         </div>
       </div>
     </section>
@@ -86,67 +85,40 @@
       </div>
     </section>
 
-    <!-- ─────────────── THE BUILDER / AI SYSTEMS ─────────────── -->
-    <section id="builder" class="section section--alt" aria-labelledby="builder-heading">
+    <!-- ─────────────── THE FOUNDRY / BUILD CATALOG ─────────────── -->
+    <section id="foundry" class="section section--alt" aria-labelledby="foundry-heading">
       <div class="container">
-        <p class="section__eyebrow">The Builder</p>
-        <h2 id="builder-heading" class="section__title">AI systems I've shipped</h2>
+        <p class="section__eyebrow">The Foundry</p>
+        <h2 id="foundry-heading" class="section__title">Everything I've built</h2>
         <p class="section__lead">
           Agent infrastructure, automation engines, dashboards, and live apps —
-          built and deployed, not slideware. A sample:
+          built and deployed, not slideware. Each one is being packaged into a
+          distribution kit you can download and run. Honest status on every card:
+          I'd rather show the roadmap than fake a download button.
         </p>
-        <div class="card-grid">
-          <article class="card">
-            <span class="card__tag">SHIPPED · IN DAILY USE</span>
-            <h3 class="card__title">A knowledge base my AI agents read and write</h3>
-            <p class="card__body">I built a structured "vault" — a markdown knowledge base backed by a database with semantic search — and a custom server that lets any AI assistant read from and write to it directly. One source of truth; every agent works from current context instead of starting cold. It's the backbone the rest of this runs on.</p>
-            <a class="card__link" href="#how-i-work">How it works →</a>
-          </article>
-          <article class="card">
-            <span class="card__tag">SHIPPED · LIVE</span>
-            <h3 class="card__title">A live income-investing platform</h3>
-            <p class="card__body">A full web app for income-focused investors — screening tools, a return simulator, and a member area, with real accounts and a live database behind it. Designed, built, and deployed end to end.</p>
-            <a class="card__link" href="#">Read more →</a>
-          </article>
-          <article class="card">
-            <span class="card__tag">SHIPPED · PRIVATE</span>
-            <h3 class="card__title">A private command center for my work</h3>
-            <p class="card__body">A single dashboard that runs my projects, content, recordings, and operations — one cockpit, with a clean dev→live deploy pipeline behind it. This site is the public storefront; that's the back of house.</p>
-            <span class="card__link">Private — internal tool</span>
-          </article>
-        </div>
-      </div>
-    </section>
 
-    <!-- ─────────────── THE TOOLS / STOREFRONT ─────────────── -->
-    <section id="tools" class="section" aria-labelledby="tools-heading">
-      <div class="container">
-        <p class="section__eyebrow">The Tools</p>
-        <h2 id="tools-heading" class="section__title">Tools you can use</h2>
-        <p class="section__lead">
-          Tools and systems I'm packaging so you can run them too. Honest status
-          on each — I'd rather show the roadmap than fake a download button.
-        </p>
-        <div class="card-grid">
-          <article class="card card--tool">
-            <span class="card__tag">COMING SOON</span>
-            <h3 class="card__title">Clone my system</h3>
-            <p class="card__body">The vault + agent setup that runs everything here, packaged so you can drop it into your own workflow. The thing people ask me about most. Building the public version now.</p>
-            <a class="btn btn--primary btn--sm" href="#contact">Join the list →</a>
-          </article>
-          <article class="card card--tool">
-            <span class="card__tag">IN BUILD</span>
-            <h3 class="card__title">Content &amp; automation engine</h3>
-            <p class="card__body">An agent that turns raw input — notes, transcripts, voice — into structured, on-brand drafts on a repeatable pipeline. In active use privately; packaging it next.</p>
-            <a class="btn btn--primary btn--sm" href="#contact">Notify me →</a>
-          </article>
-          <article class="card card--tool">
-            <span class="card__tag">IN BUILD</span>
-            <h3 class="card__title">dev → live starter kit</h3>
-            <p class="card__body">The repo skeleton I spin up for every new project — branch structure, deploy config, and the sanitization gate that keeps secrets out of public builds. Polishing it to share.</p>
-            <a class="btn btn--primary btn--sm" href="#contact">Notify me →</a>
-          </article>
+        <div class="foundry-filters" role="tablist" aria-label="Filter builds">
+          <button class="filter-chip is-active" data-filter="all" type="button">All</button>
+          <button class="filter-chip" data-filter="agent" type="button">AI &amp; Agents</button>
+          <button class="filter-chip" data-filter="app" type="button">Apps</button>
+          <button class="filter-chip" data-filter="tool" type="button">Tools &amp; Kits</button>
         </div>
+
+        <!-- JS renders cards here from the catalog in script.js.
+             Fallback message shows only if JS is disabled. -->
+        <div id="foundry-grid" class="foundry-grid">
+          <noscript>
+            <p class="section__lead">Enable JavaScript to browse the full build catalog, or
+            <a href="mailto:hello@lennymadethat.com">email me</a> for the list.</p>
+          </noscript>
+        </div>
+
+        <p class="foundry-note">
+          <span class="foundry-note__dot"></span>
+          Download buttons are wired into the <strong>Distribution Kit Foundry</strong> —
+          each build gets a downloadable kit plus licensing as it's packaged.
+          Want first access? <a href="#contact">Get on the list.</a>
+        </p>
       </div>
     </section>
 
@@ -210,6 +182,11 @@
       <p class="site-footer__note">Public storefront. The private cockpit lives elsewhere.</p>
     </div>
   </footer>
+
+  <!-- Build detail modal (populated by script.js) -->
+  <div class="modal" id="build-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="build-modal-title">
+    <div class="modal__content" role="document"></div>
+  </div>
 
   <script src="script.js"></script>
 </body>
