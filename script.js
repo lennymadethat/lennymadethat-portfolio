@@ -36,6 +36,7 @@
   var BUILDS = [
     {
       id: "content-operative",
+      dlUrl: "kits/rico-kit.zip",
       icon: "✍",
       title: "The Content Operative",
       status: "live",
@@ -54,6 +55,7 @@
     },
     {
       id: "vault-fleet",
+      dlUrl: "kits/vault-fleet-kit.zip",
       icon: "🗄",
       title: "Vault Agent Fleet",
       status: "live",
@@ -72,6 +74,7 @@
     },
     {
       id: "harvester",
+      dlUrl: "kits/harvester-kit.zip",
       icon: "📡",
       title: "The Harvester",
       status: "live",
@@ -90,6 +93,7 @@
     },
     {
       id: "forge",
+      dlUrl: "kits/forge-runner-kit.zip",
       icon: "⚙",
       title: "The Forge",
       status: "shipped",
@@ -173,6 +177,7 @@
     },
     {
       id: "data-api",
+      dlUrl: "kits/rir-api-kit.zip",
       icon: "🔌",
       title: "Income Data API",
       status: "build",
@@ -244,10 +249,10 @@
 
     // Download affordance
     var dl;
-    if (b.download === "kit") {
-      dl = '<button class="kit-btn kit-btn--download" data-soon="1" type="button" title="Distribution kit packaging in progress">'
-         + iconDownload() + 'Download<span class="kit-btn__hint">soon</span></button>';
-    } else if (b.download === "soon") {
+    if (b.dlUrl) {
+      dl = '<a class="kit-btn kit-btn--download" href="' + esc(b.dlUrl) + '" download title="Download the distribution kit (.zip)">'
+         + iconDownload() + 'Download<span class="kit-btn__hint">kit</span></a>';
+    } else if (b.download === "kit" || b.download === "soon") {
       dl = '<button class="kit-btn kit-btn--download" data-soon="1" type="button" title="Distribution kit packaging in progress">'
          + iconDownload() + 'Download<span class="kit-btn__hint">soon</span></button>';
     } else { // "na"
