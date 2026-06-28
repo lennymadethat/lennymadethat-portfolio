@@ -26,6 +26,34 @@
     year.textContent = String(new Date().getFullYear());
   }
 
+  // ─────────────────────── Live engine readout ───────────────────────
+  // Progressive enhancement: pulls a PUBLIC, key-less market endpoint and
+  // reveals the readout only on success. If the engine is unreachable the
+  // block stays hidden — the page never shows a broken widget. No secrets.
+  (function () {
+    var box = document.getElementById("live-engine");
+    var line = document.getElementById("live-engine-line");
+    if (!box || !line) return;
+    var EP = "https://hyt-data.ianleonard1988.workers.dev/market";
+    var ctrl, timer;
+    try { ctrl = new AbortController(); timer = setTimeout(function () { try { ctrl.abort(); } catch (e) {} }, 6000); } catch (e) {}
+    fetch(EP, ctrl ? { signal: ctrl.signal } : {})
+      .then(function (r) { if (!r.ok) throw new Error("http"); return r.json(); })
+      .then(function (m) {
+        if (timer) clearTimeout(timer);
+        if (!m || m.total == null || m.stage2 == null) throw new Error("shape");
+        var nf = function (n) { return Number(n).toLocaleString(); };
+        line.innerHTML =
+          "<strong>" + nf(m.stage2) + "</strong> stocks are in a confirmed uptrend right now — "
+          + "<strong>" + m.pct_above_sma200 + "%</strong> of the market sits above its 200-day average, "
+          + "across <strong>" + nf(m.total) + "</strong> names tracked.";
+        var asof = box.querySelector(".live-engine__asof");
+        if (asof && m.as_of_date) asof.textContent = m.as_of_date;
+        box.hidden = false;
+      })
+      .catch(function () { if (timer) clearTimeout(timer); /* stay hidden — never show broken */ });
+  })();
+
   // ============================================================
   //  THE FOUNDRY — build catalog
   //  Product-level descriptions ONLY. No secrets, no tokens, no
@@ -108,6 +136,24 @@
         "Drafts only — never auto-posts anywhere"
       ],
       download: "soon",
+      instructions: true
+    },
+    {
+      id: "data-engine",
+      icon: "🛰",
+      title: "Self-Running Data Engine",
+      status: "live",
+      group: "app",
+      hook: "The whole US market, recomputed every night — untouched.",
+      desc: "A data platform that owns its own copy of the entire US stock-and-fund market and recomputes it automatically every night: prices, data-integrity checks, trend and momentum signals, income analytics, market breadth, sector rotation, and the macro backdrop — a seven-stage pipeline that runs in the cloud with my computer off. The app that reads from it can't go dark because of an outside data provider; the data is owned. A live readout from it runs on this page.",
+      tags: ["Data platform", "Automation", "Cloud cron", "Fintech"],
+      agent: [
+        "Seven-stage nightly pipeline, fully autonomous",
+        "Flag-only integrity — proposes fixes, never auto-applies",
+        "Owns the data: no live third-party dependency",
+        "Powers a live web app and a sellable data API"
+      ],
+      download: "na",
       instructions: true
     },
     {

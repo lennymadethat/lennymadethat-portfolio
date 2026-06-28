@@ -148,10 +148,24 @@
         <p class="section__eyebrow">Proof</p>
         <h2 id="proof-heading" class="section__title">Build in public</h2>
         <p class="section__lead">
-          <!-- PLACEHOLDER — build-log / velocity -->
-          Receipts over claims. A running log of what shipped and how fast.
+          Receipts over claims. The clearest one is live below — a system I built,
+          reporting its own numbers in real time — followed by a running log of what
+          shipped and how fast.
         </p>
+
+        <!-- LIVE engine readout — progressive enhancement; stays hidden if the
+             engine is unreachable, so this section never shows a broken widget.
+             Pulls a PUBLIC, keyless market endpoint. No secrets. -->
+        <div class="live-engine" id="live-engine" hidden>
+          <div class="live-engine__pulse"><span class="live-engine__dot"></span>LIVE&nbsp;·&nbsp;<span class="live-engine__asof"></span></div>
+          <p class="live-engine__line" id="live-engine-line"></p>
+          <p class="live-engine__sub">A market-data engine I built — the entire US market,
+          recomputed automatically every night with my computer off. This number is current,
+          not a screenshot. <a href="#build-data-engine">See the build&nbsp;→</a></p>
+        </div>
+
         <ul class="log" aria-label="Build log">
+          <li class="log__item"><span class="log__date">Jun 2026</span><span class="log__entry">Built a self-running market-data engine: owns the whole US market and recomputes it nightly — prices, integrity, signals, income, breadth, macro — fully autonomous in the cloud. The live readout above runs on it.</span></li>
           <li class="log__item"><span class="log__date">May 2026</span><span class="log__entry">Shipped this portfolio on a clean dev→main pipeline — repo to styled, deployed site in a day.</span></li>
           <li class="log__item"><span class="log__date">May 2026</span><span class="log__entry">Stood up a dev→live deploy pipeline for my private dashboard: push to dev → preview, merge → live.</span></li>
           <li class="log__item"><span class="log__date">May 2026</span><span class="log__entry">Built a custom server so my AI agents read and write one shared knowledge base — no more re-explaining context every session.</span></li>
