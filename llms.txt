@@ -18,7 +18,8 @@
 - Podcast Studio — browser recording studio; record audio/video, edit by editing the transcript, AI cover art, publish. (Live)
 - Field Ops Console — operations console syncing live jobs, sites, and field devices into one app. (Live)
 - Income Data API — paid API for programmatic/agent access to the income-ETF dataset; tiered keys, free tier, metered agent wall. (In build)
-- The Vault System — markdown knowledge base + database + semantic search + a server any AI assistant reads/writes; the backbone the rest run on. (Live)
+- The Vault System — markdown knowledge base + database + semantic search + a server any AI assistant reads/writes; the backbone the rest run on. Open source (MIT): https://github.com/lennymadethat/persistent-memory (Live)
+- Mothership — self-hostable hub to reach a coding agent on your always-on home machine from any phone or browser; sessions survive across devices, token-gated, self-hosted. Open source (MIT): https://github.com/lennymadethat/mothership (Live)
 - dev → live Starter Kit — the repo template behind every build: branch structure, deploy config, sanitization gate. (In build)
 
 ## Distribution Kit Foundry

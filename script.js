@@ -153,6 +153,9 @@
         "Offline listening + cross-device resume",
         "Native iOS + Android, live in both app stores"
       ],
+      // Device-aware app button lights up the moment the public store URLs land:
+      // get: { ios: "https://apps.apple.com/app/...", android: "https://play.google.com/store/apps/details?id=..." }
+      appPending: true,
       download: "na",
       instructions: true
     },
@@ -284,7 +287,26 @@
         "Semantic search over everything you've captured",
         "Shared memory across every agent"
       ],
+      get: { source: "https://github.com/lennymadethat/persistent-memory" },
       download: "kit",
+      instructions: true
+    },
+    {
+      id: "mothership",
+      icon: "🛸",
+      title: "Mothership",
+      status: "live",
+      group: "tool",
+      hook: "Port into your always-on home computer from your phone.",
+      desc: "A self-hostable control hub that lets you reach a coding agent running on your always-on home machine from any phone or browser — pick up a session on the couch, keep it going on the train. Open-source and MIT-licensed: bring your own machine, arm the access token, and you're in. The backbone of how I build from anywhere.",
+      tags: ["Self-hostable", "Cloudflare Worker", "Remote control", "Open source"],
+      agent: [
+        "Drive a home coding agent from your phone",
+        "Sessions survive across devices",
+        "Token-gated access, self-hosted — your box, your keys"
+      ],
+      get: { source: "https://github.com/lennymadethat/mothership" },
+      download: "na",
       instructions: true
     }
   ];
@@ -302,6 +324,49 @@
     });
   }
 
+  // ─────────────────────── Device-aware download targets ───────────────────────
+  // Resolves the RIGHT artifact for the visitor's device:
+  //   desktop → Windows installer (.exe) · iPhone → App Store · Android → Play
+  //   any → web app / kit-zip / source. A button only renders when a real URL
+  //   exists — no dead links, no fake "download" that goes nowhere.
+  function deviceKind() {
+    try {
+      var ua = navigator.userAgent || "";
+      if (/iPhone|iPad|iPod/i.test(ua)) return "ios";
+      if (/Android/i.test(ua)) return "android";
+      var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+      var narrow = (window.innerWidth || 999) < 820;
+      if (coarse && narrow) return "mobile";
+    } catch (e) {}
+    return "desktop";
+  }
+
+  // Given a build's `get` map + the device, return {href,label,hint} or null.
+  function resolveGet(g, kind) {
+    if (!g) return null;
+    if (kind === "ios" && g.ios) return { href: g.ios, label: "Get the app", hint: "App Store" };
+    if (kind === "android" && g.android) return { href: g.android, label: "Get the app", hint: "Google Play" };
+    if (kind === "desktop" && g.windows) return { href: g.windows, label: "Download", hint: "Windows" };
+    if ((kind === "ios" || kind === "android" || kind === "mobile") && (g.android || g.ios))
+      return { href: g.android || g.ios, label: "Get the app", hint: "mobile" };
+    if (g.web) return { href: g.web, label: "Open the app", hint: "web" };
+    if (g.source) return { href: g.source, label: "View source", hint: "GitHub" };
+    return null;
+  }
+
+  // Primary smart-get button (device-resolved). "" when nothing real to offer.
+  function getBtn(b, kind) {
+    var r = resolveGet(b.get, kind);
+    if (!r) return "";
+    var external = /^https?:/i.test(r.href);
+    var dl = /\.exe($|\?)/i.test(r.href) || /\.zip($|\?)/i.test(r.href);
+    return '<a class="kit-btn kit-btn--get" href="' + esc(r.href) + '"'
+      + (external ? ' target="_blank" rel="noopener"' : "")
+      + (dl ? " download" : "")
+      + ' title="' + esc(r.label + " · " + r.hint) + '">'
+      + iconExternal() + esc(r.label) + '<span class="kit-btn__hint">' + esc(r.hint) + "</span></a>";
+  }
+
   // Build one card's HTML
   function cardHTML(b) {
     var st = STATUS_META[b.status] || STATUS_META.build;
@@ -311,6 +376,9 @@
 
     var hasAgent = b.agent && b.agent.length;
 
+    // Device-resolved primary action (App Store / Play / Windows / web / source)
+    var gb = getBtn(b, deviceKind());
+
     // Download affordance
     var dl;
     if (b.dlUrl) {
@@ -319,6 +387,11 @@
     } else if (b.download === "kit" || b.download === "soon") {
       dl = '<button class="kit-btn kit-btn--download" data-soon="1" type="button" title="Distribution kit packaging in progress">'
          + iconDownload() + 'Download<span class="kit-btn__hint">soon</span></button>';
+    } else if (gb) {
+      dl = ""; // a real device-resolved button replaces the passive "Hosted" badge
+    } else if (b.appPending) {
+      dl = '<span class="kit-btn kit-btn--na" aria-disabled="true" title="Native iOS + Android — public store links coming">'
+         + iconDownload() + 'On iOS + Android</span>';
     } else { // "na"
       dl = '<span class="kit-btn kit-btn--na" aria-disabled="true" title="This is a live product, not a downloadable kit">'
          + iconDownload() + 'Hosted</span>';
@@ -346,7 +419,7 @@
       +   '<p class="foundry-card__hook">' + esc(b.hook) + "</p>"
       +   '<p class="foundry-card__desc">' + esc(b.desc) + "</p>"
       +   '<ul class="foundry-card__tags">' + tags + "</ul>"
-      +   '<div class="foundry-card__actions">' + dl + instr + ag + "</div>"
+      +   '<div class="foundry-card__actions">' + gb + dl + instr + ag + "</div>"
       + "</article>";
   }
 
@@ -359,6 +432,9 @@
   }
   function iconSpark() {
     return '<svg class="kit-ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM18 15l.9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9z"/></svg>';
+  }
+  function iconExternal() {
+    return '<svg class="kit-ic" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
   }
 
   // Render the grid + optional filter chips
@@ -404,7 +480,11 @@
       : '<p class="modal__muted">No autonomous agent in this build.</p>';
 
     var dlNote;
-    if (b.download === "na") {
+    if (b.get && b.get.source) {
+      dlNote = "Open source — clone or fork it on GitHub (MIT).";
+    } else if (b.appPending) {
+      dlNote = "Native iOS + Android app — public store links are on the way.";
+    } else if (b.download === "na") {
       dlNote = "This is a hosted, live product — not a downloadable kit.";
     } else {
       dlNote = "A distribution kit (download + setup guide, with Stripe licensing) is being packaged for this build.";
@@ -419,6 +499,7 @@
       +   "</div>"
       + "</div>"
       + '<p class="modal__hook">' + esc(b.hook) + "</p>"
+      + (function () { var g = getBtn(b, deviceKind()); return g ? '<div class="modal__get">' + g + "</div>" : ""; })()
       + '<p class="modal__desc">' + esc(b.desc) + "</p>"
       + '<ul class="foundry-card__tags">'
       +   (b.tags || []).map(function (t) { return '<li class="foundry-card__tag">' + esc(t) + "</li>"; }).join("")

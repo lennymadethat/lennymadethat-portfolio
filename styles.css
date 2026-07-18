@@ -293,6 +293,11 @@ img{ max-width:100%; height:auto; display:block; border-radius:var(--radius); bo
 .kit-btn--agent .kit-btn__count{ background:var(--ember); }
 .kit-btn--na{ cursor:not-allowed; color:var(--ink-soft); opacity:.7; }
 .kit-btn--na:hover{ border-color:var(--line); color:var(--ink-soft); }
+/* Device-resolved primary action — the strongest CTA on the card */
+.kit-btn--get{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); font-weight:600; }
+.kit-btn--get:hover{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); filter:brightness(1.06); }
+.kit-btn--get .kit-btn__hint{ color:var(--on-accent); background:transparent; border-color:rgba(255,255,255,.35); }
+.modal__get{ margin:.2rem 0 1rem; }
 
 /* ───────────── Foundry footnote ───────────── */
 .foundry-note{
