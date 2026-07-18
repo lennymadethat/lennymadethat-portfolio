@@ -12,6 +12,7 @@
 - Vault Agent Fleet — a fleet of specialized AI agents that reads any dropped file (notes, PDFs, images, audio, video), classifies/tags/links/extracts, and files it into one searchable knowledge base; runs in the cloud on a schedule. (Live)
 - The Harvester — YouTube URL + lens in; AI watches the video, synthesizes a structured briefing, routes action items to the right project. (Live)
 - The Forge — visual workflow builder + generic execution engine; draw an automation as a graph, one interpreter runs any graph; self-hostable. (Shipped)
+- PlayLetter — his own consumer product: turns the newsletters you subscribe to into a personal audio feed (natural AI voices, morning-show routines, offline listening, cross-device resume); native iOS + Android, live in both app stores with paying subscribers. (Live)
 - Retail Investor Platform — live income-investing web app: screening, return simulator, fund-flow intelligence, AI research dossier, brokerage sync, member area. (Live)
 - Yield Observatory — static dashboard of stablecoin/RWA yields with reliability scoring and AI-authored risk dossiers, on public data. (Shipped)
 - Podcast Studio — browser recording studio; record audio/video, edit by editing the transcript, AI cover art, publish. (Live)

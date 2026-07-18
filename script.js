@@ -139,6 +139,24 @@
       instructions: true
     },
     {
+      id: "playletter",
+      icon: "🎧",
+      title: "PlayLetter",
+      status: "live",
+      group: "app",
+      hook: "Your newsletters, as a podcast you actually finish.",
+      desc: "My own consumer product: an app that turns the newsletters you already subscribe to into a personal audio feed — natural AI voices, morning-show routines, offline listening, and resume-across-devices. Shipped to the iOS App Store and Google Play with a live subscriber base. Designed, built, and run end to end — the product, the apps, the billing, and the content pipeline behind it.",
+      tags: ["Consumer app", "iOS + Android", "AI audio", "SaaS"],
+      agent: [
+        "Newsletters converted to natural AI narration",
+        "Personal routines that play like a morning show",
+        "Offline listening + cross-device resume",
+        "Native iOS + Android, live in both app stores"
+      ],
+      download: "na",
+      instructions: true
+    },
+    {
       id: "data-engine",
       icon: "🛰",
       title: "Self-Running Data Engine",
