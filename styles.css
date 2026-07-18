@@ -14,10 +14,11 @@
   --font-mono:"JetBrains Mono",ui-monospace,monospace;
   --maxw:1140px; --radius:10px;
 }
-@media (prefers-color-scheme: dark){
-  :root{ --paper:#0F1115; --surface:#161A20; --ink:#ECEAE3; --ink-soft:#9AA0A8;
-    --line:#262B33; --accent:#3FA796; --accent-hover:#54B9A8; --on-accent:#0F1115; --ember:#C79152; }
-}
+/* This site is designed as a deliberate warm-paper → dark-basalt scroll journey
+   (the .section--dark register is the intentional dark part). An OS-level dark
+   inversion of the WHOLE page fights that concept and made the warm-ink tokens
+   render near-black on a dark background. Lock to the designed light palette. */
+html{ color-scheme:light; }
 
 /* ───────────────────────── Base ───────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
