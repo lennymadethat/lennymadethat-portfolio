@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lenny — Operator who builds</title>
-  <meta name="description" content="Head of manufacturing who ships AI systems. Operations leadership, AI &amp; agent infrastructure, and downloadable tools." />
+  <title>Lenny — I make things that hold up</title>
+  <meta name="description" content="Ian &quot;Lenny&quot; Leonard — a senior operator who ships production AI systems. Five years head of manufacturing; now designing and shipping the agents, tools, and platforms that run a business. San Diego." />
 
-  <!-- Open Graph / social (placeholder values — replace at launch) -->
-  <meta property="og:title" content="Lenny — Operator who builds" />
-  <meta property="og:description" content="Head of manufacturing who ships AI systems." />
+  <!-- Open Graph / social (replace image at launch) -->
+  <meta property="og:title" content="Lenny — I make things that hold up" />
+  <meta property="og:description" content="A senior operator who ships production AI systems. Physical builds, manufacturing leadership, and production software — same discipline, different material." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://lennymadethat.com" />
+  <meta name="theme-color" content="#FAF8F4" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
   <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Person","name":"Ian Leonard","alternateName":"Lenny","jobTitle":"Manufacturing Operations Leader & AI Systems Builder","url":"https://lennymadethat.com","address":{"@type":"PostalAddress","addressLocality":"San Diego","addressRegion":"CA","addressCountry":"US"},"knowsAbout":["Manufacturing operations","Operations leadership","Process improvement","AI agents","Model Context Protocol","Automation engineering","Product design","Web application development"],"description":"Manufacturing operations leader and AI systems builder in San Diego. Runs production operations and designs the AI agents, automation, and tools that run businesses."}
+{"@context":"https://schema.org","@type":"Person","name":"Ian Leonard","alternateName":"Lenny","jobTitle":"Manufacturing Operations Leader & AI Systems Builder","url":"https://lennymadethat.com","address":{"@type":"PostalAddress","addressLocality":"San Diego","addressRegion":"CA","addressCountry":"US"},"knowsAbout":["Manufacturing operations","Operations leadership","Process improvement","AI agents","Model Context Protocol","Automation engineering","Product design","Web application development","Fabrication","Lighting design"],"description":"A senior operator who ships production AI systems. Five years head of manufacturing; now designs and ships the AI agents, automation, and tools that run businesses."}
   </script>
 </head>
 <body>
-  <!-- Skip link for keyboard / screen-reader users -->
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="site-header">
@@ -34,11 +34,11 @@
         <span class="nav__toggle-bar"></span>
       </button>
       <ul class="nav__menu" id="nav-menu">
-        <li><a href="#operator">The Operator</a></li>
-        <li><a href="#foundry">The Foundry</a></li>
-        <li><a href="#how-i-work">How I Work</a></li>
-        <li><a href="#proof">Proof</a></li>
-        <li><a href="#contact">Hire / Contact</a></li>
+        <li><a href="#operator">Operator</a></li>
+        <li><a href="#maker">Maker</a></li>
+        <li><a href="#foundry">Systems</a></li>
+        <li><a href="#how-i-work">How I work</a></li>
+        <li><a href="#contact">Hire me</a></li>
       </ul>
     </nav>
   </header>
@@ -48,20 +48,36 @@
     <!-- ───────────────────────── HERO ───────────────────────── -->
     <section class="hero" aria-labelledby="hero-heading">
       <div class="container hero__inner">
-        <p class="hero__eyebrow">IAN LEONARD · SAN DIEGO</p>
-        <h1 id="hero-heading" class="hero__headline">
-          Operator who builds.
-        </h1>
-        <p class="hero__sub">
-          I run manufacturing operations and design the AI systems, agents, and
-          tools that make a business actually run. A designer and operator who
-          ships — physical builds and production software alike.
-        </p>
-        <div class="hero__ctas">
-          <a class="btn btn--primary" href="#operator">Hire me to run operations</a>
-          <a class="btn btn--secondary" href="#foundry">See what I've built</a>
-          <a class="btn btn--secondary" href="#contact">Get the tools</a>
+        <div class="hero__copy">
+          <p class="hero__eyebrow">IAN “LENNY” LEONARD · SAN DIEGO</p>
+          <h1 id="hero-heading" class="hero__headline">
+            I make things<br>that hold&nbsp;up.
+          </h1>
+          <p class="hero__sub">
+            Physical, operational, and now intelligent. I spent five years running
+            a manufacturing floor and a season building a full off-grid home inside
+            a cargo trailer — now I design and ship the AI systems that run a
+            business. Same discipline. Different material.
+          </p>
+          <p class="hero__spec">MAKER → HEAD OF MANUFACTURING → AI&nbsp;SYSTEMS</p>
+
+          <div class="hero__cta-block">
+            <a class="btn btn--primary" href="#foundry">See what I’ve shipped</a>
+            <nav class="router" aria-label="What brought you here">
+              <span class="router__label">Or, what brought you here —</span>
+              <a class="router__door" href="#operator"><span>Run your operations</span></a>
+              <a class="router__door" href="#foundry"><span>Build AI &amp; agents</span></a>
+              <a class="router__door" href="#tools"><span>Use my tools</span></a>
+            </nav>
+          </div>
         </div>
+
+        <figure class="hero__portrait ph" data-ph="Portrait — drop /img/portrait.jpg">
+          <!-- SWAP: editorial portrait, 4:5, graded warm/matte. onerror keeps layout clean. -->
+          <img src="img/portrait.jpg" alt="Ian “Lenny” Leonard" width="640" height="800"
+               onerror="this.closest('.ph').classList.add('ph--empty')" />
+          <figcaption class="spec">SAN DIEGO, CA · BUILDER SINCE ’09</figcaption>
+        </figure>
       </div>
     </section>
 
@@ -69,32 +85,87 @@
     <section id="operator" class="section" aria-labelledby="operator-heading">
       <div class="container">
         <p class="section__eyebrow">The Operator</p>
-        <h2 id="operator-heading" class="section__title">Manufacturing &amp; operations leadership</h2>
+        <h2 id="operator-heading" class="section__title">I’ve run the floor — and built the systems that run it.</h2>
         <p class="section__lead">
-          I run manufacturing operations day to day — the people, the throughput,
-          the cost, the quality, and the systems that keep production moving.
-          Designer by training, operator by trade: I take a process held together
-          with duct tape and turn it into something that runs the same way every
-          time.
+          Five years as head of manufacturing, second in command of the operation:
+          the people, the throughput, the cost, the quality, and the systems that
+          keep production moving when nobody’s watching. Designer by training,
+          operator by trade. I take a process held together with duct tape and turn
+          it into something that runs the same way every time — then I automate the
+          parts that shouldn’t need me.
         </p>
-        <ul class="stat-row" aria-label="Highlights">
-          <li class="stat"><span class="stat__num">—</span><span class="stat__label">Years leading operations</span></li>
-          <li class="stat"><span class="stat__num">—</span><span class="stat__label">Team led</span></li>
-          <li class="stat"><span class="stat__num">—</span><span class="stat__label">Throughput / cost win</span></li>
+        <ul class="stat-row" aria-label="Operator record">
+          <li class="stat"><span class="stat__num">5<span class="stat__unit">yrs</span></span><span class="stat__label">Head of manufacturing, 2nd&nbsp;in&nbsp;command</span></li>
+          <li class="stat"><span class="stat__num">10+</span><span class="stat__label">Production systems designed &amp; shipped</span></li>
+          <li class="stat"><span class="stat__num">2</span><span class="stat__label">Public open-source releases, and counting</span></li>
         </ul>
+        <p class="section__foot spec">// OPS METRICS — throughput &amp; cost figures generalized; real numbers under NDA, shared on request</p>
       </div>
     </section>
 
-    <!-- ─────────────── THE FOUNDRY / BUILD CATALOG ─────────────── -->
+    <!-- ─────────────────────── THE MAKER ─────────────────────── -->
+    <section id="maker" class="section section--maker" aria-labelledby="maker-heading">
+      <div class="container">
+        <p class="section__eyebrow">The Maker</p>
+        <h2 id="maker-heading" class="section__title">Before I built AI systems, I built physical ones.</h2>
+        <p class="section__lead">
+          I lived six months inside a system I built with my own hands — off-grid,
+          in New York City, where a failure meant no heat. That’s the whole reason
+          the software ships and doesn’t break: I don’t hand over things I haven’t
+          had to live inside. Same craftsman’s eye, whether it’s maple and black
+          pipe or a multi-agent pipeline.
+        </p>
+
+        <div class="maker-grid">
+          <figure class="maker-card maker-card--wide ph" data-ph="Cargo-trailer tiny home — /img/trailer.jpg">
+            <img src="img/trailer.jpg" alt="Cargo-trailer tiny home conversion — hardwood interior, off-grid"
+                 width="1200" height="800" loading="lazy"
+                 onerror="this.closest('.ph').classList.add('ph--empty')" />
+            <figcaption>
+              <span class="spec">CARGO-TRAILER TINY HOME · NYC → SAN DIEGO · 2019</span>
+              <p>Turned an empty steel box into a livable, powered, plumbed home — queen bed,
+              hardwood throughout, full kitchen, private bath, high-end solar, hot water,
+              propane. Lived and travelled in it six months, then drove it cross-country.</p>
+            </figcaption>
+          </figure>
+
+          <figure class="maker-card ph" data-ph="Industrial lighting — /img/lighting.jpg">
+            <img src="img/lighting.jpg" alt="Industrial black-pipe and Edison-bulb lighting for NYC bars"
+                 width="720" height="720" loading="lazy"
+                 onerror="this.closest('.ph').classList.add('ph--empty')" />
+            <figcaption>
+              <span class="spec">ARCHITECTURAL LIGHTING · NYC BARS &amp; RESTAURANTS</span>
+              <p>Commissioned to design and install lighting across multiple NYC venues —
+              black iron pipe and vintage Edison bulbs. Wall pieces, chandeliers, sconces,
+              table lights.</p>
+            </figcaption>
+          </figure>
+
+          <figure class="maker-card ph" data-ph="Custom furniture — /img/furniture.jpg">
+            <img src="img/furniture.jpg" alt="Custom maple and black-pipe shelving, Brooklyn loft"
+                 width="720" height="720" loading="lazy"
+                 onerror="this.closest('.ph').classList.add('ph--empty')" />
+            <figcaption>
+              <span class="spec">CUSTOM FURNITURE &amp; BUILT-INS · BROOKLYN</span>
+              <p>Industrial shelving for a warehouse loft office, designed around the client’s
+              framed graffiti — 1.5&Prime; maple against ¾&Prime; black pipe to keep it light and
+              minimal. I rarely get to make matching pieces.</p>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────── THE FOUNDRY / SYSTEMS (proof wall) ─────────────── -->
     <section id="foundry" class="section section--alt" aria-labelledby="foundry-heading">
       <div class="container">
-        <p class="section__eyebrow">The Foundry</p>
-        <h2 id="foundry-heading" class="section__title">Everything I've built</h2>
+        <p class="section__eyebrow">The Systems</p>
+        <h2 id="foundry-heading" class="section__title">Everything I’ve shipped</h2>
         <p class="section__lead">
           Agent infrastructure, automation engines, dashboards, and live apps —
-          built and deployed, not slideware. Each one is being packaged into a
+          built and deployed, not slideware. Each is being packaged into a
           distribution kit you can download and run. Honest status on every card:
-          I'd rather show the roadmap than fake a download button.
+          I’d rather show the roadmap than fake a download button.
         </p>
 
         <div class="foundry-filters" role="tablist" aria-label="Filter builds">
@@ -104,8 +175,7 @@
           <button class="filter-chip" data-filter="tool" type="button">Tools &amp; Kits</button>
         </div>
 
-        <!-- JS renders cards here from the catalog in script.js.
-             Fallback message shows only if JS is disabled. -->
+        <!-- JS renders cards here from the catalog in script.js. -->
         <div id="foundry-grid" class="foundry-grid">
           <noscript>
             <p class="section__lead">Enable JavaScript to browse the full build catalog, or
@@ -113,31 +183,30 @@
           </noscript>
         </div>
 
-        <p class="foundry-note">
+        <p class="foundry-note" id="tools">
           <span class="foundry-note__dot"></span>
-          The first kits are <strong>live to download</strong> — each is a real,
+          The first kits are <strong>live to download</strong> — each a real,
           self-hostable package (setup guide + bring-your-own-keys config). More are
-          packaging via the <strong>Distribution Kit Foundry</strong>, with paid
-          licensing to follow. Want first access? <a href="#contact">Get on the list.</a>
+          packaging now, with paid licensing to follow. Want first access?
+          <a href="#contact">Get on the list.</a>
         </p>
       </div>
     </section>
 
-    <!-- ─────────────────────── HOW I WORK ─────────────────────── -->
-    <section id="how-i-work" class="section section--alt" aria-labelledby="how-heading">
+    <!-- ─────────────────────── HOW I WORK (dark register) ─────────────────────── -->
+    <section id="how-i-work" class="section section--dark" aria-labelledby="how-heading">
       <div class="container">
         <p class="section__eyebrow">How I Work</p>
-        <h2 id="how-heading" class="section__title">A vault-driven, dev → live production system</h2>
+        <h2 id="how-heading" class="section__title">A vault-driven, dev&nbsp;→&nbsp;live production system</h2>
         <p class="section__lead">
-          <!-- PLACEHOLDER — the premium justifier -->
           The reason the output is fast and the quality holds: a documented
-          production system that takes work from idea to dev to live with a
-          single decision to ship.
+          production system that takes work from idea, to dev, to live with a single
+          decision to ship. The same three moves, on every project.
         </p>
         <ol class="steps">
-          <li class="step"><span class="step__num">1</span><div><h3 class="step__title">Capture</h3><p>Every idea, decision, spec, and voice note lands in a structured vault that's the single source of truth. Nothing important lives in my head or a random doc — and my AI agents read and write it directly.</p></div></li>
-          <li class="step"><span class="step__num">2</span><div><h3 class="step__title">Build on dev</h3><p>Every project has a stable dev surface. I build and iterate there against real infrastructure, so nothing half-finished ever touches what's live.</p></div></li>
-          <li class="step"><span class="step__num">3</span><div><h3 class="step__title">Ship to live</h3><p>One decision moves work from dev to main, and it auto-deploys. Same discipline on every project — that's why the output is fast and the quality holds.</p></div></li>
+          <li class="step"><span class="step__num">1</span><div><h3 class="step__title">Capture</h3><p>Every idea, decision, spec, and voice note lands in a structured knowledge base that’s the single source of truth — and my AI agents read and write it directly. Nothing important lives in my head or a random doc.</p></div></li>
+          <li class="step"><span class="step__num">2</span><div><h3 class="step__title">Build on dev</h3><p>Every project has a stable dev surface. I build and iterate there against real infrastructure, so nothing half-finished ever touches what’s live.</p></div></li>
+          <li class="step"><span class="step__num">3</span><div><h3 class="step__title">Ship to live</h3><p>One decision moves work from dev to main, and it auto-deploys. Same discipline everywhere — that’s why the output is fast and the quality holds.</p></div></li>
         </ol>
       </div>
     </section>
@@ -153,39 +222,53 @@
           shipped and how fast.
         </p>
 
-        <!-- LIVE engine readout — progressive enhancement; stays hidden if the
-             engine is unreachable, so this section never shows a broken widget.
-             Pulls a PUBLIC, keyless market endpoint. No secrets. -->
         <div class="live-engine" id="live-engine" hidden>
           <div class="live-engine__pulse"><span class="live-engine__dot"></span>LIVE&nbsp;·&nbsp;<span class="live-engine__asof"></span></div>
           <p class="live-engine__line" id="live-engine-line"></p>
           <p class="live-engine__sub">A market-data engine I built — the entire US market,
           recomputed automatically every night with my computer off. This number is current,
-          not a screenshot. <a href="#build-data-engine">See the build&nbsp;→</a></p>
+          not a screenshot.</p>
         </div>
 
         <ul class="log" aria-label="Build log">
+          <li class="log__item"><span class="log__date">Jul 2026</span><span class="log__entry">Open-sourced two builder tools — a persistent-memory system for AI agents, and Mothership (drive your always-on machine from your phone). Sanitized, MIT-licensed, public.</span></li>
           <li class="log__item"><span class="log__date">Jun 2026</span><span class="log__entry">Built a self-running market-data engine: owns the whole US market and recomputes it nightly — prices, integrity, signals, income, breadth, macro — fully autonomous in the cloud. The live readout above runs on it.</span></li>
-          <li class="log__item"><span class="log__date">May 2026</span><span class="log__entry">Shipped this portfolio on a clean dev→main pipeline — repo to styled, deployed site in a day.</span></li>
-          <li class="log__item"><span class="log__date">May 2026</span><span class="log__entry">Stood up a dev→live deploy pipeline for my private dashboard: push to dev → preview, merge → live.</span></li>
+          <li class="log__item"><span class="log__date">May 2026</span><span class="log__entry">Shipped this site on a clean dev→main pipeline — repo to styled, deployed site in a day.</span></li>
           <li class="log__item"><span class="log__date">May 2026</span><span class="log__entry">Built a custom server so my AI agents read and write one shared knowledge base — no more re-explaining context every session.</span></li>
         </ul>
       </div>
     </section>
 
-    <!-- ─────────────────── HIRE / CONTACT ─────────────────── -->
+    <!-- ─────────────────── HIRE / CONTACT (two doors) ─────────────────── -->
     <section id="contact" class="section section--alt" aria-labelledby="contact-heading">
       <div class="container">
         <p class="section__eyebrow">Hire / Contact</p>
         <h2 id="contact-heading" class="section__title">Two ways to work together</h2>
         <p class="section__lead">
-          Hire me to run your operations, or bring me in to design and build your
-          AI systems. Either way, start here.
+          Hire me onto your team, or bring me in to design and build your AI systems.
+          Either way, start here.
         </p>
-        <div class="hero__ctas">
-          <a class="btn btn--primary" href="#" download>Download résumé (PDF)</a>
-          <a class="btn btn--secondary" href="mailto:hello@lennymadethat.com">Email me</a>
+
+        <div class="doors">
+          <div class="door">
+            <p class="door__kicker spec">FOR HIRING TEAMS</p>
+            <h3 class="door__title">Hire me</h3>
+            <p class="door__body">Operations &amp; manufacturing leadership, or AI / agent engineering roles. Grab the résumé and send a note.</p>
+            <div class="door__ctas">
+              <a class="btn btn--primary" href="resume.json">Résumé</a>
+              <a class="btn btn--secondary" href="mailto:hello@lennymadethat.com?subject=Role%20for%20Lenny">Email me</a>
+            </div>
+          </div>
+          <div class="door">
+            <p class="door__kicker spec">FOR CLIENTS</p>
+            <h3 class="door__title">Work with me</h3>
+            <p class="door__body">I’ll design, build, or fix your agent systems, automations, and internal tools. Tell me what’s slow and I’ll tell you what I’d build.</p>
+            <div class="door__ctas">
+              <a class="btn btn--primary" href="mailto:hello@lennymadethat.com?subject=Project%20for%20Lenny">Start a project</a>
+            </div>
+          </div>
         </div>
+        <p class="section__foot spec">hello@lennymadethat.com · San Diego, CA</p>
       </div>
     </section>
 

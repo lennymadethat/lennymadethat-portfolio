@@ -395,3 +395,102 @@ img{ max-width:100%; height:auto; display:block; border-radius:var(--radius); bo
 .live-engine__sub a{ color:var(--accent); }
 @media (max-width:560px){ .live-engine__line{ font-size:1.25rem; } }
 @media (prefers-reduced-motion:reduce){ .live-engine__dot{ animation:none; } }
+
+/* ============================================================
+   V2 EVOLUTION — panel brief: warm→dark register, maker story,
+   framed portrait, router band, spec-captions, contact doors.
+   Appended so it cascades over the base tokens above.
+   ============================================================ */
+:root{ --ink:#1A1613; --basalt:#141311; --bone:#EDE8DF; --teal-lift:#2E8C7E; --ember-hot:#C98A44; }
+
+/* mono "spec sheet" caption — the connective tissue between craft & code */
+.spec{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ember); font-weight:500; display:block; }
+.section__foot{ margin-top:26px; color:var(--ink-soft); }
+
+/* ───────────────────────── HERO ───────────────────────── */
+.hero__inner{ display:grid; grid-template-columns:1fr; gap:clamp(28px,5vw,64px); align-items:center; }
+.hero__eyebrow{ font-family:var(--font-mono); font-size:.72rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ember); margin:0 0 18px; }
+.hero__headline{ font-size:clamp(3rem,9vw,7rem); line-height:.95; letter-spacing:-0.025em;
+  font-weight:340; margin:0 0 26px; }
+.hero__sub{ font-size:clamp(1.05rem,1.4vw,1.25rem); line-height:1.62; color:var(--ink-soft);
+  max-width:46ch; margin:0 0 20px; }
+.hero__spec{ font-family:var(--font-mono); font-size:.72rem; letter-spacing:.18em;
+  color:var(--accent); margin:0 0 30px; }
+.hero__cta-block{ display:flex; flex-direction:column; gap:22px; align-items:flex-start; }
+
+/* soft router — assisted self-sort, not 3 co-equal buttons */
+.router{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.router__label{ font-family:var(--font-mono); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-soft); width:100%; margin-bottom:2px; }
+.router__door{ font-family:var(--font-mono); font-size:.8rem; letter-spacing:.02em;
+  color:var(--ink); border:1px solid var(--line); border-radius:100px; padding:9px 15px;
+  transition:border-color .2s, color .2s, background .2s; }
+.router__door:hover{ text-decoration:none; border-color:var(--accent); color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 6%, transparent); }
+
+/* framed portrait — matted editorial, disarms AI-portrait uncanny valley */
+.hero__portrait{ margin:0; padding:14px; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius); box-shadow:0 30px 60px -40px rgba(20,86,78,.5);
+  max-width:420px; justify-self:start; }
+.hero__portrait img{ border:1px solid var(--accent); border-radius:6px; aspect-ratio:4/5;
+  object-fit:cover; filter:saturate(.9) contrast(1.03); }
+.hero__portrait figcaption{ margin-top:12px; text-align:center; }
+@media (min-width:60rem){
+  .hero__inner{ grid-template-columns:1.35fr .9fr; }
+  .hero__portrait{ justify-self:end; }
+}
+
+/* graceful image placeholder — keeps layout intact until real photos land */
+.ph--empty img{ display:none; }
+.ph--empty{ position:relative; }
+.ph--empty::after{ content:attr(data-ph); display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:24px; min-height:220px; aspect-ratio:4/5;
+  font-family:var(--font-mono); font-size:.72rem; letter-spacing:.08em; line-height:1.7;
+  color:var(--ink-soft); background:
+    repeating-linear-gradient(45deg, transparent 0 11px, color-mix(in srgb,var(--accent) 5%,transparent) 11px 22px),
+    var(--surface);
+  border:1px dashed var(--line); border-radius:6px; }
+.hero__portrait.ph--empty::after{ aspect-ratio:4/5; }
+.maker-card.ph--empty::after{ aspect-ratio:3/2; min-height:200px; }
+
+/* ───────────────────────── THE MAKER ───────────────────────── */
+.section--maker{ background:
+  linear-gradient(180deg, color-mix(in srgb,var(--ember) 5%,transparent), transparent 40%); }
+.maker-grid{ display:grid; grid-template-columns:1fr; gap:20px; margin-top:38px; }
+.maker-card{ margin:0; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; }
+.maker-card img{ border:0; border-radius:0; width:100%; aspect-ratio:3/2; object-fit:cover;
+  filter:saturate(.9) contrast(1.03); }
+.maker-card figcaption{ padding:18px 20px 22px; }
+.maker-card figcaption .spec{ margin-bottom:8px; }
+.maker-card figcaption p{ color:var(--ink-soft); font-size:.95rem; line-height:1.6; }
+@media (min-width:52rem){
+  .maker-grid{ grid-template-columns:1fr 1fr; }
+  .maker-card--wide{ grid-column:1 / -1; }
+  .maker-card--wide img{ aspect-ratio:2.4/1; }
+}
+
+/* ───────────────────────── DARK REGISTER ───────────────────────── */
+.section--dark{ background:var(--basalt); color:var(--bone);
+  --ink:var(--bone); --ink-soft:#A49E92; --line:#2A2622; --accent:var(--teal-lift);
+  --ember:var(--ember-hot); --surface:#1C1915;
+  margin-block:0; }
+.section--dark h2,.section--dark h3{ color:var(--bone); }
+.section--dark .section__eyebrow{ color:var(--ember-hot); }
+.section--dark .step__num{ color:var(--ember-hot); border-color:#2A2622; }
+
+/* ───────────────────────── STAT unit ───────────────────────── */
+.stat__unit{ font-size:.5em; font-family:var(--font-body); font-weight:600; color:var(--ink-soft);
+  margin-left:4px; letter-spacing:0; }
+
+/* ───────────────────────── CONTACT DOORS ───────────────────────── */
+.doors{ display:grid; grid-template-columns:1fr; gap:20px; margin-top:34px; }
+.door{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:28px 26px; display:flex; flex-direction:column; gap:10px; }
+.door__kicker{ margin:0; color:var(--accent); }
+.door__title{ font-size:1.7rem; margin:2px 0 4px; }
+.door__body{ color:var(--ink-soft); font-size:.98rem; line-height:1.6; flex:1; }
+.door__ctas{ display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
+@media (min-width:48rem){ .doors{ grid-template-columns:1fr 1fr; } }
