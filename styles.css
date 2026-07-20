@@ -500,3 +500,31 @@ img{ max-width:100%; height:auto; display:block; border-radius:var(--radius); bo
 .door__body{ color:var(--ink-soft); font-size:.98rem; line-height:1.6; flex:1; }
 .door__ctas{ display:flex; flex-wrap:wrap; gap:12px; margin-top:12px; }
 @media (min-width:48rem){ .doors{ grid-template-columns:1fr 1fr; } }
+
+/* ───────────────────────── Public links row ───────────────────────── */
+.link-row{
+  list-style:none; margin:28px 0 0; padding:0;
+  display:flex; flex-wrap:wrap; gap:10px 18px;
+}
+.link-row a{
+  font-family:var(--font-mono); font-size:.78rem; letter-spacing:.04em;
+  color:var(--ink-soft); border-bottom:1px solid transparent;
+}
+.link-row a:hover{ color:var(--accent); border-bottom-color:var(--accent); text-decoration:none; }
+
+/* dark steps: lift cards off basalt */
+.section--dark .step{
+  background:var(--surface); border-color:var(--line);
+}
+.section--dark .step p{ color:var(--ink-soft); }
+
+/* maker wide image slightly taller editorial crop on desktop */
+@media (min-width:52rem){
+  .maker-card--wide img{ aspect-ratio:21/9; }
+}
+
+/* sticky nav glass — keeps paper tone but softens scroll */
+.site-header{
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+}
