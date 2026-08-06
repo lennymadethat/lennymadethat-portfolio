@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="The Desk">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f8a55"/>
+      <stop offset="1" stop-color="#12603a"/>
+    </linearGradient>
+  </defs>
+  <!-- maskable: keep art within the central ~80% safe zone -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- headphone arc -->
+  <path d="M146 268v-14a110 110 0 0 1 220 0v14" fill="none" stroke="#eafff3" stroke-width="20" stroke-linecap="round"/>
+  <rect x="132" y="262" width="40" height="72" rx="18" fill="#eafff3"/>
+  <rect x="340" y="262" width="40" height="72" rx="18" fill="#eafff3"/>
+  <!-- envelope -->
+  <rect x="168" y="300" width="176" height="118" rx="18" fill="#eafff3"/>
+  <path d="M176 312l80 56 80-56" fill="none" stroke="#12603a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
