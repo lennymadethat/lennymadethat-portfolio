@@ -5,6 +5,12 @@
    IBM Plex Mono. Every product is a machined spec plate.
    ============================================================ */
 
+@property --ring-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 :root {
   --ink: #14181B;
   --ink-2: #1D2327;
@@ -187,32 +193,132 @@ a:focus-visible, button:focus-visible {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
 }
 
-/* the signature: a machined nameplate */
+/* ───────────── the signature: a machined nameplate, powered up ─────────────
+   Depth: mouse-tracked 3D tilt (JS sets --rx/--ry/--mx/--my) + layered shadow.
+   Glow: cursor-following spotlight + animated conic-gradient ring border.
+   Motion: logos spin at rest, pause + flare on engagement. All themed off
+   var(--safety), so it recolors automatically with the theme picker. */
+.line__grid { perspective: 1400px; }
+
 .plate {
+  position: relative; isolation: isolate;
   display: flex; flex-direction: column;
-  background: var(--plate);
+  background:
+    radial-gradient(120% 140% at 0% 0%, var(--plate-sheen), transparent 55%),
+    linear-gradient(155deg, var(--plate) 0%, var(--plate-2) 130%);
   border-radius: var(--radius-plate);
   padding: 30px 26px 0;
   text-decoration: none; color: var(--text);
   border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: inset 0 1px 0 var(--plate-sheen), 0 10px 26px -18px rgba(0,0,0,0.7);
-  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  box-shadow:
+    inset 0 1px 0 var(--plate-sheen),
+    0 1px 2px rgba(0,0,0,0.4),
+    0 14px 30px -20px rgba(0,0,0,0.75);
+  transform: perspective(1400px) rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg)) translateZ(0);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
   overflow: hidden;
 }
+.plate.is-tilting { transition: box-shadow 0.4s ease; }
 .plate:hover, .plate:focus-visible {
-  transform: translateY(-4px);
-  box-shadow: inset 0 1px 0 var(--plate-sheen), 0 22px 34px -18px rgba(0,0,0,0.85);
+  box-shadow:
+    inset 0 1px 0 var(--plate-sheen),
+    0 1px 2px rgba(0,0,0,0.4),
+    0 30px 50px -22px rgba(0,0,0,0.85),
+    0 0 0 1px color-mix(in srgb, var(--safety) 30%, transparent),
+    0 0 42px -6px color-mix(in srgb, var(--safety) 45%, transparent);
 }
+
+/* animated gradient ring, traced just inside the card edge */
+.plate::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  padding: 1.5px; border-radius: inherit;
+  background: conic-gradient(from var(--ring-angle, 0deg),
+    color-mix(in srgb, var(--safety) 85%, transparent), transparent 28%,
+    transparent 62%, color-mix(in srgb, var(--safety) 60%, transparent) 82%,
+    color-mix(in srgb, var(--safety) 85%, transparent));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.plate:hover::before, .plate:focus-visible::before {
+  opacity: 1; animation: ring-angle-spin 5s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .plate:hover::before, .plate:focus-visible::before { animation: none; }
+}
+
+/* cursor-following spotlight */
+.plate::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--safety) 16%, transparent), transparent 62%);
+  opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+}
+.plate:hover::after, .plate:focus-visible::after { opacity: 1; }
+
+.plate__top, .plate__name, .plate__hook, .plate__baseline { position: relative; z-index: 1; }
 .plate__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.plate__logo {
-  width: 84px; height: 84px; border-radius: 20px; object-fit: cover;
-  background: var(--plate-2);
+
+/* logo: spins at rest, pauses + flares on engagement, sits in a glowing ring */
+.plate__logo-wrap {
+  position: relative; width: 88px; height: 88px; border-radius: 22px;
+  display: grid; place-items: center;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
+.plate:hover .plate__logo-wrap, .plate:focus-visible .plate__logo-wrap {
+  transform: scale(1.08) translateZ(20px);
+}
+.plate__logo-wrap::before {
+  content: ""; position: absolute; inset: -4px; z-index: 0;
+  border-radius: 26px; padding: 2px;
+  background: conic-gradient(from 0deg, var(--safety), transparent 40%, transparent 60%, var(--safety));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0.4; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--safety) 70%, transparent));
+  animation: ring-spin 7s linear infinite;
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+.plate:hover .plate__logo-wrap::before, .plate:focus-visible .plate__logo-wrap::before {
+  opacity: 1; filter: drop-shadow(0 0 12px color-mix(in srgb, var(--safety) 85%, transparent));
+  animation-duration: 2.2s;
+}
+.plate__logo {
+  position: relative; z-index: 1;
+  width: 100%; height: 100%; border-radius: 20px; object-fit: cover;
+  background: var(--plate-2);
+  box-shadow: 0 8px 20px -10px rgba(0,0,0,0.55);
+  animation: logo-spin 26s linear infinite;
+}
+.plate:hover .plate__logo, .plate:focus-visible .plate__logo { animation-play-state: paused; }
+
+@keyframes logo-spin { to { transform: rotate(360deg); } }
+@keyframes ring-spin { to { transform: rotate(360deg); } }
+@keyframes ring-angle-spin { to { --ring-angle: 360deg; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .plate__logo, .plate__logo-wrap::before { animation: none; }
+  .plate { transition: box-shadow 0.3s ease; }
+}
+
 .plate__status {
+  position: relative;
   font-family: var(--font-spec); font-size: 0.62rem; font-weight: 500;
   letter-spacing: 0.1em; padding: 5px 9px; border-radius: 4px; white-space: nowrap;
 }
 .st-live  { background: var(--safety); color: #fff; }
+.st-live::before {
+  content: ""; position: absolute; inset: -4px; z-index: -1; border-radius: 7px;
+  background: var(--safety); filter: blur(7px); opacity: 0.55;
+  animation: live-pulse 2.4s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.9); }
+  50% { opacity: 0.65; transform: scale(1.2); }
+}
+@media (prefers-reduced-motion: reduce) { .st-live::before { animation: none; } }
 .st-open  { background: var(--teal); color: #fff; }
 .st-beta  { background: transparent; color: var(--plate-muted); border: 1px solid var(--plate-line); }
 .st-build { background: transparent; color: var(--plate-muted); border: 1px dashed var(--plate-muted); }
@@ -233,9 +339,11 @@ a:focus-visible, button:focus-visible {
 .plate__unit { color: var(--plate-muted); }
 .plate__go {
   font-family: var(--font-spec); font-size: 0.72rem; letter-spacing: 0.09em;
-  color: var(--safety); font-weight: 500;
+  color: var(--safety); font-weight: 500; transition: letter-spacing 0.3s ease;
 }
-.plate:hover .plate__go { text-decoration: underline; }
+.plate:hover .plate__go, .plate:focus-visible .plate__go {
+  text-decoration: underline; letter-spacing: 0.14em;
+}
 
 /* stacked dark shelves */
 .line--agents, .line--infra { border-top: 1px solid var(--hairline-dark); padding-top: 56px; }

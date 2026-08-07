@@ -33,7 +33,7 @@
     var st = window.PRODUCT_STATUS[p.status] || window.PRODUCT_STATUS.build;
     return '<a class="plate" href="/products/' + esc(p.slug) + '">'
       + '<div class="plate__top">'
-      +   '<img class="plate__logo" src="' + esc(p.logo) + '" alt="" loading="lazy" width="84" height="84" />'
+      +   '<span class="plate__logo-wrap"><img class="plate__logo" src="' + esc(p.logo) + '" alt="" loading="lazy" width="84" height="84" /></span>'
       +   '<span class="plate__status ' + st.cls + '">' + esc(st.label) + "</span>"
       + "</div>"
       + '<h3 class="plate__name">' + esc(p.name) + "</h3>"
@@ -65,6 +65,35 @@
   renderSection("platform-grid", "platform", plateHTML);
   renderSection("agent-grid", "agent", agentHTML);
   renderSection("infra-grid", "infra", plateHTML);
+
+  // ─────────────── Platform card 3D tilt + spotlight ───────────────
+  // Fine-pointer, motion-ok devices only. Sets --rx/--ry (tilt, degrees)
+  // and --mx/--my (spotlight position, %) as inline custom properties;
+  // the actual transform/gradient math lives in styles.css.
+  (function () {
+    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (reduceMotion || !finePointer) return;
+
+    var MAX_TILT = 7; // degrees
+    document.querySelectorAll("#platform-grid .plate").forEach(function (card) {
+      card.addEventListener("pointermove", function (e) {
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width;   // 0..1
+        var py = (e.clientY - r.top) / r.height;   // 0..1
+        var rx = (px - 0.5) * 2 * MAX_TILT;         // rotateY driver
+        var ry = (0.5 - py) * 2 * MAX_TILT;         // rotateX driver
+        card.style.setProperty("--rx", rx.toFixed(2) + "deg");
+        card.style.setProperty("--ry", ry.toFixed(2) + "deg");
+        card.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
+        card.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+      });
+      card.addEventListener("pointerleave", function () {
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+      });
+    });
+  })();
 
   // ─────────────── THE AGENT SHOP ───────────────
   var shop = document.getElementById("shop-grid");
