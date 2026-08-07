@@ -127,18 +127,18 @@ a:focus-visible, button:focus-visible {
 .section--dark .btn--ghost, .hero .btn--ghost { }
 .btn--ghost:hover { border-color: var(--safety); color: var(--safety); }
 
-/* ───────────────────────── Hero ───────────────────────── */
+/* ───────────── Hero — compact maker badge ───────────── */
 .hero { background: var(--paper); border-bottom: 1px solid var(--hairline); }
 .hero__inner {
-  display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 56px;
-  align-items: center; padding-top: 72px; padding-bottom: 72px;
+  display: flex; gap: 36px;
+  align-items: center; padding-top: 34px; padding-bottom: 34px;
 }
-.hero__eyebrow { margin-bottom: 22px; }
+.hero__eyebrow { margin-bottom: 12px; }
 .hero__headline {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(3.2rem, 8vw, 6.2rem);
-  line-height: 0.97;
+  font-size: clamp(2.4rem, 5.4vw, 4rem);
+  line-height: 1;
   text-transform: uppercase;
   color: var(--heading);
   letter-spacing: 0.005em;
@@ -146,29 +146,28 @@ a:focus-visible, button:focus-visible {
 .hero__headline-accent {
   color: var(--safety);
   /* engraved underline — machined groove */
-  border-bottom: 6px solid var(--heading);
-  padding-bottom: 4px;
+  border-bottom: 5px solid var(--heading);
+  padding-bottom: 3px;
 }
-.hero__sub { margin: 38px 0 30px; max-width: 34em; font-size: 1.1rem; }
-.hero__cta-block { display: flex; gap: 14px; flex-wrap: wrap; }
+.hero__sub { margin: 16px 0 20px; max-width: 44em; font-size: 1.02rem; }
+.hero__cta-block { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero__cta-block .btn { padding: 10px 20px; font-size: 0.9rem; }
 
-.hero__portrait { position: relative; }
+.hero__portrait { position: relative; flex: 0 0 190px; }
 .hero__portrait img {
   width: 100%; aspect-ratio: 4 / 5; object-fit: cover; height: auto;
   border-radius: var(--radius-plate);
   border: 1px solid var(--hairline);
-  box-shadow: 0 1px 0 var(--hairline), 0 18px 40px -22px rgba(20, 24, 27, 0.45);
+  box-shadow: 0 1px 0 var(--hairline), 0 14px 30px -18px rgba(20, 24, 27, 0.45);
 }
-.hero__portrait figcaption {
-  margin-top: 10px; text-align: right;
-}
+.hero__portrait figcaption { margin-top: 8px; text-align: center; }
 .hero__portrait.is-empty img { display: none; }
 
 /* ───────────────────────── THE LINE ───────────────────────── */
 .line {
   background: var(--ink);
   color: var(--text-on-ink);
-  padding: 76px 0 84px;
+  padding: 44px 0 72px;
 }
 .line__head {
   display: flex; align-items: baseline; justify-content: space-between;
@@ -181,7 +180,7 @@ a:focus-visible, button:focus-visible {
   color: var(--text-on-ink);
 }
 .line__count { color: var(--steel-soft); }
-.line__lead { margin: 18px 0 40px; max-width: 42em; color: var(--steel-soft); }
+.line__lead { margin: 12px 0 28px; max-width: 42em; color: var(--steel-soft); }
 .line__lead a { color: var(--text-on-ink); }
 
 .line__grid {
@@ -513,8 +512,10 @@ a:focus-visible, button:focus-visible {
 }
 
 @media (max-width: 720px) {
-  .hero__inner { grid-template-columns: 1fr; gap: 36px; padding-top: 48px; padding-bottom: 48px; }
-  .hero__portrait { max-width: 420px; }
+  .hero__inner { gap: 16px; padding-top: 24px; padding-bottom: 24px; align-items: flex-start; }
+  .hero__portrait { flex-basis: 96px; }
+  .hero__portrait figcaption { display: none; }
+  .hero__eyebrow { margin-bottom: 8px; }
   .line__grid, .shop-grid { grid-template-columns: 1fr; }
   .doors { grid-template-columns: 1fr; }
   .product-hero__inner { flex-direction: column; align-items: flex-start; }
