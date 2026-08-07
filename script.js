@@ -28,25 +28,49 @@
   var year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
 
-  // ─────────────── THE LINE grid ───────────────
-  var grid = document.getElementById("line-grid");
-  if (grid && window.PRODUCTS) {
-    grid.innerHTML = window.PRODUCTS.map(function (p) {
-      var st = window.PRODUCT_STATUS[p.status] || window.PRODUCT_STATUS.build;
-      return '<a class="plate" href="/products/' + esc(p.slug) + '">'
-        + '<div class="plate__top">'
-        +   '<img class="plate__logo" src="' + esc(p.logo) + '" alt="" loading="lazy" width="84" height="84" />'
-        +   '<span class="plate__status ' + st.cls + '">' + esc(st.label) + "</span>"
-        + "</div>"
-        + '<h3 class="plate__name">' + esc(p.name) + "</h3>"
-        + '<p class="plate__hook">' + esc(p.hook) + "</p>"
-        + '<div class="plate__baseline">'
-        +   '<span class="plate__unit spec">' + esc(p.unit) + " · " + esc(p.kind) + "</span>"
-        +   '<span class="plate__go">OPEN →</span>'
-        + "</div>"
-      + "</a>";
-    }).join("");
+  // ─────────────── Plate + agent card renderers ───────────────
+  function plateHTML(p) {
+    var st = window.PRODUCT_STATUS[p.status] || window.PRODUCT_STATUS.build;
+    return '<a class="plate" href="/products/' + esc(p.slug) + '">'
+      + '<div class="plate__top">'
+      +   '<img class="plate__logo" src="' + esc(p.logo) + '" alt="" loading="lazy" width="84" height="84" />'
+      +   '<span class="plate__status ' + st.cls + '">' + esc(st.label) + "</span>"
+      + "</div>"
+      + '<h3 class="plate__name">' + esc(p.name) + "</h3>"
+      + '<p class="plate__hook">' + esc(p.hook) + "</p>"
+      + '<div class="plate__baseline">'
+      +   '<span class="plate__unit spec">' + esc(p.unit) + " · " + esc(p.kind) + "</span>"
+      +   '<span class="plate__go">OPEN →</span>'
+      + "</div>"
+    + "</a>";
   }
+
+  function agentHTML(p) {
+    var st = window.PRODUCT_STATUS[p.status] || window.PRODUCT_STATUS.build;
+    var visual = p.art
+      ? '<img class="agent-card__art" src="' + esc(p.art) + '" alt="" loading="lazy" />'
+      : '<img class="agent-card__art agent-card__art--mark" src="' + esc(p.logo) + '" alt="" loading="lazy" />';
+    return '<a class="agent-card" href="/products/' + esc(p.slug) + '">'
+      + '<div class="agent-card__frame">' + visual
+      +   '<span class="plate__status ' + st.cls + '">' + esc(st.label) + "</span>"
+      + "</div>"
+      + '<div class="agent-card__body">'
+      +   '<h3 class="agent-card__name">' + esc(p.name) + "</h3>"
+      +   '<p class="agent-card__role spec">' + esc(p.unit) + " · " + esc(p.kind) + "</p>"
+      +   '<p class="agent-card__hook">' + esc(p.hook) + "</p>"
+      + "</div>"
+    + "</a>";
+  }
+
+  function renderSection(id, section, fn) {
+    var el = document.getElementById(id);
+    if (el && window.PRODUCTS) {
+      el.innerHTML = window.PRODUCTS.filter(function (p) { return p.section === section; }).map(fn).join("");
+    }
+  }
+  renderSection("platform-grid", "platform", plateHTML);
+  renderSection("agent-grid", "agent", agentHTML);
+  renderSection("infra-grid", "infra", plateHTML);
 
   // ─────────────── THE AGENT SHOP ───────────────
   var shop = document.getElementById("shop-grid");

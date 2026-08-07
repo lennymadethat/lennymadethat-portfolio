@@ -46,7 +46,7 @@
   var hero = document.getElementById("p-hero");
   if (hero) {
     hero.innerHTML = ''
-      + '<img class="product-hero__logo" src="' + esc(p.logo) + '" alt="' + esc(p.name) + ' logo" width="148" height="148" />'
+      + '<img class="product-hero__logo" src="' + esc(p.art || p.logo) + '" alt="' + esc(p.name) + '" width="148" height="148" />'
       + "<div>"
       +   '<p class="product-hero__unit spec">' + esc(p.unit) + " · " + esc(p.kind) + "</p>"
       +   '<h1 class="product-hero__name">' + esc(p.name) + "</h1>"
