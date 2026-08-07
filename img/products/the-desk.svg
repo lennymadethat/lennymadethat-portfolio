@@ -1,17 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="The Desk">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#1f8a55"/>
-      <stop offset="1" stop-color="#12603a"/>
-    </linearGradient>
-  </defs>
-  <!-- maskable: keep art within the central ~80% safe zone -->
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <!-- headphone arc -->
-  <path d="M146 268v-14a110 110 0 0 1 220 0v14" fill="none" stroke="#eafff3" stroke-width="20" stroke-linecap="round"/>
-  <rect x="132" y="262" width="40" height="72" rx="18" fill="#eafff3"/>
-  <rect x="340" y="262" width="40" height="72" rx="18" fill="#eafff3"/>
-  <!-- envelope -->
-  <rect x="168" y="300" width="176" height="118" rx="18" fill="#eafff3"/>
-  <path d="M176 312l80 56 80-56" fill="none" stroke="#12603a" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect width="512" height="512" rx="112" fill="#14181B"/>
+  <!-- three content lanes, staggered like a live desk -->
+  <rect x="104" y="168" width="80" height="176" rx="24" fill="#5B6670"/>
+  <rect x="216" y="118" width="80" height="276" rx="24" fill="#EDEBE4"/>
+  <rect x="328" y="196" width="80" height="148" rx="24" fill="#EDEBE4"/>
+  <!-- the one human approval tap -->
+  <circle cx="256" cy="418" r="34" fill="#F04D23"/>
+  <path d="M240 418 L252 430 L274 404" fill="none" stroke="#14181B" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

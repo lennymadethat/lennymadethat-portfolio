@@ -240,12 +240,15 @@ a:focus-visible, button:focus-visible {
 /* stacked dark shelves */
 .line--agents, .line--infra { border-top: 1px solid var(--hairline-dark); padding-top: 56px; }
 
-/* ───────────────────────── Agent roster ───────────────────────── */
-.agent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+/* ───────────── Agent roster — contact-icon cards ───────────── */
+.agent-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
 .agent-card {
-  display: flex; flex-direction: column; text-decoration: none;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 5px; padding: 26px 14px 20px;
+  text-decoration: none;
   background: var(--plate); border-radius: var(--radius-plate);
-  border: 1px solid rgba(255,255,255,0.06); overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
   box-shadow: inset 0 1px 0 var(--plate-sheen), 0 10px 26px -18px rgba(0,0,0,0.7);
   transition: transform 0.16s ease, box-shadow 0.16s ease;
 }
@@ -253,19 +256,25 @@ a:focus-visible, button:focus-visible {
   transform: translateY(-4px);
   box-shadow: inset 0 1px 0 var(--plate-sheen), 0 22px 34px -18px rgba(0,0,0,0.85);
 }
-.agent-card__frame { position: relative; background: var(--ink-2); }
-.agent-card__art {
-  width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block;
+.agent-card > .plate__status { position: absolute; top: 10px; right: 10px; }
+.agent-card__avatar {
+  width: 108px; height: 108px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 32%, var(--ink-3), var(--ink) 78%);
+  border: 3px solid var(--plate-line);
+  overflow: hidden; display: block; margin-bottom: 8px;
 }
-.agent-card__art--mark { object-fit: contain; padding: 18%; box-sizing: border-box; }
-.agent-card__frame .plate__status { position: absolute; top: 12px; right: 12px; }
-.agent-card__body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; }
+.agent-card:hover .agent-card__avatar { border-color: var(--safety); }
+.agent-card__avatar img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  /* head-and-shoulders crop — art is a transparent full bust */
+  transform: scale(1.22) translateY(9%);
+}
 .agent-card__name {
   font-family: var(--font-display); font-weight: 400; text-transform: uppercase;
-  font-size: 1.35rem; line-height: 1.1; color: var(--plate-text);
+  font-size: 1.15rem; line-height: 1.1; color: var(--plate-text);
 }
 .agent-card__role { color: var(--safety); }
-.agent-card__hook { font-size: 0.92rem; color: var(--plate-muted); }
+.agent-card__hook { font-size: 0.83rem; color: var(--plate-muted); }
 
 /* ───────────────────────── Sections (paper register) ───────────────────────── */
 .section { padding: 76px 0; border-bottom: 1px solid var(--hairline); }
@@ -383,6 +392,12 @@ a:focus-visible, button:focus-visible {
   width: 148px; height: 148px; border-radius: 32px; object-fit: cover; flex-shrink: 0;
   background: var(--ink-2);
   box-shadow: 0 18px 40px -20px rgba(0,0,0,0.9);
+}
+.product-hero__logo--round {
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 32%, var(--ink-3), var(--ink-2) 78%);
+  border: 4px solid var(--hairline-dark);
+  object-fit: cover;
 }
 .product-hero__unit { color: var(--steel-soft); margin-bottom: 12px; }
 .product-hero__name {
@@ -535,7 +550,8 @@ a:focus-visible, button:focus-visible {
 
 /* ───────────────────────── Responsive ───────────────────────── */
 @media (max-width: 980px) {
-  .line__grid, .shop-grid, .agent-grid { grid-template-columns: repeat(2, 1fr); }
+  .line__grid, .shop-grid { grid-template-columns: repeat(2, 1fr); }
+  .agent-grid { grid-template-columns: repeat(3, 1fr); }
   .story { grid-template-columns: 1fr; gap: 24px; }
   .story__photos { grid-template-columns: repeat(2, 1fr); }
   .product-body__grid { grid-template-columns: 1fr; gap: 40px; }
@@ -548,8 +564,10 @@ a:focus-visible, button:focus-visible {
   .hero__eyebrow { margin-bottom: 8px; }
   .line__grid, .shop-grid { grid-template-columns: 1fr; }
   .agent-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .agent-card__name { font-size: 1.05rem; }
-  .agent-card__body { padding: 12px 14px 14px; }
+  .agent-card { padding: 20px 10px 16px; }
+  .agent-card__avatar { width: 88px; height: 88px; }
+  .agent-card__name { font-size: 1rem; }
+  .agent-card__hook { display: none; }
   .doors { grid-template-columns: 1fr; }
   .product-hero__inner { flex-direction: column; align-items: flex-start; }
 

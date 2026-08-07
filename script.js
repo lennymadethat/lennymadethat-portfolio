@@ -47,18 +47,12 @@
 
   function agentHTML(p) {
     var st = window.PRODUCT_STATUS[p.status] || window.PRODUCT_STATUS.build;
-    var visual = p.art
-      ? '<img class="agent-card__art" src="' + esc(p.art) + '" alt="" loading="lazy" />'
-      : '<img class="agent-card__art agent-card__art--mark" src="' + esc(p.logo) + '" alt="" loading="lazy" />';
     return '<a class="agent-card" href="/products/' + esc(p.slug) + '">'
-      + '<div class="agent-card__frame">' + visual
-      +   '<span class="plate__status ' + st.cls + '">' + esc(st.label) + "</span>"
-      + "</div>"
-      + '<div class="agent-card__body">'
-      +   '<h3 class="agent-card__name">' + esc(p.name) + "</h3>"
-      +   '<p class="agent-card__role spec">' + esc(p.unit) + " · " + esc(p.kind) + "</p>"
-      +   '<p class="agent-card__hook">' + esc(p.hook) + "</p>"
-      + "</div>"
+      + '<span class="plate__status ' + st.cls + '">' + esc(st.label) + "</span>"
+      + '<span class="agent-card__avatar"><img src="' + esc(p.art || p.logo) + '" alt="" loading="lazy" width="132" height="132" /></span>'
+      + '<h3 class="agent-card__name">' + esc(p.name) + "</h3>"
+      + '<p class="agent-card__role spec">' + esc(p.kind) + "</p>"
+      + '<p class="agent-card__hook">' + esc(p.hook) + "</p>"
     + "</a>";
   }
 

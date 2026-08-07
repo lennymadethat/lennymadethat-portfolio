@@ -32,7 +32,7 @@ window.PRODUCTS = [
     unit: "UNIT 02",
     kind: "INVESTING PLATFORM",
     status: "live",
-    logo: "/img/products/rir-512.png",
+    logo: "/img/products/rir-mark.svg",
     wordmark: "/img/products/rir-wordmark.png",
     hook: "A full income-investing platform, shipped.",
     what: "A live platform for income-focused investors: screeners, a return simulator, fund-flow intelligence, research dossiers with full fundamentals, brokerage sync, and a member area — real accounts, a real database, and a self-running data engine that recomputes the entire US market every night with my computer off. Several of the agents below work here.",
@@ -369,7 +369,7 @@ window.PRODUCTS = [
     unit: "INFRA 01",
     kind: "THE BRAIN",
     status: "live",
-    logo: "/img/products/personal-agents.svg",
+    logo: "/img/products/vault.svg",
     hook: "One brain every agent reads and writes.",
     what: "The brain behind everything on this page: a structured knowledge base with semantic search that every AI agent reads from and writes to directly. Decisions, specs, session logs, project state — captured once, available to every agent forever. No agent starts cold; no context gets re-explained.",
     does: [
@@ -409,7 +409,7 @@ window.PRODUCTS = [
     unit: "INFRA 03",
     kind: "THE PULSE",
     status: "live",
-    logo: "/img/products/rir-512.png",
+    logo: "/img/products/rir-mark.svg",
     hook: "The whole US market, recomputed nightly. Untouched.",
     what: "A data platform that owns its own copy of the entire US stock-and-fund market and recomputes it every night — prices, integrity checks, trend signals, income analytics, breadth, macro — a seven-stage pipeline that runs in the cloud with my computer off. The platforms that read from it can't go dark because of an outside provider. The live readout in the Proof section below runs on it.",
     does: [
