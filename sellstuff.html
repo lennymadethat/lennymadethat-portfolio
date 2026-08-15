@@ -75,6 +75,9 @@
     .ss-hero figure { margin: 0; }
     .ss-hero img {
       width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
       border: 1px solid #2f2630;
       border-radius: 6px;
       box-shadow: 0 0 40px rgba(255,93,222,.12);
@@ -101,7 +104,14 @@
     .ss-sec h2 em { font-style: normal; color: var(--magenta); }
     .ss-lead { margin: 16px 0 28px; max-width: 58ch; color: #d8c9ba; font-size: 1.12rem; }
     .ss-art { margin: 28px 0 8px; }
-    .ss-art img { width: 100%; border: 1px solid #2f2630; border-radius: 6px; }
+    .ss-art img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      border: 1px solid #2f2630;
+      border-radius: 6px;
+    }
 
     .ss-steps {
       display: grid;
@@ -271,7 +281,7 @@
     <section class="ss-sec ss-sec--alt" id="price">
       <div class="container ss-grid-2">
         <figure class="ss-art" style="margin-top:0">
-          <img src="/img/sellstuff/price.jpg" alt="SellStuff changing a blank tag inside the coat lining" width="1376" height="768" />
+          <img src="/img/sellstuff/price.jpg" alt="SellStuff changing a blank tag inside the coat lining" width="1280" height="720" />
           <figcaption class="ss-cap">Ten percent · never under the floor · seven days between drops</figcaption>
         </figure>
         <div>
@@ -290,7 +300,7 @@
           <p class="ss-lead">Remove deletes the listing. Facebook is not told whether it sold. People who already messaged you see that it is no longer listed. No reason. No form. If the platform asks why, the only answer he will pick is that you no longer want to sell it.</p>
         </div>
         <figure class="ss-art" style="margin-top:0">
-          <img src="/img/sellstuff/remove.jpg" alt="SellStuff pulling a tag off the lining until it turns to steam" width="1376" height="768" />
+          <img src="/img/sellstuff/remove.jpg" alt="SellStuff pulling a tag off the lining until it turns to steam" width="1280" height="720" />
           <figcaption class="ss-cap">Delete listing · never mark as sold · the chats go quiet</figcaption>
         </figure>
       </div>
