@@ -1,2 +1,5 @@
 /products/sellstuff /sellstuff.html 200
+/products/sellstuff-long /sellstuff-long.html 200
+/sellstuff /sellstuff.html 200
+/sellstuff-long /sellstuff-long.html 200
 /products/* /product.html 200

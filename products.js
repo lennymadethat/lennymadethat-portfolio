@@ -348,14 +348,14 @@ window.PRODUCTS = [
     status: "live",
     logo: "/img/agents/sellstuff.png",
     art: "/img/agents/sellstuff.png",
-    hook: "Photos in. Listed. You tap once.",
-    what: "The stall that sells the pile in the garage. You send photos. He researches the item, writes the listing, prices it, and waits for your tap. Then he posts it to Facebook Marketplace at human speed, marks the price down when you say so, and takes it down like it never happened. He does not talk to buyers.",
+    hook: "Snap a pic. He sells it.",
+    what: "You send a photo. He writes the listing and prices it. You tap once. It goes on Marketplace. Same tap to drop the price or take it down. He does not talk to buyers.",
     does: [
-      "Turns a photo dump into a researched, priced listing",
-      "Posts only after you approve the card",
-      "Five listings a day, with a gap between each one",
-      "Weekly price drops you approve — he updates the live ad",
-      "One-tap remove: the listing disappears, never marked sold"
+      "Send photos. He writes the listing.",
+      "Nothing posts until you tap yes.",
+      "He puts it on Marketplace.",
+      "Drop the price when you say.",
+      "One tap removes it — never marked sold"
     ],
     tags: ["Marketplace", "Human-in-loop", "Phone desk", "Private operator"],
     cta: { label: "See how he works", href: "/products/sellstuff" }
