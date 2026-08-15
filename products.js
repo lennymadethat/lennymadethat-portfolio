@@ -343,7 +343,7 @@ window.PRODUCTS = [
     slug: "sellstuff",
     section: "agent",
     name: "SellStuff",
-    unit: "AGENT 10",
+    unit: "AGENT SELL STUFF",
     kind: "THE STALL",
     status: "live",
     logo: "/img/agents/sellstuff.png",
