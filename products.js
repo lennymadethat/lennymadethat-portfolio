@@ -344,21 +344,21 @@ window.PRODUCTS = [
     section: "agent",
     name: "SellStuff",
     unit: "AGENT 10",
-    kind: "THE SALESMAN",
-    status: "beta",
-    logo: "/img/products/ingester.svg",
+    kind: "THE STALL",
+    status: "live",
+    logo: "/img/agents/sellstuff.png",
     art: "/img/agents/sellstuff.png",
-    hook: "Packages the builds. Mans the storefront.",
-    what: "The shop's salesman. SellStuff takes a finished build and turns it into something you can actually take home — a clean, documented, bring-your-own-keys distribution kit — and keeps the storefront stocked. Every kit in the Agent Shop below passed through his hands.",
+    hook: "Photos in. Listed. You tap once.",
+    what: "The stall that sells the pile in the garage. You send photos. He researches the item, writes the listing, prices it, and waits for your tap. Then he posts it to Facebook Marketplace at human speed, marks the price down when you say so, and takes it down like it never happened. He does not talk to buyers.",
     does: [
-      "Packages builds into self-hostable distribution kits",
-      "Writes the setup guide and config for every kit",
-      "Keeps the Agent Shop shelves stocked and current",
-      "Sanitizes everything — no secrets ever ship",
-      "Paid licensing desk: coming"
+      "Turns a photo dump into a researched, priced listing",
+      "Posts only after you approve the card",
+      "Five listings a day, with a gap between each one",
+      "Weekly price drops you approve — he updates the live ad",
+      "One-tap remove: the listing disappears, never marked sold"
     ],
-    tags: ["Packaging", "Distribution", "Storefront", "Automation"],
-    cta: { label: "Browse the Agent Shop", href: "/#shop" }
+    tags: ["Marketplace", "Human-in-loop", "Phone desk", "Private operator"],
+    cta: { label: "See how he works", href: "/products/sellstuff" }
   },
 
   /* ─────────────── THE INFRASTRUCTURE ─────────────── */
