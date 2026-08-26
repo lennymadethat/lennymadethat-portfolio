@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Lenny Made That — apps, platforms &amp; agents by one maker</title>
   <meta name="description" content="The audio app, the investing platform, the factory OS, the AI agents — Lenny made that. One maker, nine shipped products. Download the tools, or hire the guy who built them." />
 
@@ -42,6 +42,7 @@ try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documen
         <span class="nav__toggle-bar"></span>
       </button>
       <ul class="nav__menu" id="nav-menu">
+        <li><a href="#factory">Factory</a></li>
         <li><a href="#line">Platforms</a></li>
         <li><a href="#agents">Agents</a></li>
         <li><a href="#infra">Infrastructure</a></li>
@@ -53,30 +54,113 @@ try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documen
 
   <main id="main">
 
-    <!-- ─────────────── HERO — compact maker badge ─────────────── -->
-    <section class="hero" aria-labelledby="hero-heading">
-      <div class="container hero__inner">
-        <figure class="hero__portrait">
-          <img src="img/portrait.jpg" alt="Ian “Lenny” Leonard" width="190" height="238"
-               onerror="this.closest('figure').classList.add('is-empty')" />
-          <figcaption class="spec">THE MAKER · SD, CA</figcaption>
-        </figure>
+    <!-- ─────────────── FACTORY — scroll swarm ─────────────── -->
+    <section id="factory" class="swarm" aria-labelledby="hero-heading">
+      <a class="swarm-skip spec" href="#line">Skip the factory</a>
+      <div class="swarm-scroll">
+        <div class="swarm-stage">
+          <canvas id="swarm-canvas" aria-hidden="true"></canvas>
 
-        <div class="hero__copy">
-          <p class="hero__eyebrow spec">IAN “LENNY” LEONARD · SAN DIEGO · BUILDER SINCE ’09</p>
-          <h1 id="hero-heading" class="hero__headline">
-            Lenny made <span class="hero__headline-accent">that.</span>
-          </h1>
-          <p class="hero__sub">
-            The platforms, the agents, and the infrastructure they run on —
-            designed, built, and shipped by one person. Nothing here is a demo.
-          </p>
-          <div class="hero__cta-block">
-            <a class="btn btn--primary" href="#hire">Hire me</a>
-            <a class="btn btn--ghost" href="#shop">Get the agents</a>
+          <p class="swarm-cue spec">SCROLL · THE FACTORY BUILDS</p>
+          <p class="swarm-caption spec" id="swarm-caption">THE SHOP COMES ONLINE</p>
+
+          <div class="swarm-maker" data-lock="maker">
+            <figure class="swarm-portrait">
+              <img src="img/portrait.jpg" alt="Ian “Lenny” Leonard" width="190" height="238"
+                   onerror="this.closest('figure').classList.add('is-empty')" />
+              <figcaption class="spec">THE MAKER · SD, CA</figcaption>
+            </figure>
+            <div>
+              <p class="swarm-kicker spec">IAN “LENNY” LEONARD · SAN DIEGO · BUILDER SINCE ’09</p>
+              <h1 id="hero-heading">Lenny made <span>that.</span></h1>
+            </div>
+          </div>
+
+          <div class="swarm-dest">
+            <article class="swarm-card" data-lock="playletter">
+              <p class="swarm-card__unit spec">UNIT 01 · CONSUMER APP · LIVE</p>
+              <h2>PlayLetter</h2>
+              <p>Your newsletters, out loud. A masthead becomes a voice.</p>
+              <div class="swarm-card__ctas">
+                <a class="btn btn--primary" href="https://playletter.com">Open playletter.com</a>
+                <a class="btn btn--ghost" href="/products/playletter">The page</a>
+              </div>
+            </article>
+
+            <article class="swarm-card" data-lock="rir">
+              <p class="swarm-card__unit spec">UNIT 02 · INVESTING PLATFORM · LIVE</p>
+              <h2>Retail Investor Report</h2>
+              <p>A full income-investing platform, shipped. The whole US market, recomputed nightly — computer off.</p>
+              <div class="swarm-card__ctas">
+                <a class="btn btn--primary" href="https://retailinvestorreport.com">Open the platform</a>
+                <a class="btn btn--ghost" href="/products/retail-investor-report">The page</a>
+              </div>
+            </article>
+
+            <article class="swarm-card" data-lock="floor">
+              <p class="swarm-card__unit spec">UNIT 03 · COMPANY OS · LIVE</p>
+              <h2>Assembly Floor OS</h2>
+              <p>An operating system for manufacturers. Built on a real floor, then productized.</p>
+              <div class="swarm-card__ctas">
+                <a class="btn btn--primary" href="https://assemblyfloor.ianleonard1988.workers.dev">See Assembly Floor</a>
+                <a class="btn btn--ghost" href="/products/assembly-floor">The page</a>
+              </div>
+            </article>
+
+            <article class="swarm-card" data-lock="mothership">
+              <p class="swarm-card__unit spec">UNIT 04 · ALWAYS-ON HARNESS · OPEN SOURCE</p>
+              <h2>Mothership</h2>
+              <p>Any model. Always on. In your pocket.</p>
+              <div class="swarm-card__ctas">
+                <a class="btn btn--primary" href="https://github.com/lennymadethat/mothership">Get it on GitHub</a>
+                <a class="btn btn--ghost" href="/products/mothership">The page</a>
+              </div>
+            </article>
+
+            <div class="swarm-crew" data-lock="crew">
+              <a class="swarm-mini" href="/products/the-ingester">
+                <img src="img/agents/ingester.png" alt="" width="56" height="56" />
+                <strong>The Ingester</strong>
+                <span class="spec">THE FILER</span>
+              </a>
+              <a class="swarm-mini" href="/products/the-harvester">
+                <img src="img/agents/harvester.png" alt="" width="56" height="56" />
+                <strong>The Harvester</strong>
+                <span class="spec">THE RESEARCHER</span>
+              </a>
+              <a class="swarm-mini" href="/products/rico">
+                <img src="img/agents/rico.png" alt="" width="56" height="56" />
+                <strong>RICO</strong>
+                <span class="spec">THE GHOSTWRITER</span>
+              </a>
+              <a class="swarm-mini" href="/products/sentinel">
+                <img src="img/agents/sentinel.png" alt="" width="56" height="56" />
+                <strong>Sentinel</strong>
+                <span class="spec">THE WATCHMAN</span>
+              </a>
+            </div>
+
+            <article class="swarm-card" data-lock="vault">
+              <p class="swarm-card__unit spec">INFRA 01 · THE BRAIN · LIVE</p>
+              <h2>The Vault</h2>
+              <p>One brain every agent reads and writes. Everything you just watched files itself here.</p>
+              <div class="swarm-card__ctas">
+                <a class="btn btn--primary" href="/products/personal-agents">See Personal Agents</a>
+                <a class="btn btn--ghost" href="/products/the-vault">The page</a>
+              </div>
+            </article>
           </div>
         </div>
       </div>
+      <noscript>
+        <style>
+          .swarm-scroll { height: auto !important; }
+          .swarm-stage { position: relative !important; height: auto !important; display: flex; flex-direction: column; gap: 22px; padding: 28px 20px 48px; }
+          #swarm-canvas, .swarm-cue { display: none !important; }
+          .swarm-maker, .swarm-dest, .swarm-card, .swarm-crew, .swarm-portrait { position: relative !important; opacity: 1 !important; pointer-events: auto !important; inset: auto !important; transform: none !important; width: auto !important; height: auto !important; }
+          .swarm-dest { display: flex; flex-direction: column; gap: 16px; }
+        </style>
+      </noscript>
     </section>
 
     <!-- ─────────────────────── THE PLATFORMS ─────────────────────── -->
@@ -236,5 +320,6 @@ try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documen
   <script src="products.js"></script>
   <script src="script.js"></script>
   <script src="theme.js"></script>
+  <script src="swarm.js"></script>
 </body>
 </html>
