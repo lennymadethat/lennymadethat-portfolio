@@ -179,7 +179,7 @@ function boot() {
   `;
 
   const sparkFrag = `
-    precision mediump float;
+    precision highp float;
     varying float vHeat;
     varying float vAlpha;
     void main(){
@@ -237,7 +237,7 @@ function boot() {
     }
   `;
   const dustFrag = `
-    precision mediump float;
+    precision highp float;
     varying float vA;
     void main(){
       vec2 uv = gl_PointCoord - 0.5;

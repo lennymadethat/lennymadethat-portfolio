@@ -164,7 +164,7 @@ function boot() {
     }
   `;
   const frag = `
-    precision mediump float;
+    precision highp float;
     varying float vHeat;
     varying float vAlpha;
     void main(){
@@ -245,7 +245,7 @@ function boot() {
     }
   `;
   const lineFrag = `
-    precision mediump float;
+    precision highp float;
     uniform float uForm;
     uniform float uRelease;
     varying float vDepth;
@@ -327,7 +327,7 @@ function boot() {
     }
   `;
   const pulseFrag = `
-    precision mediump float;
+    precision highp float;
     varying float vGlow;
     void main(){
       vec2 uv = gl_PointCoord - 0.5;

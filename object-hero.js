@@ -122,7 +122,7 @@ function boot(sig) {
     }
   `;
   const frag = `
-    precision mediump float;
+    precision highp float;
     uniform vec3 uPalA;
     uniform vec3 uPalB;
     uniform vec3 uPalD;
