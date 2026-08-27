@@ -45,14 +45,22 @@
     + "</a>";
   }
 
+  function agentLamp(status) {
+    if (status === "live") return { cls: "lamp--on", label: "ON THE CLOCK" };
+    if (status === "beta") return { cls: "lamp--trial", label: "ON TRIAL" };
+    return { cls: "lamp--bench", label: "ON THE BENCH" };
+  }
+
   function agentHTML(p) {
-    var st = window.PRODUCT_STATUS[p.status] || window.PRODUCT_STATUS.build;
+    var lamp = agentLamp(p.status);
     return '<a class="agent-card" href="/products/' + esc(p.slug) + '">'
-      + '<span class="plate__status ' + st.cls + '">' + esc(st.label) + "</span>"
+      + '<span class="agent-card__slot" aria-hidden="true"></span>'
+      + '<p class="agent-card__serial spec">' + esc(p.unit) + "</p>"
       + '<span class="agent-card__avatar"><img src="' + esc(p.art || p.logo) + '" alt="" loading="lazy" width="132" height="132" /></span>'
       + '<h3 class="agent-card__name">' + esc(p.name) + "</h3>"
-      + '<p class="agent-card__role spec">' + esc(p.kind) + "</p>"
+      + '<p class="agent-card__role spec"><span>' + esc(p.kind) + "</span></p>"
       + '<p class="agent-card__hook">' + esc(p.hook) + "</p>"
+      + '<p class="agent-card__status spec"><span class="lamp ' + lamp.cls + '"></span>' + lamp.label + "</p>"
     + "</a>";
   }
 
@@ -65,6 +73,26 @@
   renderSection("platform-grid", "platform", plateHTML);
   renderSection("agent-grid", "agent", agentHTML);
   renderSection("infra-grid", "infra", plateHTML);
+
+  // ─────────────── Crew clock-in (staggered badge entrance) ───────────────
+  (function () {
+    var grid = document.getElementById("agent-grid");
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.querySelectorAll(".agent-card"));
+    if (!("IntersectionObserver" in window)) {
+      cards.forEach(function (c) { c.classList.add("is-in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        var i = cards.indexOf(e.target);
+        setTimeout(function () { e.target.classList.add("is-in"); }, (i % 10) * 100);
+      });
+    }, { threshold: 0.2, rootMargin: "0px 0px -6% 0px" });
+    cards.forEach(function (c) { io.observe(c); });
+  })();
 
   // ─────────────── Platform card 3D tilt + spotlight ───────────────
   // Fine-pointer, motion-ok devices only. Sets --rx/--ry (tilt, degrees)

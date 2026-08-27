@@ -128,13 +128,13 @@ window.PRODUCTS = [
     source: "https://github.com/lennymadethat/persistent-memory"
   },
   {
-    slug: "the-desk",
+    slug: "content-hub",
     section: "platform",
-    name: "The Desk",
+    name: "Content Hub",
     unit: "UNIT 07",
     kind: "MEDIA ENGINE",
     status: "beta",
-    logo: "/img/products/the-desk.svg",
+    logo: "/img/products/content-hub.svg",
     hook: "Your media team, one approval tap.",
     what: "An automatic media engine: it generates social content across every lane of a brand, queues it in a multi-lane approval desk, and publishes only on a human tap — never on its own. Next up: it walks your photo library, assembles memories, and posts them with one click after notifying you. I run my brands on it daily.",
     does: [
@@ -145,7 +145,7 @@ window.PRODUCTS = [
       "In daily use across my own brands"
     ],
     tags: ["Content engine", "Social automation", "Approval flow", "PWA"],
-    cta: { label: "Private beta — ask me about it", href: "mailto:hello@lennymadethat.com?subject=The%20Desk" }
+    cta: { label: "Private beta — ask me about it", href: "mailto:hello@lennymadethat.com?subject=Content%20Hub" }
   },
 
   /* ─────────────── THE AGENTS ─────────────── */
@@ -219,7 +219,7 @@ window.PRODUCTS = [
     unit: "AGENT 04",
     kind: "THE GHOSTWRITER",
     status: "live",
-    logo: "/img/products/the-desk.svg",
+    logo: "/img/products/content-hub.svg",
     art: "/img/agents/rico.png",
     hook: "Ramble in. On-brand draft out.",
     what: "The ghostwriter. RICO learns a voice from the published record — the actual sentences, the register, what would never be said — and turns raw input (typed notes, dictation, a phone voice memo) into a finished draft in that voice. Every draft passes voice and compliance checks, lands as a draft in the publishing tool, and never goes out without a human's final click.",

@@ -60,16 +60,16 @@ document.documentElement.classList.add("js");</script>
       <canvas id="forge-canvas" aria-hidden="true"></canvas>
       <div class="forge-glow" aria-hidden="true"></div>
       <div class="forge-content">
-        <p class="forge-kicker spec">IAN “LENNY” LEONARD · SAN DIEGO · OPERATOR WHO BUILDS</p>
+        <p class="forge-kicker spec">IAN LEONARD · SAN DIEGO · OPERATOR WHO BUILDS</p>
         <h1 id="hero-heading" class="forge-title">LENNY MADE <span>THAT.</span></h1>
-        <p class="forge-sub">Apps, platforms, agents — nine shipped products from one maker.
-        Forged, not pitched.</p>
+        <p class="forge-sub">The audio app. The investing platform. The factory OS.
+        The agent crew. All live — this page is the receipts.</p>
         <div class="forge-ctas">
           <a class="btn btn--primary" href="#line">See the line</a>
           <a class="btn btn--ghost" href="#hire">Hire me</a>
         </div>
       </div>
-      <p class="forge-cue spec" aria-hidden="true">SCROLL · THE LINE IS BELOW</p>
+      <p class="forge-cue spec" aria-hidden="true">SCROLL · WALK THE FLOOR</p>
     </section>
 
     <!-- ─────────────────────── THE PLATFORMS ─────────────────────── -->
@@ -90,20 +90,47 @@ document.documentElement.classList.add("js");</script>
     <section id="agents" class="line line--agents" aria-labelledby="agents-heading">
       <div class="container">
         <div class="line__head">
-          <h2 id="agents-heading" class="line__title">The Agents</h2>
-          <p class="line__count spec">10 ORIGINALS · DESIGNED &amp; BUILT IN-HOUSE</p>
+          <h2 id="agents-heading" class="line__title">The crew, on the clock</h2>
+          <p class="line__count spec">10 ORIGINALS · DESIGNED &amp; NAMED IN-HOUSE</p>
         </div>
         <p class="line__lead">
           An original crew — each one designed, named, and put on the clock inside
           the platforms above. Some you can download and run yourself. And there
           are more on the bench.
         </p>
+        <div class="crew-rail" aria-hidden="true">
+          <div class="crew-rail__line"></div>
+          <div class="crew-rail__packet"></div>
+          <p class="crew-rail__label spec">VAULT FEED · <b>LIVE</b></p>
+        </div>
         <div id="agent-grid" class="agent-grid"></div>
       </div>
     </section>
 
     <!-- ─────────────────── THE INFRASTRUCTURE ─────────────────── -->
     <section id="infra" class="line line--infra" aria-labelledby="infra-heading">
+      <div class="brain">
+        <div class="brain-scroll">
+          <div class="brain-stage">
+            <canvas id="brain-canvas" aria-hidden="true"></canvas>
+            <div class="brain-copy" data-beat="0">
+              <p class="brain-copy__eyebrow spec">INFRA 01 · THE BRAIN</p>
+              <h3 class="brain-copy__title">One memory. Every agent.</h3>
+              <p class="brain-copy__body">A knowledge vault the whole crew reads and
+              writes — decisions, project state, hard-won lessons. Nothing gets
+              re-explained. A session ends; the memory doesn't.</p>
+            </div>
+            <div class="brain-copy" data-beat="1">
+              <p class="brain-copy__eyebrow spec">INFRA 02 · THE PULSE</p>
+              <h3 class="brain-copy__title">It thinks while the computer is off.</h3>
+              <p class="brain-copy__body">A market data engine recomputes the entire
+              US market every night in the cloud — end to end, unattended. The
+              platforms above wake up already knowing.</p>
+            </div>
+            <p class="brain-cue spec" aria-hidden="true">SCROLL</p>
+          </div>
+        </div>
+      </div>
       <div class="container">
         <div class="line__head">
           <h2 id="infra-heading" class="line__title">The Infrastructure</h2>
@@ -230,5 +257,6 @@ document.documentElement.classList.add("js");</script>
   <script src="script.js"></script>
   <script src="theme.js"></script>
   <script type="module" src="hero.js"></script>
+  <script type="module" src="brain.js"></script>
 </body>
 </html>
