@@ -30,7 +30,7 @@ function boot() {
   const isMobile = Math.min(window.innerWidth, window.innerHeight) < 720;
   const N = isMobile ? 7000 : 14000;
   const SEG = isMobile ? 220 : 420;
-  const PULSES = isMobile ? 26 : 44;
+  const PULSES = isMobile ? 36 : 64;
 
   /* ---------- brain surface ---------- */
   function brainPoint() {
@@ -85,6 +85,8 @@ function boot() {
     uniform float uPulse;
     uniform float uRelease;
     uniform float uSplit;
+    uniform vec3  uFire;
+    uniform float uFireT;
     uniform vec2  uCenter;
     uniform float uRadius;
     uniform float uDpr;
@@ -145,12 +147,20 @@ function boot() {
       pos.y += r * (260.0 + 420.0 * ph);
 
       /* synapse flash: nearby heat when the pulse layer is hot */
-      vHeat = 0.4 + 0.4 * depth + uPulse * 0.3 * (0.5 + 0.5 * sin(uTime * 2.0 + ph * 25.0));
-      vAlpha = (0.16 + 0.78 * depth) * t * (1.0 - r) + (1.0 - t) * 0.5;
+      vHeat = 0.5 + 0.42 * depth + uPulse * 0.3 * (0.5 + 0.5 * sin(uTime * 2.0 + ph * 25.0));
+      vAlpha = (0.22 + 0.78 * depth) * t * (1.0 - r) + (1.0 - t) * 0.5;
+      /* thought ripple: particles near a firing point flare and fade */
+      float ft2 = uTime - uFireT;
+      if (ft2 > 0.0 && ft2 < 1.4) {
+        vec3 df = aBrain - uFire;
+        float flash = exp(-dot(df, df) * 3.5) * (1.0 - ft2 / 1.4);
+        vHeat += flash * 1.5;
+        vAlpha += flash * 0.35;
+      }
 
       vec4 mv = modelViewMatrix * vec4(pos, 0.0, 1.0);
       gl_Position = projectionMatrix * mv;
-      gl_PointSize = (1.3 + 1.6 * szf) * (0.6 + 0.7 * depth) * uDpr;
+      gl_PointSize = (1.7 + 2.1 * szf) * (0.6 + 0.75 * depth) * uDpr;
     }
   `;
   const frag = `
@@ -170,7 +180,7 @@ function boot() {
       col = mix(col, vec3(1.0, 0.88, 0.62), core * clamp(heat * 1.1 - 0.3, 0.0, 1.0));
       float alp = disc * clamp(vAlpha, 0.0, 1.0);
       if (alp < 0.004) discard;
-      gl_FragColor = vec4(col * (0.5 + 0.8 * heat), alp);
+      gl_FragColor = vec4(col * (0.6 + 0.95 * heat), alp);
     }
   `;
 
@@ -240,7 +250,7 @@ function boot() {
     uniform float uRelease;
     varying float vDepth;
     void main(){
-      float alp = 0.13 * uForm * (1.0 - uRelease) * (0.25 + 0.75 * vDepth);
+      float alp = 0.17 * uForm * (1.0 - uRelease) * (0.25 + 0.75 * vDepth);
       gl_FragColor = vec4(0.95, 0.42, 0.2, alp);
     }
   `;
@@ -313,7 +323,7 @@ function boot() {
       vGlow = imp * uForm * (1.0 - uRelease) * (0.35 + 0.65 * uPulse);
       vec4 mv = modelViewMatrix * vec4(pos, 0.0, 1.0);
       gl_Position = projectionMatrix * mv;
-      gl_PointSize = (4.0 + 4.5 * vGlow) * (0.6 + 0.6 * depth) * uDpr;
+      gl_PointSize = (5.0 + 5.5 * vGlow) * (0.6 + 0.6 * depth) * uDpr;
     }
   `;
   const pulseFrag = `
@@ -443,6 +453,7 @@ function boot() {
 
   /* ---------- scroll + beats ---------- */
   let running = false, raf = 0;
+  let lastAutoFire = 0;
   const header = document.querySelector(".site-header");
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 
@@ -462,6 +473,22 @@ function boot() {
     uniforms.uRelease.value = clamp01((p - 0.84) / 0.16);
     /* Vault beat: the hemispheres part — one memory, two halves — then seal */
     uniforms.uSplit.value = clamp01((p - 0.16) / 0.07) * clamp01((0.42 - p) / 0.07);
+
+    /* the brain thinks on its own: ambient firing every few seconds once formed */
+    if (uniforms.uForm.value > 0.9 && t - lastAutoFire > 3.4 && brainPts.length) {
+      lastAutoFire = t;
+      if (t - uniforms.uFireT.value > 2.0) {
+        const p2 = brainPts[(Math.random() * brainPts.length) | 0];
+        uniforms.uFire.value.set(p2.x, p2.y, p2.z);
+        uniforms.uFireT.value = t;
+      }
+    }
+
+    /* halo glow follows formation, pulse beat, and firings */
+    const fireGlow = Math.max(0, 1 - (t - uniforms.uFireT.value) / 1.2) * 0.4;
+    stage.style.setProperty("--brain-glow",
+      (0.4 * uniforms.uForm.value * (1 - uniforms.uRelease.value)
+        + 0.35 * uniforms.uPulse.value + fireGlow).toFixed(3));
 
     const beat = p < 0.46 ? 0 : 1;
     copies.forEach(function (c, i) {

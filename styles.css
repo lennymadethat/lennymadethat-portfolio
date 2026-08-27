@@ -466,6 +466,31 @@ a:focus-visible, button:focus-visible {
 /* stacked dark shelves */
 .line--agents, .line--infra { border-top: 1px solid var(--hairline-dark); padding-top: 56px; }
 
+/* ───────────── Product signature stage (object-hero.js) ───────────── */
+.object-stage {
+  position: relative;
+  height: 58vh;
+  min-height: 340px;
+  background: radial-gradient(100% 80% at 50% 46%, #191F24 0%, var(--ink) 55%, #0D1013 100%);
+  overflow: hidden;
+}
+.object-stage__canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+.object-stage__label {
+  position: absolute;
+  left: 50%; bottom: 14px;
+  transform: translateX(-50%);
+  color: var(--steel-soft);
+  letter-spacing: 0.18em;
+  text-align: center;
+  padding: 0 16px;
+  width: max-content;
+  max-width: calc(100% - 24px);
+}
+
 /* ───────────── The Brain — infra scrollytelling ─────────────
    Base layout is the static fallback (no JS / no WebGL / reduced motion);
    the sticky runway only engages under html.js when boot succeeded. */
@@ -481,7 +506,22 @@ a:focus-visible, button:focus-visible {
 .brain-copy { max-width: 560px; margin: 0 auto; }
 .brain-cue { display: none; }
 
-.js .brain:not(.is-static) .brain-scroll { height: 260vh; }
+.js .brain:not(.is-static) .brain-scroll { height: 400vh; }
+.js .brain:not(.is-static) .brain-stage::after {
+  content: "";
+  position: absolute;
+  left: 62%; top: 48%;
+  width: min(64vw, 820px); height: min(64vh, 620px);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(50% 50% at 50% 50%,
+    rgba(240, 77, 35, 0.20) 0%, rgba(240, 77, 35, 0.06) 45%, transparent 72%);
+  filter: blur(10px);
+  opacity: var(--brain-glow, 0);
+  pointer-events: none;
+}
+@media (max-width: 899px) {
+  .js .brain:not(.is-static) .brain-stage::after { left: 50%; top: 36%; }
+}
 .js .brain:not(.is-static) .brain-stage {
   position: sticky; top: 0;
   height: 100dvh;
