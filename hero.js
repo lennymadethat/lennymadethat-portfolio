@@ -81,6 +81,32 @@ function boot() {
 
     float easeS(float t){ t = clamp(t, 0.0, 1.0); return t*t*(3.0-2.0*t); }
 
+    /* Simplex 2D noise — (c) Ashima Arts / Stefan Gustavson, MIT
+       (github.com/stegu/webgl-noise) */
+    vec3 permute(vec3 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
+    float snoise(vec2 v){
+      const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+      vec2 i = floor(v + dot(v, C.yy));
+      vec2 x0 = v - i + dot(i, C.xx);
+      vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+      vec4 x12 = x0.xyxy + C.xxzz;
+      x12.xy -= i1;
+      i = mod(i, 289.0);
+      vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+      m = m*m; m = m*m;
+      vec3 x = 2.0 * fract(p * C.www) - 1.0;
+      vec3 h = abs(x) - 0.5;
+      vec3 ox = floor(x + 0.5);
+      vec3 a0 = x - ox;
+      m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+      vec3 g;
+      g.x = a0.x * x0.x + h.x * x0.y;
+      g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+      return 130.0 * dot(m, g);
+    }
+    float fbm2(vec2 p){ return snoise(p) * 0.65 + snoise(p * 2.13 + 7.7) * 0.35; }
+
     void main(){
       float ph  = aSeed.x;
       float spd = aSeed.y;
@@ -90,11 +116,13 @@ function boot() {
       /* staggered per-particle assembly progress */
       float t = easeS( (uAssemble - ph*0.38) / 0.62 );
 
-      /* pre-lock flight: wandering swirl */
+      /* pre-lock flight: orbital drift + fbm flow field (organic, not jitter) */
       vec3 sw = aStart;
       float ang = uTime * (0.6 + spd*0.8) + ph*6.28318;
-      sw.x += sin(ang + aStart.y*0.011) * 88.0;
-      sw.y += cos(ang*0.83 + aStart.x*0.009) * 66.0;
+      sw.x += sin(ang + aStart.y*0.011) * 34.0;
+      sw.y += cos(ang*0.83 + aStart.x*0.009) * 26.0;
+      float fa = fbm2(aStart.xy * 0.0042 + uTime * vec2(0.055, 0.042)) * 6.28318 + ph * 6.28318;
+      sw.xy += vec2(cos(fa), sin(fa)) * (32.0 + 42.0 * spd);
 
       /* quadratic bezier toward the glyph, arcing upward */
       vec3 mid = mix(sw, aTarget, 0.5);
@@ -118,13 +146,16 @@ function boot() {
         float cycle = fract(uTime * 0.10 * spd + ph);
         vec3 amb = aTarget;
         amb.y -= cycle * (70.0 + 120.0*spd);
-        amb.x += sin(uTime*spd*1.4 + ph*21.0) * 24.0 * cycle;
+        float wa = fbm2(aTarget.xy * 0.01 + uTime * 0.12 + ph) * 6.28318;
+        amb.x += cos(wa) * 26.0 * cycle;
 
         pos = mix(pos, burst, q);
         pos = mix(pos, amb, q * live);
 
         float burstFade = (1.0 - q) * 0.9;
-        float emberA = live * (1.0 - cycle) * (1.0 - cycle) * 0.85 * (1.0 - 0.6*uCalm);
+        /* spark life: fast ignite, long dying tail */
+        float lifeA = pow(cycle, 0.28) * pow(1.0 - cycle, 1.7) * 2.2;
+        float emberA = live * lifeA * 0.85 * (1.0 - 0.6*uCalm);
         vAlpha = mix(vAlpha, max(burstFade, emberA), q);
         vHeat  = mix(vHeat, 0.45 + 0.55*(1.0-cycle), q);
       }
@@ -156,12 +187,13 @@ function boot() {
       float d = length(uv);
       float disc = smoothstep(0.5, 0.05, d);
       float core = smoothstep(0.24, 0.0, d);
-      vec3 ember  = vec3(0.52, 0.12, 0.025);
-      vec3 orange = vec3(0.95, 0.34, 0.14);
-      vec3 hot    = vec3(1.0, 0.85, 0.58);
+      /* cosine palette (IQ, MIT) fitted to the house ember ramp —
+         smooth hue travel, no muddy midpoints */
       float heat = clamp(vHeat, 0.0, 1.6);
-      vec3 col = mix(ember, orange, clamp(heat, 0.0, 1.0));
-      col = mix(col, hot, core * clamp(heat*1.15 - 0.3, 0.0, 1.0));
+      float t = clamp(heat, 0.0, 1.0);
+      vec3 col = vec3(0.735, 0.23, 0.085)
+               + vec3(0.215, 0.11, 0.055) * cos(6.28318 * (0.5 * t + vec3(0.50, 0.44, 0.42)));
+      col = mix(col, vec3(1.0, 0.88, 0.62), core * clamp(heat*1.15 - 0.3, 0.0, 1.0));
       float a = disc * clamp(vAlpha, 0.0, 1.0);
       if (a < 0.004) discard;
       gl_FragColor = vec4(col * (0.5 + 0.9*heat), a);

@@ -90,6 +90,31 @@ function boot() {
     varying float vHeat;
     varying float vAlpha;
     float easeS(float t){ t = clamp(t, 0.0, 1.0); return t*t*(3.0-2.0*t); }
+    /* Simplex 2D noise — (c) Ashima Arts / Stefan Gustavson, MIT
+       (github.com/stegu/webgl-noise) */
+    vec3 permute(vec3 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
+    float snoise(vec2 v){
+      const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+      vec2 i = floor(v + dot(v, C.yy));
+      vec2 x0 = v - i + dot(i, C.xx);
+      vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+      vec4 x12 = x0.xyxy + C.xxzz;
+      x12.xy -= i1;
+      i = mod(i, 289.0);
+      vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+      vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+      m = m*m; m = m*m;
+      vec3 x = 2.0 * fract(p * C.www) - 1.0;
+      vec3 h = abs(x) - 0.5;
+      vec3 ox = floor(x + 0.5);
+      vec3 a0 = x - ox;
+      m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+      vec3 g;
+      g.x = a0.x * x0.x + h.x * x0.y;
+      g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+      return 130.0 * dot(m, g);
+    }
+    float fbm2(vec2 p){ return snoise(p) * 0.65 + snoise(p * 2.13 + 7.7) * 0.35; }
     void main(){
       float ph = aSeed.x, spd = aSeed.y, szf = aSeed.z;
 
@@ -104,8 +129,8 @@ function boot() {
 
       float t = easeS((uForm - ph * 0.3) / 0.7);
       vec2 sc = aScatter.xy;
-      sc.x += sin(uTime * (0.4 + spd * 0.4) + ph * 6.28318) * 30.0;
-      sc.y += cos(uTime * (0.35 + spd * 0.3) + ph * 4.0) * 24.0;
+      float fa = fbm2(aScatter.xy * 0.0042 + uTime * vec2(0.05, 0.04)) * 6.28318 + ph * 6.28318;
+      sc += vec2(cos(fa), sin(fa)) * (26.0 + 30.0 * spd);
       vec2 pos = mix(sc, brainPx, t);
 
       /* release: stream down into the plate grid below */
@@ -130,12 +155,12 @@ function boot() {
       float d = length(uv);
       float disc = smoothstep(0.5, 0.06, d);
       float core = smoothstep(0.22, 0.0, d);
-      vec3 ember  = vec3(0.5, 0.13, 0.03);
-      vec3 orange = vec3(0.95, 0.36, 0.15);
-      vec3 hot    = vec3(1.0, 0.85, 0.6);
+      /* cosine palette (IQ, MIT) fitted to the house ember ramp */
       float heat = clamp(vHeat, 0.0, 1.5);
-      vec3 col = mix(ember, orange, clamp(heat, 0.0, 1.0));
-      col = mix(col, hot, core * clamp(heat * 1.1 - 0.3, 0.0, 1.0));
+      float t = clamp(heat, 0.0, 1.0);
+      vec3 col = vec3(0.735, 0.23, 0.085)
+               + vec3(0.215, 0.11, 0.055) * cos(6.28318 * (0.5 * t + vec3(0.50, 0.44, 0.42)));
+      col = mix(col, vec3(1.0, 0.88, 0.62), core * clamp(heat * 1.1 - 0.3, 0.0, 1.0));
       float alp = disc * clamp(vAlpha, 0.0, 1.0);
       if (alp < 0.004) discard;
       gl_FragColor = vec4(col * (0.5 + 0.8 * heat), alp);
@@ -255,7 +280,9 @@ function boot() {
       vec2 pos = uCenter + vec2(p.x, -p.y) * uRadius;
       pos.y += uRelease * 300.0;
       float depth = (p.z + 1.6) / 3.2;
-      vGlow = sin(u * 3.14159) * uForm * (1.0 - uRelease) * (0.35 + 0.65 * uPulse);
+      /* neuron impulse: sharp attack, long decay (shaped, not a sine hump) */
+      float imp = pow(clamp(u * 5.0, 0.0, 1.0), 0.6) * pow(1.0 - u, 1.6) * 1.9;
+      vGlow = imp * uForm * (1.0 - uRelease) * (0.35 + 0.65 * uPulse);
       vec4 mv = modelViewMatrix * vec4(pos, 0.0, 1.0);
       gl_Position = projectionMatrix * mv;
       gl_PointSize = (4.0 + 4.5 * vGlow) * (0.6 + 0.6 * depth) * uDpr;
