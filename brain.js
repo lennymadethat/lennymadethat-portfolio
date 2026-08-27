@@ -28,7 +28,7 @@ function boot() {
 
   let W = 1, H = 1;
   const isMobile = Math.min(window.innerWidth, window.innerHeight) < 720;
-  const N = isMobile ? 5200 : 9500;
+  const N = isMobile ? 7000 : 14000;
   const SEG = isMobile ? 220 : 420;
   const PULSES = isMobile ? 26 : 44;
 
@@ -71,6 +71,9 @@ function boot() {
     uForm: { value: 0 },
     uPulse: { value: 0 },
     uRelease: { value: 0 },
+    uSplit: { value: 0 },
+    uFire: { value: new THREE.Vector3(0, 0, 0) },
+    uFireT: { value: -100 },
     uCenter: { value: new THREE.Vector2(0, 0) },
     uRadius: { value: 100 },
     uDpr: { value: 1 }
@@ -81,6 +84,7 @@ function boot() {
     uniform float uForm;
     uniform float uPulse;
     uniform float uRelease;
+    uniform float uSplit;
     uniform vec2  uCenter;
     uniform float uRadius;
     uniform float uDpr;
@@ -125,6 +129,9 @@ function boot() {
       vec3 rb = vec3(b.x * ca + b.z * sa, b.y, -b.x * sa + b.z * ca);
 
       vec2 brainPx = uCenter + vec2(rb.x, -rb.y) * uRadius;
+      /* hemisphere parting: the halves slide apart on screen along the
+         left/right axis (aBrain.z) while the lattice stays stretched between */
+      brainPx.x += sign(aBrain.z) * uSplit * uRadius * 0.11;
       float depth = (rb.z + 1.4) / 2.8;   /* 0 back … 1 front */
 
       float t = easeS((uForm - ph * 0.3) / 0.7);
@@ -167,7 +174,8 @@ function boot() {
     }
   `;
 
-  const brainPts = new Array(N);
+  /* procedural fallback cloud; replaced by the baked MRI scan when it loads */
+  let brainPts = new Array(N);
   for (let i = 0; i < N; i++) brainPts[i] = brainPoint();
 
   const geo = new THREE.BufferGeometry();
@@ -176,14 +184,21 @@ function boot() {
   const scatterArr = new Float32Array(N * 3);
   const seedArr = new Float32Array(N * 4);
   for (let i = 0; i < N; i++) {
-    brainArr[i * 3] = brainPts[i].x;
-    brainArr[i * 3 + 1] = brainPts[i].y;
-    brainArr[i * 3 + 2] = brainPts[i].z;
     seedArr[i * 4] = Math.random();
     seedArr[i * 4 + 1] = 0.6 + Math.random();
     seedArr[i * 4 + 2] = Math.random();
     seedArr[i * 4 + 3] = Math.random();
   }
+  function fillCloud(pts) {
+    for (let i = 0; i < N; i++) {
+      const p = pts[Math.floor((i * pts.length) / N) % pts.length];
+      brainArr[i * 3] = p.x;
+      brainArr[i * 3 + 1] = p.y;
+      brainArr[i * 3 + 2] = p.z;
+    }
+    if (geo.attributes.aBrain) geo.attributes.aBrain.needsUpdate = true;
+  }
+  fillCloud(brainPts);
   geo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
   geo.setAttribute("aBrain", new THREE.BufferAttribute(brainArr, 3));
   geo.setAttribute("aScatter", new THREE.BufferAttribute(scatterArr, 3));
@@ -232,18 +247,22 @@ function boot() {
   const lgeo = new THREE.BufferGeometry();
   const lpos = new Float32Array(SEG * 2 * 3);
   const lbrain = new Float32Array(SEG * 2 * 3);
-  for (let i = 0; i < SEG; i++) {
-    const a = brainPts[(Math.random() * N) | 0];
-    /* partner: a nearby-ish point so the lattice reads cortical, not chaotic */
-    let b = null, best = 1e9;
-    for (let k = 0; k < 8; k++) {
-      const c = brainPts[(Math.random() * N) | 0];
-      const d = (a.x - c.x) ** 2 + (a.y - c.y) ** 2 + (a.z - c.z) ** 2;
-      if (d > 0.01 && d < best) { best = d; b = c; }
+  function fillLattice(pts) {
+    for (let i = 0; i < SEG; i++) {
+      const a = pts[(Math.random() * pts.length) | 0];
+      /* partner: a nearby-ish point so the lattice reads cortical, not chaotic */
+      let b = null, best = 1e9;
+      for (let k = 0; k < 8; k++) {
+        const c = pts[(Math.random() * pts.length) | 0];
+        const d = (a.x - c.x) ** 2 + (a.y - c.y) ** 2 + (a.z - c.z) ** 2;
+        if (d > 0.01 && d < best) { best = d; b = c; }
+      }
+      b = b || pts[(Math.random() * pts.length) | 0];
+      lbrain.set([a.x, a.y, a.z, b.x, b.y, b.z], i * 6);
     }
-    b = b || brainPts[(Math.random() * N) | 0];
-    lbrain.set([a.x, a.y, a.z, b.x, b.y, b.z], i * 6);
+    if (lgeo.attributes.aBrain) lgeo.attributes.aBrain.needsUpdate = true;
   }
+  fillLattice(brainPts);
   lgeo.setAttribute("position", new THREE.BufferAttribute(lpos, 3));
   lgeo.setAttribute("aBrain", new THREE.BufferAttribute(lbrain, 3));
   const lmat = new THREE.ShaderMaterial({
@@ -261,6 +280,8 @@ function boot() {
     uniform float uForm;
     uniform float uPulse;
     uniform float uRelease;
+    uniform vec3  uFire;
+    uniform float uFireT;
     uniform vec2  uCenter;
     uniform float uRadius;
     uniform float uDpr;
@@ -272,9 +293,16 @@ function boot() {
       float ph = aSeed.x, spd = aSeed.y;
       float a = uTime * 0.22;
       float ca = cos(a), sa = sin(a);
-      vec3 f = vec3(aFrom.x * ca + aFrom.z * sa, aFrom.y, -aFrom.x * sa + aFrom.z * ca);
-      vec3 t = vec3(aTo.x * ca + aTo.z * sa, aTo.y, -aTo.x * sa + aTo.z * ca);
+      vec3 from3 = aFrom;
       float u = fract(uTime * (0.14 + spd * 0.12) + ph);
+      /* touch-fire: ~35% of pulses re-originate from the touched spot */
+      float ft = uTime - uFireT;
+      if (aSeed.z < 0.35 && ft > 0.0 && ft < 1.6) {
+        from3 = uFire;
+        u = clamp(ft / (0.7 + aSeed.z), 0.0, 1.0);
+      }
+      vec3 f = vec3(from3.x * ca + from3.z * sa, from3.y, -from3.x * sa + from3.z * ca);
+      vec3 t = vec3(aTo.x * ca + aTo.z * sa, aTo.y, -aTo.x * sa + aTo.z * ca);
       vec3 midv = mix(f, t, 0.5) * 1.25;      /* bulge outward */
       vec3 p = mix(mix(f, midv, u), mix(midv, t, u), u);
       vec2 pos = uCenter + vec2(p.x, -p.y) * uRadius;
@@ -307,15 +335,24 @@ function boot() {
   const pto = new Float32Array(PULSES * 3);
   const pseed = new Float32Array(PULSES * 4);
   for (let i = 0; i < PULSES; i++) {
-    const a = brainPts[(Math.random() * N) | 0];
-    const b = brainPts[(Math.random() * N) | 0];
-    pfrom.set([a.x, a.y, a.z], i * 3);
-    pto.set([b.x, b.y, b.z], i * 3);
     pseed[i * 4] = Math.random();
     pseed[i * 4 + 1] = 0.5 + Math.random();
     pseed[i * 4 + 2] = Math.random();
     pseed[i * 4 + 3] = Math.random();
   }
+  function fillPulses(pts) {
+    for (let i = 0; i < PULSES; i++) {
+      const a = pts[(Math.random() * pts.length) | 0];
+      const b = pts[(Math.random() * pts.length) | 0];
+      pfrom.set([a.x, a.y, a.z], i * 3);
+      pto.set([b.x, b.y, b.z], i * 3);
+    }
+    if (pgeo.attributes.aFrom) {
+      pgeo.attributes.aFrom.needsUpdate = true;
+      pgeo.attributes.aTo.needsUpdate = true;
+    }
+  }
+  fillPulses(brainPts);
   pgeo.setAttribute("position", new THREE.BufferAttribute(ppos, 3));
   pgeo.setAttribute("aFrom", new THREE.BufferAttribute(pfrom, 3));
   pgeo.setAttribute("aTo", new THREE.BufferAttribute(pto, 3));
@@ -328,6 +365,52 @@ function boot() {
   const pulses = new THREE.Points(pgeo, pmat);
   pulses.frustumCulled = false;
   scene.add(pulses);
+
+  /* ---------- the real brain: baked MRI point cloud (NIH 3DPX-021161, CC BY) ----------
+     Hot-swaps over the procedural fallback whenever it arrives; a failed fetch
+     simply leaves the procedural brain in place. */
+  Promise.all([fetch("points/brain-mri.bin"), fetch("points/brain-mri.json")])
+    .then(function (rs) {
+      if (!rs[0].ok || !rs[1].ok) throw new Error("points missing");
+      return Promise.all([rs[0].arrayBuffer(), rs[1].json()]);
+    })
+    .then(function (loaded) {
+      const f = new Float32Array(loaded[0]);
+      const count = loaded[1].count;
+      const stride = loaded[1].stride || 6;
+      const pts = new Array(count);
+      for (let i = 0; i < count; i++) {
+        pts[i] = { x: f[i * stride], y: f[i * stride + 1], z: f[i * stride + 2] };
+      }
+      brainPts = pts;
+      fillCloud(pts);
+      fillLattice(pts);
+      fillPulses(pts);
+    })
+    .catch(function () { /* procedural brain stays */ });
+
+  /* touch-fire: tapping the brain makes that spot think */
+  stage.addEventListener("pointerdown", function (e) {
+    if (!brainPts.length) return;
+    const r = stage.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const a = uniforms.uTime.value * 0.22;
+    const ca = Math.cos(a), sa = Math.sin(a);
+    const C = uniforms.uCenter.value, R = uniforms.uRadius.value;
+    let best = -1, bd = 1e9;
+    for (let i = 0; i < brainPts.length; i += 7) {
+      const p = brainPts[i];
+      const sx = C.x + (p.x * ca + p.z * sa) * R + Math.sign(p.z) * uniforms.uSplit.value * R * 0.11;
+      const sy = C.y - p.y * R;
+      const d = (sx - mx) * (sx - mx) + (sy - my) * (sy - my);
+      if (d < bd) { bd = d; best = i; }
+    }
+    if (best >= 0 && bd < R * R * 0.4) {
+      const p = brainPts[best];
+      uniforms.uFire.value.set(p.x, p.y, p.z);
+      uniforms.uFireT.value = uniforms.uTime.value;
+    }
+  }, { passive: true });
 
   /* ---------- layout ---------- */
   function resize() {
@@ -377,6 +460,8 @@ function boot() {
     uniforms.uForm.value = clamp01(p / 0.32);
     uniforms.uPulse.value = clamp01((p - 0.42) / 0.18);
     uniforms.uRelease.value = clamp01((p - 0.84) / 0.16);
+    /* Vault beat: the hemispheres part — one memory, two halves — then seal */
+    uniforms.uSplit.value = clamp01((p - 0.16) / 0.07) * clamp01((0.42 - p) / 0.07);
 
     const beat = p < 0.46 ? 0 : 1;
     copies.forEach(function (c, i) {
