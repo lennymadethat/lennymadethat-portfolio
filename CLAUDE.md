@@ -80,6 +80,29 @@ flag this to Lenny rather than silently pushing.
 
 ---
 
+## Site architecture (since the 2026-08-06 "THE LINE" redesign)
+
+Product-led portfolio. **`products.js` is the single source of truth** — it holds
+the 9-product catalog (THE LINE) and the Agent Shop kit list. Both surfaces render
+from it:
+
+- `index.html` + `script.js` — landing: hero, THE LINE plate grid, story, proof
+  (live data-engine readout), THE AGENT SHOP, hire doors.
+- `product.html` + `product.js` — one template for all product detail pages.
+  Clean URLs via `_redirects` (`/products/* → /product.html 200`); slug resolved
+  from the path, `?p=slug` as fallback. Unknown slug redirects home.
+- `img/products/` — logos. PlayLetter/RIR/Mothership/Yield Agents/The Desk are
+  copied from their product repos; Assembly Floor, Personal Agents, Ingester, and
+  Harvester are hand-authored house-style SVGs (dark plate, safety-orange detail).
+
+Design system: ink steel `#14181B` / shop paper `#F2F1EC` / safety orange
+`#F04D23`, heritage teal kept as secondary. Type: Anton (display) / Public Sans
+(body) / IBM Plex Mono (spec labels). Signature element: the machined nameplate
+("plate") card.
+
+To add or edit a product: edit `products.js` only. To change page furniture,
+edit the templates.
+
 ## Repo facts
 
 - GitHub: `retail-investor-report/lennymadethat-portfolio` (PRIVATE for now;

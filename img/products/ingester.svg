@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="The Ingester">
+  <rect width="512" height="512" rx="112" fill="#14181B"/>
+  <!-- messy input -->
+  <circle cx="152" cy="112" r="18" fill="#5B6670"/>
+  <rect x="240" y="88" width="34" height="34" rx="8" fill="#EDEBE4" transform="rotate(18 257 105)"/>
+  <polygon points="352,94 374,132 330,132" fill="#5B6670"/>
+  <!-- funnel -->
+  <path d="M96 168 L416 168 L296 300 L296 380 L216 380 L216 300 Z" fill="#EDEBE4"/>
+  <!-- ordered output -->
+  <rect x="216" y="412" width="80" height="28" rx="8" fill="#F04D23"/>
+</svg>

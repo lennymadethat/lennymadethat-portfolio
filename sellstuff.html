@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Sell Stuff — snap a pic. he sells it. · lennymadethat</title>
+  <meta name="description" content="Snap a pic. He sells it. Send a photo, tap once, it goes on Marketplace. He does not talk to buyers." />
+  <meta name="theme-color" content="#0c0a0e" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c0a0e'/%3E%3Ccircle cx='16' cy='14' r='5' fill='%23ff5dde'/%3E%3Crect x='8' y='22' width='16' height='4' rx='1' fill='%23d06a32'/%3E%3C/svg%3E" />
+  <script>try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    :root {
+      --stall: #0c0a0e;
+      --stall-2: #161218;
+      --magenta: #ff5dde;
+      --copper: #d06a32;
+      --ticket: #f4ead8;
+      --mute: #9a8f9c;
+    }
+    body.ss { background: var(--stall); color: var(--ticket); }
+    body.ss .site-header { background: rgba(12,10,14,.92); border-bottom-color: #2a2228; }
+    body.ss .nav__brand, body.ss .nav__menu a { color: var(--ticket); }
+    body.ss .nav__brand-accent { color: var(--magenta); }
+    body.ss .nav__hire { background: var(--magenta); color: #1a0816; }
+    body.ss .site-footer { background: #08070a; color: var(--mute); border-top-color: #2a2228; }
+
+    .ss-page { background: var(--stall); }
+    .ss-hero {
+      padding: 64px 0 28px;
+      background:
+        radial-gradient(900px 420px at 80% -10%, rgba(255,93,222,.18), transparent 60%),
+        var(--stall);
+    }
+    .ss-hero__inner { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: end; }
+    @media (min-width: 860px) {
+      .ss-hero__inner { grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+    }
+    .ss-kicker {
+      font-family: var(--font-spec);
+      letter-spacing: .16em;
+      font-size: .72rem;
+      color: var(--magenta);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .ss-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3.2rem, 9vw, 6.6rem);
+      line-height: .86;
+      letter-spacing: .01em;
+      color: var(--ticket);
+    }
+    .ss-hero h1 em { font-style: normal; color: var(--magenta); }
+    .ss-hero__hook {
+      margin-top: 16px;
+      font-size: 1.2rem;
+      max-width: 28ch;
+      color: #e7d9c8;
+    }
+    .ss-hero__acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .ss-btn {
+      display: inline-flex; align-items: center;
+      padding: 12px 18px;
+      font-weight: 700;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+    .ss-btn--hot { background: var(--magenta); color: #1a0816; }
+    .ss-btn--ghost { border: 1px solid #4a3a46; color: var(--ticket); }
+    .ss-hero figure { margin: 0; }
+    .ss-hero img,
+    .ss-art img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      border: 1px solid #2f2630;
+      border-radius: 6px;
+    }
+    .ss-hero img { box-shadow: 0 0 40px rgba(255,93,222,.12); }
+    .ss-cap {
+      font-family: var(--font-spec);
+      font-size: .68rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .ss-beats { padding: 36px 0 20px; }
+    .ss-steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 720px) {
+      .ss-steps { grid-template-columns: repeat(3, 1fr); }
+    }
+    .ss-step {
+      background: #1a141c;
+      border: 1px solid #322833;
+      border-radius: 6px;
+      padding: 16px 16px 18px;
+    }
+    .ss-step .n {
+      font-family: var(--font-spec);
+      font-size: .68rem;
+      letter-spacing: .12em;
+      color: var(--magenta);
+    }
+    .ss-step h3 {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      letter-spacing: .02em;
+      margin: 8px 0 6px;
+      line-height: .95;
+    }
+    .ss-step p { font-size: .95rem; color: var(--mute); }
+
+    .ss-rule {
+      margin: 22px 0 0;
+      font-size: 1.05rem;
+      color: #e7d9c8;
+    }
+    .ss-rule em { font-style: normal; color: var(--magenta); }
+
+    .ss-art { padding: 20px 0 8px; }
+    .ss-end { text-align: center; padding: 56px 0 72px; }
+    .ss-end h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      line-height: .95;
+      margin: 0 auto 12px;
+    }
+    .ss-end h2 em { font-style: normal; color: var(--magenta); }
+    .ss-end p { margin: 0 auto 22px; color: #d8c9ba; max-width: 36ch; }
+  </style>
+</head>
+<body class="ss">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__brand" href="/" aria-label="Lenny — home">lenny<span class="nav__brand-accent">madethat</span></a>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+      </button>
+      <ul class="nav__menu" id="nav-menu">
+        <li><a href="/#line">The Line</a></li>
+        <li><a href="/#story">The Story</a></li>
+        <li><a href="/#proof">Proof</a></li>
+        <li><a href="/#shop">Downloads</a></li>
+        <li><a class="nav__hire" href="/#hire">Hire me</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="ss-page">
+    <section class="ss-hero">
+      <div class="container ss-hero__inner">
+        <div>
+          <p class="ss-kicker">Agent Sell Stuff</p>
+          <h1>YOU SNAP.<br>HE SELLS IT<em>.</em></h1>
+          <p class="ss-hero__hook">Send a photo. Tap once. It goes on Marketplace.</p>
+          <div class="ss-hero__acts">
+            <a class="ss-btn ss-btn--hot" href="https://mothership.lennymadethat.com/#/sellstuff">Open the desk</a>
+            <a class="ss-btn ss-btn--ghost" href="/products/sellstuff-long">Long version</a>
+          </div>
+        </div>
+        <figure>
+          <img src="/img/sellstuff/hero.jpg" alt="Agent Sell Stuff crest — brass dealer, coat open, price tags hanging in the lining" width="1376" height="768" />
+          <figcaption class="ss-cap">You take the picture. He runs the stall.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="ss-beats">
+      <div class="container">
+        <div class="ss-steps">
+          <div class="ss-step">
+            <div class="n">01</div>
+            <h3>SNAP</h3>
+            <p>Pictures from your phone. That is the whole job on your side.</p>
+          </div>
+          <div class="ss-step">
+            <div class="n">02</div>
+            <h3>TAP</h3>
+            <p>He writes the listing and prices it. Nothing posts until you say yes.</p>
+          </div>
+          <div class="ss-step">
+            <div class="n">03</div>
+            <h3>HE SELLS</h3>
+            <p>He puts it on Marketplace. Same tap to drop the price or take it down.</p>
+          </div>
+        </div>
+        <p class="ss-rule">He does <em>not</em> talk to buyers.</p>
+      </div>
+    </section>
+
+    <section class="ss-art">
+      <div class="container">
+        <figure>
+          <img src="/img/sellstuff/intake.jpg" alt="SellStuff photographing a bench of used goods in the night stall" width="1376" height="768" />
+          <figcaption class="ss-cap">Photo in · card out · your tap</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="ss-end">
+      <div class="container">
+        <p class="ss-kicker">Agent Sell Stuff</p>
+        <h2>Snap it. He <em>sells</em> it.</h2>
+        <p>A Lenny Made That agent. Built on a real garage.</p>
+        <div class="ss-hero__acts" style="justify-content:center">
+          <a class="ss-btn ss-btn--hot" href="https://mothership.lennymadethat.com/#/sellstuff">Open the desk</a>
+          <a class="ss-btn ss-btn--ghost" href="/#line">Back to the line</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p>&copy; <span id="year">2026</span> lennymadethat.com — a Lenny Made That build.</p>
+      <p class="site-footer__note"><a href="/products/sellstuff-long" style="color:inherit">The long version is still here.</a></p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector(".nav__toggle");
+      var menu = document.getElementById("nav-menu");
+      if (toggle && menu) {
+        toggle.addEventListener("click", function () {
+          var open = menu.classList.toggle("is-open");
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+      }
+      var year = document.getElementById("year");
+      if (year) year.textContent = String(new Date().getFullYear());
+    })();
+  </script>
+  <script src="/theme.js"></script>
+</body>
+</html>

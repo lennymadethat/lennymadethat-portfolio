@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SellStuff — the stall · lennymadethat</title>
+  <meta name="description" content="Photos in. Listed. You tap once. SellStuff researches, prices, posts, marks down, and takes listings down — never talks to buyers." />
+  <meta name="theme-color" content="#0c0a0e" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c0a0e'/%3E%3Ccircle cx='16' cy='14' r='5' fill='%23ff5dde'/%3E%3Crect x='8' y='22' width='16' height='4' rx='1' fill='%23d06a32'/%3E%3C/svg%3E" />
+  <script>try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    :root {
+      --stall: #0c0a0e;
+      --stall-2: #161218;
+      --magenta: #ff5dde;
+      --magenta-dim: rgba(255, 93, 222, .16);
+      --copper: #d06a32;
+      --ticket: #f4ead8;
+      --mute: #9a8f9c;
+    }
+    body.ss { background: var(--stall); color: var(--ticket); }
+    body.ss .site-header { background: rgba(12,10,14,.92); border-bottom-color: #2a2228; }
+    body.ss .nav__brand, body.ss .nav__menu a { color: var(--ticket); }
+    body.ss .nav__brand-accent { color: var(--magenta); }
+    body.ss .nav__hire { background: var(--magenta); color: #1a0816; }
+    body.ss .site-footer { background: #08070a; color: var(--mute); border-top-color: #2a2228; }
+
+    .ss-page { background: var(--stall); }
+    .ss-hero {
+      padding: 72px 0 36px;
+      background:
+        radial-gradient(900px 420px at 80% -10%, rgba(255,93,222,.18), transparent 60%),
+        var(--stall);
+    }
+    .ss-hero__inner { display: grid; grid-template-columns: 1fr; gap: 28px; align-items: end; }
+    @media (min-width: 860px) {
+      .ss-hero__inner { grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }
+    }
+    .ss-kicker {
+      font-family: var(--font-spec);
+      letter-spacing: .16em;
+      font-size: .72rem;
+      color: var(--magenta);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .ss-hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(3.4rem, 9vw, 7rem);
+      line-height: .88;
+      letter-spacing: .01em;
+      color: var(--ticket);
+    }
+    .ss-hero h1 em { font-style: normal; color: var(--magenta); }
+    .ss-hero__hook {
+      margin-top: 18px;
+      font-size: 1.25rem;
+      max-width: 34ch;
+      color: #e7d9c8;
+    }
+    .ss-hero__acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .ss-btn {
+      display: inline-flex; align-items: center;
+      padding: 12px 18px;
+      font-weight: 700;
+      border-radius: 4px;
+      text-decoration: none;
+    }
+    .ss-btn--hot { background: var(--magenta); color: #1a0816; }
+    .ss-btn--ghost { border: 1px solid #4a3a46; color: var(--ticket); }
+    .ss-hero figure { margin: 0; }
+    .ss-hero img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      border: 1px solid #2f2630;
+      border-radius: 6px;
+      box-shadow: 0 0 40px rgba(255,93,222,.12);
+    }
+    .ss-cap {
+      font-family: var(--font-spec);
+      font-size: .68rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    .ss-sec { padding: 84px 0; }
+    .ss-sec--alt { background: var(--stall-2); }
+    .ss-sec h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      line-height: .95;
+      letter-spacing: .01em;
+      max-width: 16ch;
+    }
+    .ss-sec h2 em { font-style: normal; color: var(--magenta); }
+    .ss-lead { margin: 16px 0 28px; max-width: 58ch; color: #d8c9ba; font-size: 1.12rem; }
+    .ss-art { margin: 28px 0 8px; }
+    .ss-art img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      border: 1px solid #2f2630;
+      border-radius: 6px;
+    }
+
+    .ss-steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin: 28px 0;
+    }
+    @media (min-width: 720px) {
+      .ss-steps { grid-template-columns: repeat(5, 1fr); }
+    }
+    .ss-step {
+      background: #1a141c;
+      border: 1px solid #322833;
+      border-radius: 6px;
+      padding: 14px 14px 16px;
+    }
+    .ss-step .n {
+      font-family: var(--font-spec);
+      font-size: .68rem;
+      letter-spacing: .12em;
+      color: var(--magenta);
+    }
+    .ss-step h3 { font-size: 1rem; margin: 8px 0 6px; }
+    .ss-step p { font-size: .88rem; color: var(--mute); }
+
+    .ss-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (min-width: 800px) { .ss-grid-2 { grid-template-columns: 1fr 1fr; gap: 40px; } }
+
+    .ss-cards { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    @media (min-width: 700px) { .ss-cards { grid-template-columns: 1fr 1fr; } }
+    .ss-card {
+      background: #1a141c;
+      border: 1px solid #322833;
+      border-radius: 6px;
+      padding: 18px;
+    }
+    .ss-card h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .ss-card p { color: var(--mute); font-size: .95rem; }
+    .ss-card strong { color: var(--ticket); }
+
+    .ss-table { width: 100%; border-collapse: collapse; font-size: .95rem; margin-top: 8px; }
+    .ss-table th {
+      text-align: left; font-family: var(--font-spec); font-size: .68rem;
+      letter-spacing: .1em; text-transform: uppercase; color: var(--mute);
+      padding: 8px 10px; border-bottom: 1px solid #322833;
+    }
+    .ss-table td { padding: 12px 10px; border-bottom: 1px solid #241c24; vertical-align: top; }
+    .ss-table td:first-child { color: var(--magenta); font-weight: 600; width: 34%; }
+
+    .ss-warn {
+      border-left: 3px solid var(--magenta);
+      background: var(--magenta-dim);
+      padding: 16px 18px;
+      border-radius: 0 6px 6px 0;
+      margin-top: 22px;
+    }
+
+    .ss-end { text-align: center; padding: 96px 0 80px; }
+    .ss-end h2 { margin: 0 auto 14px; }
+    .ss-end p { margin: 0 auto 24px; color: #d8c9ba; max-width: 46ch; }
+  </style>
+</head>
+<body class="ss">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__brand" href="/" aria-label="Lenny — home">lenny<span class="nav__brand-accent">madethat</span></a>
+      <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+      </button>
+      <ul class="nav__menu" id="nav-menu">
+        <li><a href="/#line">The Line</a></li>
+        <li><a href="/#story">The Story</a></li>
+        <li><a href="/#proof">Proof</a></li>
+        <li><a href="/#shop">Downloads</a></li>
+        <li><a class="nav__hire" href="/#hire">Hire me</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" class="ss-page">
+    <section class="ss-hero">
+      <div class="container ss-hero__inner">
+        <div>
+          <p class="ss-kicker">Agent Sell Stuff · The stall</p>
+          <h1>SELL<br>STUFF<em>.</em></h1>
+          <p class="ss-hero__hook">Photos in. Listed. You tap once. He does not talk to buyers.</p>
+          <div class="ss-hero__acts">
+            <a class="ss-btn ss-btn--hot" href="#loop">How he works</a>
+            <a class="ss-btn ss-btn--ghost" href="https://mothership.lennymadethat.com/#/sellstuff">Open the desk</a>
+            <a class="ss-btn ss-btn--ghost" href="/products/sellstuff">Short version</a>
+          </div>
+        </div>
+        <figure>
+          <img src="/img/sellstuff/hero.jpg" alt="Agent Sell Stuff crest — brass dealer, coat open, price tags hanging in the lining" width="1376" height="768" />
+          <figcaption class="ss-cap">The stall is his. The tap is yours.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="ss-sec">
+      <div class="container">
+        <p class="ss-kicker">The week you know</p>
+        <h2>A garage full of stuff is not a <em>store.</em></h2>
+        <p class="ss-lead">You take the pictures. Then the listing never happens. Or it happens once, at the wrong price, and sits. Or it sells and Facebook wants a speech about whether it sold. None of that is a selling problem. It is a stall problem.</p>
+        <div class="ss-cards">
+          <article class="ss-card">
+            <h3>The pile grows.</h3>
+            <p>Photos live in the camera roll. Nothing is researched. Nothing is priced. Nothing is up.</p>
+          </article>
+          <article class="ss-card">
+            <h3>The ad goes stale.</h3>
+            <p>A listing that does not move needs a lower number. Walking into Facebook to type it, every week, is how it never happens.</p>
+          </article>
+          <article class="ss-card">
+            <h3>Taking it down is a form.</h3>
+            <p>Mark as sold tells the platform a story it does not need. The listing should just be gone.</p>
+          </article>
+          <article class="ss-card">
+            <h3>Buyers want a chatbot.</h3>
+            <p>They do not get one from him. A silent auto-replier on a real account is how the stall gets flagged.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="ss-sec ss-sec--alt" id="loop">
+      <div class="container">
+        <p class="ss-kicker">Receive → retire</p>
+        <h2>Five moves. One <em>tap</em> in the middle.</h2>
+        <p class="ss-lead">He never lists anything you did not approve. He never answers a buyer. The work is automated. The decision is not.</p>
+        <div class="ss-steps">
+          <div class="ss-step"><div class="n">01</div><h3>Photos</h3><p>Send a pile to the bot. He files the pictures and starts a card.</p></div>
+          <div class="ss-step"><div class="n">02</div><h3>Research</h3><p>What it is, what it sold for, a title, a price, a floor.</p></div>
+          <div class="ss-step"><div class="n">03</div><h3>Your tap</h3><p>Approve, reject, or pick the venue. Nothing posts without this.</p></div>
+          <div class="ss-step"><div class="n">04</div><h3>The stall</h3><p>He types the Facebook listing at human speed. Five a day. A gap between each one.</p></div>
+          <div class="ss-step"><div class="n">05</div><h3>Keep or kill</h3><p>Drop the price when you say so. Pull it down like it never happened.</p></div>
+        </div>
+        <figure class="ss-art">
+          <img src="/img/sellstuff/intake.jpg" alt="SellStuff photographing a bench of used goods in the night stall" width="1376" height="768" />
+          <figcaption class="ss-cap">The paper goes in · the card comes out · you decide</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="ss-sec" id="desk">
+      <div class="container ss-grid-2">
+        <div>
+          <p class="ss-kicker">The desk</p>
+          <h2>The phone is the <em>floor.</em></h2>
+          <p class="ss-lead">Live, pipeline, sold, stuck. Open a card. Edit the title, the price, the copy. Save, confirm, he changes the live ad. Remove, confirm, the listing is deleted — never marked sold. Hide is only this phone. Mark sold is a ledger note, not a Facebook speech.</p>
+        </div>
+        <figure class="ss-art" style="margin-top:0">
+          <img src="/img/sellstuff/desk.jpg" alt="SellStuff holding the phone desk, listings on the screen" width="1376" height="768" />
+          <figcaption class="ss-cap">One board · every listing · your tap on the dangerous buttons</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="ss-sec ss-sec--alt" id="price">
+      <div class="container ss-grid-2">
+        <figure class="ss-art" style="margin-top:0">
+          <img src="/img/sellstuff/price.jpg" alt="SellStuff changing a blank tag inside the coat lining" width="1280" height="720" />
+          <figcaption class="ss-cap">Ten percent · never under the floor · seven days between drops</figcaption>
+        </figure>
+        <div>
+          <p class="ss-kicker">The markdown</p>
+          <h2>The price moves when <em>you</em> say so.</h2>
+          <p class="ss-lead">Once a week he proposes a 10% drop, capped at the floor you set. You get a card. Approve it and he updates the desk and the live Facebook listing. Reject it and the number stays. He will not chase a listing under the floor, and he will not nag the same item twice in seven days.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="ss-sec" id="remove">
+      <div class="container ss-grid-2">
+        <div>
+          <p class="ss-kicker">Take-down</p>
+          <h2>Gone. Not <em>sold.</em></h2>
+          <p class="ss-lead">Remove deletes the listing. Facebook is not told whether it sold. People who already messaged you see that it is no longer listed. No reason. No form. If the platform asks why, the only answer he will pick is that you no longer want to sell it.</p>
+        </div>
+        <figure class="ss-art" style="margin-top:0">
+          <img src="/img/sellstuff/remove.jpg" alt="SellStuff pulling a tag off the lining until it turns to steam" width="1280" height="720" />
+          <figcaption class="ss-cap">Delete listing · never mark as sold · the chats go quiet</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="ss-sec ss-sec--alt" id="limits">
+      <div class="container">
+        <p class="ss-kicker">What he will not do</p>
+        <h2>The stall has <em>rules.</em></h2>
+        <div class="ss-cards" style="margin-top:28px">
+          <article class="ss-card">
+            <h3>No inbox.</h3>
+            <p>He posts, edits, and deletes. He does not open buyer chat. He does not draft a reply unless you build that lane on purpose later.</p>
+          </article>
+          <article class="ss-card">
+            <h3>No second account.</h3>
+            <p>Real stall only. Five new listings a day. Minutes between posts. One thing in flight. A checkpoint stops the lane.</p>
+          </article>
+          <article class="ss-card">
+            <h3>No eBay — yet.</h3>
+            <p>The second venue button stays dark until that lane is actually connected. He will not pretend a post went up.</p>
+          </article>
+          <article class="ss-card">
+            <h3>No silent yes.</h3>
+            <p>Offers below the floor get a counter, never an accept, and only if you are the one sending the message.</p>
+          </article>
+        </div>
+        <div class="ss-warn">
+          This is a private operator, not a kit on the shelf. The desk lives on the Mothership. The art on this page is his. When the stall changes, this page changes with it.
+        </div>
+      </div>
+    </section>
+
+    <section class="ss-sec" id="hood">
+      <div class="container">
+        <p class="ss-kicker">Under the hood</p>
+        <h2>What is actually <em>running.</em></h2>
+        <table class="ss-table">
+          <thead><tr><th>Piece</th><th>Job</th></tr></thead>
+          <tbody>
+            <tr><td>Photo intake</td><td>Telegram bot → stored pictures → one item card per pile.</td></tr>
+            <tr><td>Research</td><td>Title, description, category, ask, and a floor. You see the card before anything is live.</td></tr>
+            <tr><td>The poster</td><td>A single browser on the home machine types the Marketplace form like a person.</td></tr>
+            <tr><td>The desk</td><td>Phone board: live / pipeline / sold. Edit, remove, mark sold, hide.</td></tr>
+            <tr><td>Price drops</td><td>Weekly proposal, your approve, then the live ad is updated.</td></tr>
+            <tr><td>Remove</td><td>Delete listing on Facebook. Status archived. No sold story.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="ss-end">
+      <div class="container">
+        <p class="ss-kicker">Agent Sell Stuff</p>
+        <h2>He mans the stall.<br>You keep the <em>key.</em></h2>
+        <p>A Lenny Made That agent. Built on a real garage, not a pitch. The next time the pile grows, you send pictures.</p>
+        <div class="ss-hero__acts" style="justify-content:center">
+          <a class="ss-btn ss-btn--hot" href="https://mothership.lennymadethat.com/#/sellstuff">Open the desk</a>
+          <a class="ss-btn ss-btn--ghost" href="/#line">Back to the line</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p>&copy; <span id="year">2026</span> lennymadethat.com — a Lenny Made That build.</p>
+      <p class="site-footer__note">When the stall changes, this page changes with it.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var toggle = document.querySelector(".nav__toggle");
+      var menu = document.getElementById("nav-menu");
+      if (toggle && menu) {
+        toggle.addEventListener("click", function () {
+          var open = menu.classList.toggle("is-open");
+          toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+      }
+      var year = document.getElementById("year");
+      if (year) year.textContent = String(new Date().getFullYear());
+    })();
+  </script>
+  <script src="/theme.js"></script>
+</body>
+</html>

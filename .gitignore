@@ -40,3 +40,6 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# local model sources — baked points ship, models don't (see particle-forge skill)
+models-src/

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="The Desk">
+  <rect width="512" height="512" rx="112" fill="#14181B"/>
+  <!-- three content lanes, staggered like a live desk -->
+  <rect x="104" y="168" width="80" height="176" rx="24" fill="#5B6670"/>
+  <rect x="216" y="118" width="80" height="276" rx="24" fill="#EDEBE4"/>
+  <rect x="328" y="196" width="80" height="148" rx="24" fill="#EDEBE4"/>
+  <!-- the one human approval tap -->
+  <circle cx="256" cy="418" r="34" fill="#F04D23"/>
+  <path d="M240 418 L252 430 L274 404" fill="none" stroke="#14181B" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

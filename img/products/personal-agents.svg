@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Personal Agents">
+  <rect width="512" height="512" rx="112" fill="#14181B"/>
+  <!-- the person -->
+  <circle cx="256" cy="196" r="62" fill="#EDEBE4"/>
+  <path d="M136 392 C136 322 190 286 256 286 C322 286 376 322 376 392 L376 404 L136 404 Z" fill="#EDEBE4"/>
+  <!-- the agent, in orbit -->
+  <ellipse cx="256" cy="256" rx="196" ry="118" fill="none" stroke="#5B6670" stroke-width="12" stroke-dasharray="2 26" stroke-linecap="round" transform="rotate(-18 256 256)"/>
+  <circle cx="416" cy="150" r="30" fill="#F04D23"/>
+  <circle cx="416" cy="150" r="11" fill="#14181B"/>
+</svg>
