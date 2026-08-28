@@ -20,6 +20,8 @@ function boot() {
   const stage = wrap.querySelector(".brain-stage");
   const copies = wrap.querySelectorAll(".brain-copy");
   if (!scrollEl || !stage) { wrap.classList.add("is-static"); return; }
+  /* marker: the scroll rig is live, so the boot watchdog must not force static */
+  wrap.classList.add("is-live");
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "high-performance" });
   renderer.setClearColor(0x000000, 0);

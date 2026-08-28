@@ -20,7 +20,22 @@
 
   <script>/* apply saved color theme before first paint */
 try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documentElement.setAttribute("data-theme",_t);}catch(e){}
-document.documentElement.classList.add("js");</script>
+document.documentElement.classList.add("js");
+/* Boot watchdog: the hero copy and the brain rig are hidden by CSS until their
+   WebGL modules light them. If a module 404s, the GPU is blocklisted, or the
+   context is lost, that never happens and the page shows an empty hero and a
+   400vh dead zone. Plain (non-module) script so it runs even if the modules do
+   not. 4200ms clears the 3.0s quench, so a working animation is untouched. */
+window.addEventListener("load", function () {
+  setTimeout(function () {
+    var f = document.querySelector(".forge");
+    if (f && !f.classList.contains("is-lit")) f.classList.add("is-lit");
+    var b = document.querySelector(".brain");
+    if (b && !b.classList.contains("is-live") && !b.classList.contains("is-static")) {
+      b.classList.add("is-static");
+    }
+  }, 4200);
+});</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
