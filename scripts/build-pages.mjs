@@ -268,7 +268,7 @@ function build404() {
       url: SITE + "/404",
       extra: '  <meta name="robots" content="noindex" />',
     }),
-    "<body>",
+    '<body class="nf-body">',
     NAV,
     '  <main id="main">',
     '    <section class="section section--dark">',

@@ -1079,3 +1079,10 @@ a:focus-visible, button:focus-visible {
    Scope them to the on-ink text colour (the hero already did this locally). */
 .site-header .btn--ghost { color: var(--text-on-ink); border-color: rgba(237, 235, 228, 0.35); }
 .site-header .btn--ghost:hover { color: var(--safety); border-color: var(--safety); }
+
+/* 404 is a short page — keep it filling the viewport so the paper ground
+   doesn't show as a band beneath the footer. Scoped: the homepage's 100dvh
+   hero and 400vh brain rig must not inherit a flex body. */
+.nf-body { min-height: 100dvh; display: flex; flex-direction: column; }
+.nf-body main { flex: 1 0 auto; display: flex; align-items: center; }
+.nf-body .site-footer { margin-top: auto; }
