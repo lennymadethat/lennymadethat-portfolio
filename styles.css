@@ -238,9 +238,9 @@ a:focus-visible, button:focus-visible {
   transition: opacity 0.5s ease;
 }
 .js .forge.is-lit .forge-content > * { opacity: 1; transform: none; }
-.js .forge.is-lit .forge-kicker { transition-delay: 0.75s; }
-.js .forge.is-lit .forge-sub { transition-delay: 0.9s; }
-.js .forge.is-lit .forge-ctas { transition-delay: 1.05s; }
+.js .forge.is-lit .forge-kicker { transition-delay: 0.10s; }
+.js .forge.is-lit .forge-sub { transition-delay: 0.22s; }
+.js .forge.is-lit .forge-ctas { transition-delay: 0.34s; }
 .js .forge-cue { opacity: 0; transition: opacity 0.9s ease 1.6s; }
 .js .forge.is-lit .forge-cue { opacity: 1; }
 
@@ -986,4 +986,91 @@ a:focus-visible, button:focus-visible {
   .nav__menu li { width: 100%; }
   .nav__menu a { display: block; padding: 12px 0; font-size: 1rem; }
   .nav__hire { margin-top: 8px; display: inline-block; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RÉSUMÉ  (/resume) — the artifact a hiring manager actually opens.
+   Narrow measure, one accent, generous rhythm, prints clean to PDF.
+   ═══════════════════════════════════════════════════════════════ */
+.container--narrow { max-width: 780px; }
+
+.cv-body { background: var(--paper); }
+.cv { padding-top: 56px; border-bottom: 0; }
+
+.cv-head { padding-bottom: 28px; border-bottom: 2px solid var(--heading); }
+.cv-name {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(2.4rem, 7vw, 4rem);
+  letter-spacing: -0.02em;            /* display tracking goes negative */
+  line-height: 1; text-transform: uppercase;
+  color: var(--heading); margin: 0 0 10px;
+}
+.cv-label {
+  font-size: 1.06rem; font-weight: 600; color: var(--safety);
+  margin: 0 0 14px; letter-spacing: 0.01em;
+}
+.cv-contact { color: var(--steel); margin: 0 0 22px; }
+.cv-contact a { color: var(--steel); text-decoration: underline; text-underline-offset: 3px; }
+.cv-contact a:hover { color: var(--safety); }
+
+.cv-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.cv-actions .btn { font-size: 0.9rem; padding: 10px 18px; }
+
+.cv-summary {
+  font-size: 1.1rem; line-height: 1.6; color: var(--text);
+  margin: 30px 0 0; max-width: 60ch;
+}
+
+.cv-h2 {
+  font-family: var(--font-spec); font-size: 0.76rem; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--steel);
+  margin: 48px 0 20px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.cv-role { margin-bottom: 30px; }
+.cv-role__title {
+  font-size: 1.16rem; font-weight: 700; color: var(--heading);
+  margin: 0 0 4px; line-height: 1.25;
+}
+.cv-role__meta { color: var(--steel); margin: 0 0 10px; }
+.cv-role__summary { color: var(--text); margin: 0 0 10px; max-width: 62ch; }
+
+.cv-list { margin: 0 0 0 1.05em; padding: 0; color: var(--text-soft); }
+.cv-list li { margin-bottom: 6px; line-height: 1.55; }
+.cv-list a { color: var(--text-soft); text-decoration: underline; text-underline-offset: 3px; }
+.cv-list a:hover { color: var(--safety); }
+
+.cv-note { color: var(--steel); margin: -8px 0 22px; font-size: 0.95rem; }
+.cv-note a { color: var(--safety); text-decoration: underline; text-underline-offset: 3px; }
+
+.cv-projects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.cv-proj {
+  background: var(--plate); border: 1px solid var(--plate-line);
+  border-radius: var(--radius-plate); padding: 18px 20px;
+}
+.cv-proj__name { font-size: 1rem; font-weight: 700; color: var(--plate-text); margin: 0 0 6px; }
+.cv-proj__desc { font-size: 0.94rem; line-height: 1.55; color: var(--plate-muted); margin: 0 0 10px; }
+.cv-proj__kw { color: var(--steel); font-size: 0.68rem; }
+
+.cv-skills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 28px; }
+.cv-skill__name { font-size: 0.98rem; font-weight: 700; color: var(--heading); margin: 0 0 4px; }
+.cv-skill__kw { font-size: 0.92rem; color: var(--text-soft); margin: 0; line-height: 1.5; }
+
+@media (max-width: 720px) {
+  .cv-projects, .cv-skills { grid-template-columns: 1fr; }
+}
+
+/* Print / save-as-PDF: the same document, on paper. */
+@media print {
+  .site-header, .site-footer, .cv-actions, .skip-link { display: none !important; }
+  .cv-body { background: #fff; }
+  .cv { padding: 0; }
+  .container--narrow { max-width: none; padding: 0; }
+  .cv-name { font-size: 30pt; }
+  .cv-label { color: #000; }
+  .cv-h2 { margin-top: 22pt; page-break-after: avoid; }
+  .cv-role, .cv-proj { page-break-inside: avoid; }
+  .cv-proj { border: 1px solid #bbb; }
+  a { text-decoration: none; color: #000; }
 }

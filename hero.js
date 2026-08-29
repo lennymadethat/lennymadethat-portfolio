@@ -47,9 +47,9 @@ function boot() {
   try { if (sessionStorage.getItem("lmt-forged")) timeScale = 2.1; } catch (e) {}
 
   /* ---------- timeline (seconds, pre-timeScale) ---------- */
-  const T_ASSEMBLE_START = 0.55;
-  const T_ASSEMBLE_END = 2.55;
-  const T_QUENCH = 3.0;
+  const T_ASSEMBLE_START = 0.30;
+  const T_ASSEMBLE_END = 1.30;
+  const T_QUENCH = 1.5;
   const QUENCH_LEN = 0.85;
 
   /* ---------- sparks ---------- */

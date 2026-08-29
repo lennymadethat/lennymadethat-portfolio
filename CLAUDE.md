@@ -110,3 +110,25 @@ edit the templates.
 - Local path: `C:\Users\lenny\Documents\lennymadethat-portfolio`
 - Stack: hand-written `index.html` + `styles.css` + `script.js`. No framework,
   no build step.
+
+## Generated pages — run the builder after editing the catalog or résumé
+
+`resume.html`, `products/<slug>.html` (one per catalog entry), `404.html`,
+`sitemap.xml`, and `robots.txt` are GENERATED, not hand-edited. They exist so
+crawlers and link-preview bots get a real `<title>`, description, and Open
+Graph tags without executing JS — `product.js` only sets `document.title`
+client-side, which those bots never see.
+
+```
+node scripts/build-pages.mjs
+```
+
+Run it after any edit to `products.js` or `resume.json`, and commit the output.
+Editing a generated file by hand will be overwritten on the next run — change
+the source or the generator instead.
+
+Routing note: `_redirects` no longer carries a `/products/* /product 200`
+catch-all. Cloudflare Pages resolves `/products/<slug>` to the generated
+`products/<slug>.html` directly, so an unknown slug now falls through to
+`404.html` instead of silently returning the homepage with a 200.
+`/products/sellstuff` is still redirected to its richer dedicated page.

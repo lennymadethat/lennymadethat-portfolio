@@ -25,7 +25,7 @@ document.documentElement.classList.add("js");
    WebGL modules light them. If a module 404s, the GPU is blocklisted, or the
    context is lost, that never happens and the page shows an empty hero and a
    400vh dead zone. Plain (non-module) script so it runs even if the modules do
-   not. 4200ms clears the 3.0s quench, so a working animation is untouched. */
+   not. 2600ms clears the 1.5s quench, so a working animation is untouched. */
 window.addEventListener("load", function () {
   setTimeout(function () {
     var f = document.querySelector(".forge");
@@ -34,7 +34,7 @@ window.addEventListener("load", function () {
     if (b && !b.classList.contains("is-live") && !b.classList.contains("is-static")) {
       b.classList.add("is-static");
     }
-  }, 4200);
+  }, 2600);
 });</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,6 +63,7 @@ window.addEventListener("load", function () {
         <li><a href="#agents">Agents</a></li>
         <li><a href="#infra">Infrastructure</a></li>
         <li><a href="#shop">Downloads</a></li>
+        <li><a href="/resume">Résumé</a></li>
         <li><a class="nav__hire" href="#hire">Hire me</a></li>
       </ul>
     </nav>
@@ -240,7 +241,7 @@ window.addEventListener("load", function () {
             <p class="door__body">Operations &amp; manufacturing leadership, or AI / agent
             engineering. You’ve just seen the portfolio — grab the résumé and send a note.</p>
             <div class="door__ctas">
-              <a class="btn btn--primary" href="resume.json">Résumé (JSON)</a>
+              <a class="btn btn--primary" href="/resume">Read the résumé</a>
               <a class="btn btn--ghost" href="mailto:hello@lennymadethat.com?subject=Role%20for%20Lenny">Email me</a>
             </div>
           </div>
