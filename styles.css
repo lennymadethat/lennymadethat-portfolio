@@ -1074,3 +1074,8 @@ a:focus-visible, button:focus-visible {
   .cv-proj { border: 1px solid #bbb; }
   a { text-decoration: none; color: #000; }
 }
+
+/* Ghost buttons in the dark sticky header inherited body ink — dark on dark.
+   Scope them to the on-ink text colour (the hero already did this locally). */
+.site-header .btn--ghost { color: var(--text-on-ink); border-color: rgba(237, 235, 228, 0.35); }
+.site-header .btn--ghost:hover { color: var(--safety); border-color: var(--safety); }
