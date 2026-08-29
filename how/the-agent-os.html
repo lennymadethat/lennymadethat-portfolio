@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How the agent OS works — lennymadethat</title>
+  <meta name="description" content="A working AI operating system for one person: a shared memory vault, a fleet of named agents on real schedules, and a phone that can pick up any of it. How it is built, what it costs, and what breaks." />
+  <link rel="canonical" href="https://lennymadethat.com/how/the-agent-os" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Lenny Made That" />
+  <meta property="og:title" content="How the agent OS works" />
+  <meta property="og:description" content="A shared memory vault, a fleet of named agents on real schedules, and a phone that can pick up any of it. How it is built, what it costs, and what breaks." />
+  <meta property="og:url" content="https://lennymadethat.com/how/the-agent-os" />
+  <meta property="og:image" content="https://lennymadethat.com/img/hiw/hiw-map.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How the agent OS works" />
+  <meta name="twitter:description" content="A shared memory vault, a fleet of named agents on real schedules, and a phone that can pick up any of it." />
+  <meta name="twitter:image" content="https://lennymadethat.com/img/hiw/hiw-map.png" />
+  <meta name="theme-color" content="#14181B" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314181B'/%3E%3Crect x='7' y='20' width='18' height='4' rx='1' fill='%23EDEBE4'/%3E%3Crect x='7' y='14' width='18' height='4' rx='1' fill='%23EDEBE4'/%3E%3Crect x='10' y='8' width='15' height='4' rx='1' fill='%23F04D23'/%3E%3C/svg%3E" />
+  <script>try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__brand" href="/" aria-label="Lenny — home">lenny<span class="nav__brand-accent">madethat</span></a>
+      <a class="btn btn--ghost" href="/#line">The line</a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <section class="wp-hero">
+      <div class="container container--narrow">
+        <p class="section__eyebrow spec">HOW IT WORKS · 01</p>
+        <h1 class="wp-title">The agent OS</h1>
+        <p class="wp-standfirst">Most of what I have built runs on one thing: a shared
+        memory every agent reads and writes, a crew of named workers that run on
+        schedules whether I am at the desk or not, and a phone that can pick up any
+        session mid-thought. This is how that actually works — including the parts
+        that break.</p>
+        <p class="spec wp-meta">DESIGNED, BUILT AND RUN BY ONE PERSON · RUNNING DAILY</p>
+      </div>
+    </section>
+
+    <article class="wp">
+      <div class="container container--narrow">
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">01 · WHAT IT IS</p>
+          <h2 class="wp-h2">A crew, not a chatbot.</h2>
+          <p>The difference that matters is standing work. A chat assistant answers when
+          spoken to and forgets. This is a set of named agents with jobs, schedules, and a
+          shared place to put what they learn — the Ingester reads whatever lands in the
+          inbox, the Harvester turns long video into briefings, the Sentinel watches for
+          changes worth knowing about, RICO drafts in my voice, and so on.</p>
+          <p>They are not separate products bolted together. They are separate workers
+          pointed at one memory. That single decision is what makes the whole thing behave
+          like an operating system instead of a folder of scripts.</p>
+          <figure class="wp-fig">
+            <img src="/img/hiw/hiw-map.png" alt="System diagram: a central hexagon labelled The Vault, with six agent nodes — Ingester, Harvester, Sentinel, RICO, Scout, Coach — connected around it, and a phone connected by a dotted line." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">THE VAULT AT THE CENTRE · EVERY AGENT READS AND WRITES THE SAME MEMORY</figcaption>
+          </figure>
+        </section>
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">02 · THE MEMORY</p>
+          <h2 class="wp-h2">One source of truth, or it does not work.</h2>
+          <p>The vault is a structured markdown knowledge base backed by a database with
+          semantic search. Project pages, decisions, session logs, methodology. Agents read
+          it before they act and write to it after, which means I never re-explain context
+          and no two agents hold different versions of the same fact.</p>
+          <p>It is exposed to any AI assistant over the Model Context Protocol, so the same
+          memory is reachable from a terminal, a browser, or a phone without a bespoke
+          integration per surface. The unglamorous half is discipline: one page per project
+          that is rewritten rather than appended, so retrieval ranks current state above
+          history.</p>
+        </section>
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">03 · THE INTAKE LINE</p>
+          <h2 class="wp-h2">Drop anything in one inbox.</h2>
+          <p>Notes, PDFs, images, audio, video. A sorter classifies each file to a project,
+          extracts its text, renders a thumbnail, and files it — writing one row to a shared
+          events table so every surface can show the same history.</p>
+          <p>The interesting case is a scan with no text layer, which used to be detected as
+          unreadable and filed with an empty extract anyway — the worst kind of failure,
+          because it looks like success. Now, when text extraction returns under about forty
+          characters, the page is rasterised and passed to a vision model instead. Roughly
+          eighteen seconds, and no metered spend.</p>
+          <figure class="wp-fig">
+            <img src="/img/hiw/hiw-intake.png" alt="Pipeline diagram: Drop, Classify, Extract, Thumbnail, Filed, with a branch from Extract labelled No Text Layer leading to Vision." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">THE INTAKE PIPELINE · THE VISION BRANCH IS WHAT SAVES SCANNED PAPER</figcaption>
+          </figure>
+        </section>
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">04 · THE PART I AM PROUDEST OF</p>
+          <h2 class="wp-h2">Two engines. One contract.</h2>
+          <p>There are two separate processors. One runs on my workstation and handles
+          everything while the machine is on. The other runs in the cloud on a schedule, for
+          when it is not. They are built differently, they have different front doors, and
+          they use different brains.</p>
+          <p>They write the <em>same</em> events table, in the same shape. That is the whole
+          trick: because the output contract is identical, every surface downstream is
+          indifferent to which engine did the work, and either can be worked on or taken
+          offline without touching the other. When something looks wrong, the first
+          diagnostic question is simply which engine produced the row.</p>
+          <figure class="wp-fig">
+            <img src="/img/hiw/hiw-engines.png" alt="Convergence diagram: a Workstation column marked Always On and a Cloud column marked PC Off, both flowing into a single box labelled One Events Table." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">DIFFERENT ENGINES, IDENTICAL OUTPUT · THE SURFACES NEVER NEED TO KNOW</figcaption>
+          </figure>
+        </section>
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">05 · COST</p>
+          <h2 class="wp-h2">Free by construction, not by discipline.</h2>
+          <p>This runs at effectively no marginal cost, and that is an architectural
+          property rather than a habit. The default brain is a local CLI covered by a
+          flat-rate subscription, behind it a chain of fallbacks, and at the end of the
+          chain a model running on the workstation itself.</p>
+          <p>The safeguard that actually holds is a hard flag that makes metered APIs
+          <em>unreachable by construction</em> — not merely discouraged, not a warning in a
+          README. Kill switches for each provider live in the settings screen. The rule I
+          enforce above all others is that exactly one automatic brain may be armed at a
+          time, because two live paths means paying twice for the same work.</p>
+        </section>
+
+        <section class="wp-sec wp-sec--limits">
+          <p class="wp-lead spec">06 · HONESTLY</p>
+          <h2 class="wp-h2">What breaks.</h2>
+          <p>Every system like this has sharp edges, and a page that hides them is
+          marketing. These are the current ones:</p>
+          <ul class="wp-list">
+            <li><strong>Cloud storage is the weak dependency.</strong> The file front door
+            sits on a sync client that died twice in fourteen hours. Both times the process
+            was simply gone. Nothing watched it, and a watchdog is the top of the backlog.</li>
+            <li><strong>A verifier that cannot tell two failures apart.</strong> When it
+            checks that a page was written, an unreachable drive and a file that was never
+            created return the same empty answer — so an outage reads as though the model
+            lied. The outcome is safe; the report is misleading.</li>
+            <li><strong>One health probe covers two ingresses.</strong> A break in the
+            unwatched one would go unnoticed. Not yet observed, which is not the same as
+            fixed.</li>
+            <li><strong>The classifier's project list is thin.</strong> Documents about newer
+            projects get a weak guess, because the hint list has not kept up with what I have
+            built.</li>
+            <li><strong>The file store has no undo.</strong> It is not version-controlled, so
+            bulk writes are snapshotted first. That is a procedure, and procedures are weaker
+            than mechanisms.</li>
+          </ul>
+          <p>Most of these share a shape worth naming: the system is good at doing the work
+          and worse at knowing when it did not. That is where the next round of effort goes.</p>
+        </section>
+
+        <section class="wp-sec">
+          <h2 class="wp-h2">Under the hood</h2>
+          <div class="wp-table-wrap">
+            <table class="wp-table">
+              <tbody>
+                <tr><th scope="row">Memory</th><td>Structured markdown knowledge base, database-backed, semantic search, exposed over Model Context Protocol</td></tr>
+                <tr><th scope="row">Agents</th><td>Named workers with individual jobs and schedules; scheduled runs continue with the machine off</td></tr>
+                <tr><th scope="row">Intake</th><td>Single inbox; classify, extract, thumbnail, file; vision fallback for scans with no text layer</td></tr>
+                <tr><th scope="row">Engines</th><td>Local always-on processor and cloud cron processor writing one identical events table</td></tr>
+                <tr><th scope="row">Brains</th><td>Subscription-backed local CLI first, provider fallback chain, on-device model last</td></tr>
+                <tr><th scope="row">Spend control</th><td>Metered APIs unreachable by construction; per-provider kill switches; one armed brain at a time</td></tr>
+                <tr><th scope="row">Remote</th><td>Phone surface that resumes any desk session mid-thought</td></tr>
+                <tr><th scope="row">Marginal cost</th><td>Effectively zero</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="wp-sec wp-cta">
+          <h2 class="wp-h2">Want the rest?</h2>
+          <p>The agents, platforms and infrastructure this runs are all on the line, and the
+          résumé is one click away.</p>
+          <div class="cv-actions">
+            <a class="btn btn--primary" href="/#line">Walk the line</a>
+            <a class="btn btn--ghost" href="/resume">Read the résumé</a>
+            <a class="btn btn--ghost" href="mailto:hello@lennymadethat.com?subject=Role%20for%20Lenny">Email me</a>
+          </div>
+        </section>
+
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p class="spec">LENNYMADETHAT · SAN DIEGO, CA</p>
+      <p class="spec"><a href="mailto:hello@lennymadethat.com">HELLO@LENNYMADETHAT.COM</a> ·
+      <a href="https://github.com/lennymadethat" target="_blank" rel="noopener">GITHUB</a></p>
+    </div>
+  </footer>
+</body>
+</html>
