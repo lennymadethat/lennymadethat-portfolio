@@ -92,6 +92,16 @@
       });
     }, { threshold: 0.2, rootMargin: "0px 0px -6% 0px" });
     cards.forEach(function (c) { io.observe(c); });
+
+    /* Safety net: the cards start at opacity 0 and only the observer reveals
+       them, so an observer that exists but never fires leaves an empty shelf.
+       Reveal anything still hidden after 3s — a visitor must never meet a
+       blank crew. Cards already clocked in are untouched. */
+    setTimeout(function () {
+      cards.forEach(function (c) {
+        if (!c.classList.contains("is-in")) c.classList.add("is-in");
+      });
+    }, 3000);
   })();
 
   // ─────────────── Platform card 3D tilt + spotlight ───────────────
