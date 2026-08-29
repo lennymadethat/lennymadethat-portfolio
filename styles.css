@@ -1181,3 +1181,61 @@ a:focus-visible, button:focus-visible {
   border-bottom: 1px solid rgba(240, 77, 35, 0.4); padding-bottom: 2px;
 }
 .line__hiw a:hover { border-bottom-color: var(--safety); }
+
+/* ═══════════════════════════════════════════════════════════════
+   THE CLAIM — the one-line answer, straight after the hero.
+   ═══════════════════════════════════════════════════════════════ */
+.claim { background: var(--ink-2); border-bottom: 1px solid var(--hairline-dark); padding: 34px 0; }
+.claim__line {
+  color: var(--text-on-ink); margin: 0 0 18px; max-width: 54ch;
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem); line-height: 1.45; font-weight: 500;
+}
+.claim__facts { list-style: none; display: flex; flex-wrap: wrap; gap: 10px 8px; margin: 0; padding: 0; }
+.claim__fact {
+  display: inline-block; padding: 6px 12px;
+  border: 1px solid rgba(237, 235, 228, 0.22); border-radius: 999px;
+  color: var(--steel-soft);
+}
+.claim__facts li:first-child .claim__fact { border-color: var(--safety); color: var(--safety); }
+
+/* ═══════════════════════════════════════════════════════════════
+   THE LONG READS — explainer entry cards.
+   ═══════════════════════════════════════════════════════════════ */
+.reads { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.read {
+  display: block; text-decoration: none;
+  background: var(--ink-2); border: 1px solid var(--hairline-dark);
+  border-radius: var(--radius-plate); padding: 26px 24px 22px;
+  transition: border-color 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.read:hover { border-color: var(--safety); transform: translateY(-3px); }
+.read__kicker { color: var(--safety); margin: 0 0 10px; }
+.read__title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem); letter-spacing: -0.01em;
+  text-transform: uppercase; color: var(--text-on-ink); margin: 0 0 12px; line-height: 1.1;
+}
+.read__body { color: rgba(237, 235, 228, 0.74); margin: 0 0 16px; line-height: 1.55; }
+.read__cta { color: var(--safety); }
+
+/* ═══════════════════════════════════════════════════════════════
+   THE THREAD — left-edge progress line on long reads. Demonstrates
+   position in the argument; no decorative parallax. Adapted from the
+   Assembly Floor signature.
+   ═══════════════════════════════════════════════════════════════ */
+.wp { position: relative; }
+.wp-thread {
+  position: fixed; left: 0; top: 0; width: 3px; height: 100vh;
+  background: var(--hairline); z-index: 40; pointer-events: none;
+}
+.wp-thread__fill {
+  width: 100%; height: 0; background: var(--safety);
+  transition: height 0.12s linear;
+}
+@media (max-width: 720px) { .wp-thread { width: 2px; } }
+@media (prefers-reduced-motion: reduce) { .wp-thread__fill { transition: none; } }
+
+/* the brain rig, when embedded in a long read rather than the homepage */
+.wp-sec--brain { padding-top: 0; }
+.wp-sec--brain .brain-copy__title { color: var(--heading); }

@@ -11,11 +11,11 @@
   <meta property="og:title" content="How the agent OS works" />
   <meta property="og:description" content="A shared memory vault, a fleet of named agents on real schedules, and a phone that can pick up any of it. How it is built, what it costs, and what breaks." />
   <meta property="og:url" content="https://lennymadethat.com/how/the-agent-os" />
-  <meta property="og:image" content="https://lennymadethat.com/img/hiw/hiw-map.png" />
+  <meta property="og:image" content="https://lennymadethat.com/img/hiw/os-01-map.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="How the agent OS works" />
   <meta name="twitter:description" content="A shared memory vault, a fleet of named agents on real schedules, and a phone that can pick up any of it." />
-  <meta name="twitter:image" content="https://lennymadethat.com/img/hiw/hiw-map.png" />
+  <meta name="twitter:image" content="https://lennymadethat.com/img/hiw/os-01-map.png" />
   <meta name="theme-color" content="#14181B" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314181B'/%3E%3Crect x='7' y='20' width='18' height='4' rx='1' fill='%23EDEBE4'/%3E%3Crect x='7' y='14' width='18' height='4' rx='1' fill='%23EDEBE4'/%3E%3Crect x='10' y='8' width='15' height='4' rx='1' fill='%23F04D23'/%3E%3C/svg%3E" />
   <script>try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
@@ -24,6 +24,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css" />
+  <script>window.addEventListener("load",function(){setTimeout(function(){
+    var b=document.querySelector(".brain");
+    if(b&&!b.classList.contains("is-live")&&!b.classList.contains("is-static"))b.classList.add("is-static");
+  },2600);});</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -64,8 +68,8 @@
           pointed at one memory. That single decision is what makes the whole thing behave
           like an operating system instead of a folder of scripts.</p>
           <figure class="wp-fig">
-            <img src="/img/hiw/hiw-map.png" alt="System diagram: a central hexagon labelled The Vault, with six agent nodes — Ingester, Harvester, Sentinel, RICO, Scout, Coach — connected around it, and a phone connected by a dotted line." width="1376" height="768" loading="lazy" />
-            <figcaption class="spec">THE VAULT AT THE CENTRE · EVERY AGENT READS AND WRITES THE SAME MEMORY</figcaption>
+            <img src="/img/hiw/os-01-map.png" alt="Infographic: documents, scans, audio, video and notes flowing into a central vault, which the six agents — Ingester, Harvester, Sentinel, RICO, Scout and Coach — both read from and write to, reachable from any surface." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">ONE MEMORY, MANY WORKERS</figcaption>
           </figure>
         </section>
 
@@ -83,6 +87,31 @@
           history.</p>
         </section>
 
+        <section class="wp-sec wp-sec--brain">
+      <div class="brain">
+        <div class="brain-scroll">
+          <div class="brain-stage">
+            <canvas id="brain-canvas" aria-hidden="true"></canvas>
+            <div class="brain-copy" data-beat="0">
+              <p class="brain-copy__eyebrow spec">INFRA 01 · THE BRAIN</p>
+              <h3 class="brain-copy__title">One memory. Every agent.</h3>
+              <p class="brain-copy__body">A knowledge vault the whole crew reads and
+              writes — decisions, project state, hard-won lessons. Nothing gets
+              re-explained. A session ends; the memory doesn't.</p>
+            </div>
+            <div class="brain-copy" data-beat="1">
+              <p class="brain-copy__eyebrow spec">INFRA 02 · THE PULSE</p>
+              <h3 class="brain-copy__title">It thinks while the computer is off.</h3>
+              <p class="brain-copy__body">A market data engine recomputes the entire
+              US market every night in the cloud — end to end, unattended. The
+              platforms above wake up already knowing.</p>
+            </div>
+            <p class="brain-cue spec" aria-hidden="true">SCROLL · TAP THE BRAIN — IT THINKS</p>
+          </div>
+        </div>
+      </div>
+        </section>
+
         <section class="wp-sec">
           <p class="wp-lead spec">03 · THE INTAKE LINE</p>
           <h2 class="wp-h2">Drop anything in one inbox.</h2>
@@ -95,8 +124,8 @@
           characters, the page is rasterised and passed to a vision model instead. Roughly
           eighteen seconds, and no metered spend.</p>
           <figure class="wp-fig">
-            <img src="/img/hiw/hiw-intake.png" alt="Pipeline diagram: Drop, Classify, Extract, Thumbnail, Filed, with a branch from Extract labelled No Text Layer leading to Vision." width="1376" height="768" loading="lazy" />
-            <figcaption class="spec">THE INTAKE PIPELINE · THE VISION BRANCH IS WHAT SAVES SCANNED PAPER</figcaption>
+            <img src="/img/hiw/os-02-intake.png" alt="Infographic: a file lands in one inbox, is classified to a project, is read even with no text layer, gets a thumbnail, and is filed where every surface can see it." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">ONE INBOX · NOTHING ARRIVES UNNOTICED</figcaption>
           </figure>
         </section>
 
@@ -113,8 +142,8 @@
           offline without touching the other. When something looks wrong, the first
           diagnostic question is simply which engine produced the row.</p>
           <figure class="wp-fig">
-            <img src="/img/hiw/hiw-engines.png" alt="Convergence diagram: a Workstation column marked Always On and a Cloud column marked PC Off, both flowing into a single box labelled One Events Table." width="1376" height="768" loading="lazy" />
-            <figcaption class="spec">DIFFERENT ENGINES, IDENTICAL OUTPUT · THE SURFACES NEVER NEED TO KNOW</figcaption>
+            <img src="/img/hiw/os-03-engines.png" alt="Infographic: a workstation engine and a cloud engine, with different strengths, both feeding one events table that every surface reads." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">DIFFERENT MACHINES, IDENTICAL OUTPUT</figcaption>
           </figure>
         </section>
 
@@ -182,7 +211,7 @@
           <p>The agents, platforms and infrastructure this runs are all on the line, and the
           résumé is one click away.</p>
           <div class="cv-actions">
-            <a class="btn btn--primary" href="/how/assembly-floor">How Assembly Floor OS works</a>
+            <a class="btn btn--primary" href="https://assemblyfloor.ianleonard1988.workers.dev" target="_blank" rel="noopener">See Assembly Floor OS</a>
             <a class="btn btn--ghost" href="/#line">Walk the line</a>
             <a class="btn btn--ghost" href="/resume">Read the résumé</a>
             <a class="btn btn--ghost" href="mailto:hello@lennymadethat.com?subject=Role%20for%20Lenny">Email me</a>
@@ -200,5 +229,7 @@
       <a href="https://github.com/lennymadethat" target="_blank" rel="noopener">GITHUB</a></p>
     </div>
   </footer>
+  <script type="module" src="/brain.js"></script>
+  <script src="/thread.js"></script>
 </body>
 </html>
