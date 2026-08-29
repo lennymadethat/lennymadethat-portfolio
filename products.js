@@ -363,6 +363,26 @@ window.PRODUCTS = [
 
   /* ─────────────── THE INFRASTRUCTURE ─────────────── */
   {
+    slug: "the-agent-os",
+    section: "infra",
+    name: "The Agent OS",
+    unit: "INFRA 00",
+    kind: "THE WHOLE SYSTEM",
+    status: "live",
+    logo: "/img/products/vault.svg",
+    hook: "One memory. A crew of workers. Any surface.",
+    what: "The operating system the rest of this line runs on: a shared memory every agent reads and writes, a crew of named workers running on real schedules whether the machine is on or not, and a phone that can pick up any session mid-thought. Two separate engines — one local, one in the cloud — write one identical record, so nothing downstream needs to know which did the work.",
+    does: [
+      "One shared memory, read and written by every agent",
+      "Named workers with their own jobs and schedules",
+      "Any file dropped in one inbox is read, classified and filed",
+      "Two engines, one identical output record",
+      "Runs at effectively zero marginal cost, by construction"
+    ],
+    tags: ["Multi-agent", "MCP", "Automation", "Infrastructure"],
+    cta: { label: "How the agent OS works", href: "/how/the-agent-os" }
+  },
+  {
     slug: "the-vault",
     section: "infra",
     name: "The Vault",
