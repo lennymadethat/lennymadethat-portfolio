@@ -15,7 +15,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SITE = "https://lennymadethat.com";
-/* Six catalog marks are SVG-only. Link-preview crawlers (X, Facebook,
+/* SEVEN product pages ship no og:image (the comment said six; counted
+   2026-08-29): assembly-floor, content-hub, personal-agents,
+   retail-investor-report, the-agent-os, the-data-engine, the-vault.
+   Their marks are SVG-only. Link-preview crawlers (X, Facebook,
    LinkedIn, Slack) will not render SVG, and borrowing another product's PNG
    would preview the wrong brand — so those pages ship no og:image and degrade
    to a text summary card. TODO: generate a real 1200x630 card per product. */
