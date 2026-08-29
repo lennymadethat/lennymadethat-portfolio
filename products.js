@@ -320,14 +320,14 @@ window.PRODUCTS = [
   {
     slug: "foreman",
     section: "agent",
-    name: "Foreman",
+    name: "AI Foreman",
     unit: "AGENT 09",
     kind: "THE FLOOR BOSS",
     status: "live",
     logo: "/img/products/assembly-floor.svg",
     art: "/img/agents/foreman.png",
     hook: "Runs the floor inside Assembly Floor OS.",
-    what: "The assistant inside Assembly Floor OS. Foreman reads the same source of truth the factory runs on — jobs, sites, devices, paperwork — and answers like someone who's actually walked the floor. Ask what's late, what's idle, what changed overnight; get an answer from the operation's own data.",
+    what: "The AI assistant inside Assembly Floor OS. The AI Foreman reads the same source of truth the factory runs on — jobs, sites, devices, paperwork — and answers like someone who's actually walked the floor. Ask what's late, what's idle, what changed overnight; get an answer from the operation's own data.",
     does: [
       "Reads the operation's live source of truth",
       "Answers floor questions from real data",
