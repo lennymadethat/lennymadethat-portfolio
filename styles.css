@@ -1086,3 +1086,98 @@ a:focus-visible, button:focus-visible {
 .nf-body { min-height: 100dvh; display: flex; flex-direction: column; }
 .nf-body main { flex: 1 0 auto; display: flex; align-items: center; }
 .nf-body .site-footer { margin-top: auto; }
+
+/* ═══════════════════════════════════════════════════════════════
+   WHITE PAPER  (/how/*) — long-form explainers. Narrow measure,
+   one accent, figures allowed to breathe. Same tokens as the site.
+   ═══════════════════════════════════════════════════════════════ */
+.wp-hero {
+  background: var(--ink);
+  color: var(--text-on-ink);
+  padding: 84px 0 64px;
+  border-bottom: 1px solid var(--hairline-dark);
+}
+.wp-title {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(2.6rem, 8vw, 5rem);
+  letter-spacing: -0.03em; line-height: 0.98;
+  text-transform: uppercase; color: var(--text-on-ink);
+  margin: 6px 0 20px;
+}
+.wp-standfirst {
+  font-size: clamp(1.05rem, 2.2vw, 1.28rem);
+  line-height: 1.55; color: rgba(237, 235, 228, 0.82);
+  max-width: 60ch; margin: 0 0 22px;
+}
+.wp-meta { color: var(--steel-soft); }
+
+.wp { padding: 8px 0 76px; background: var(--paper); }
+.wp-sec { padding: 54px 0 0; }
+.wp-lead { color: var(--safety); margin-bottom: 10px; }
+.wp-h2 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  letter-spacing: -0.015em; line-height: 1.08;
+  text-transform: uppercase; color: var(--heading);
+  margin: 0 0 18px;
+}
+.wp p { color: var(--text); line-height: 1.66; max-width: 64ch; margin: 0 0 16px; }
+.wp p em { color: var(--heading); font-style: normal; font-weight: 600; }
+
+.wp-fig { margin: 30px 0 8px; }
+.wp-fig img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-plate);
+  background: var(--ink);
+}
+.wp-fig figcaption { margin-top: 10px; color: var(--steel); }
+
+.wp-list { margin: 0 0 16px 1.05em; padding: 0; max-width: 64ch; }
+.wp-list li { color: var(--text); line-height: 1.6; margin-bottom: 12px; }
+.wp-list strong { color: var(--heading); }
+
+.wp-sec--limits {
+  border-left: 3px solid var(--safety);
+  padding-left: 22px; margin-top: 54px;
+}
+
+.wp-table-wrap { overflow-x: auto; }
+.wp-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.wp-table th, .wp-table td {
+  text-align: left; vertical-align: top; padding: 13px 14px;
+  border-bottom: 1px solid var(--hairline);
+}
+.wp-table th {
+  font-family: var(--font-spec); font-size: 0.72rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--steel); white-space: nowrap; width: 34%;
+}
+.wp-table td { color: var(--text); line-height: 1.55; }
+
+.wp-cta { border-top: 1px solid var(--hairline); margin-top: 54px; padding-top: 44px; }
+
+@media (max-width: 720px) {
+  .wp-hero { padding: 56px 0 44px; }
+  .wp-sec { padding-top: 40px; }
+  .wp-sec--limits { padding-left: 16px; }
+  .wp-table th { width: auto; white-space: normal; }
+}
+
+/* Entry point from the Infrastructure shelf into the white paper. */
+.infra-hiw {
+  margin-top: 34px; padding-top: 26px;
+  border-top: 1px solid var(--hairline-dark);
+  display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px;
+}
+.infra-hiw__lead { margin: 0; max-width: 46ch; color: var(--text-on-ink); opacity: 0.86; }
+
+/* Explainer link sitting under a shelf heading. */
+.line__hiw { margin: 8px 0 0; }
+.line__hiw a {
+  font-family: var(--font-spec); font-size: 0.74rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--safety); text-decoration: none;
+  border-bottom: 1px solid rgba(240, 77, 35, 0.4); padding-bottom: 2px;
+}
+.line__hiw a:hover { border-bottom-color: var(--safety); }

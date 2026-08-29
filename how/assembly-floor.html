@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How Assembly Floor OS works — lennymadethat</title>
+  <meta name="description" content="A company operating system for manufacturers, built by the person running the production floor it was built for. One record the floor and the office both read, an assistant wired to that same record, and an honest account of what it does not do." />
+  <link rel="canonical" href="https://lennymadethat.com/how/assembly-floor" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Lenny Made That" />
+  <meta property="og:title" content="How Assembly Floor OS works" />
+  <meta property="og:description" content="A company operating system for manufacturers, built by the person running the floor. One record the floor and the office both read." />
+  <meta property="og:url" content="https://lennymadethat.com/how/assembly-floor" />
+  <meta property="og:image" content="https://lennymadethat.com/img/hiw/34-os-master.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="How Assembly Floor OS works" />
+  <meta name="twitter:description" content="A company operating system for manufacturers, built by the person running the floor." />
+  <meta name="twitter:image" content="https://lennymadethat.com/img/hiw/34-os-master.webp" />
+  <meta name="theme-color" content="#14181B" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314181B'/%3E%3Crect x='7' y='20' width='18' height='4' rx='1' fill='%23EDEBE4'/%3E%3Crect x='7' y='14' width='18' height='4' rx='1' fill='%23EDEBE4'/%3E%3Crect x='10' y='8' width='15' height='4' rx='1' fill='%23F04D23'/%3E%3C/svg%3E" />
+  <script>try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documentElement.setAttribute("data-theme",_t);}catch(e){}</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__brand" href="/" aria-label="Lenny — home">lenny<span class="nav__brand-accent">madethat</span></a>
+      <a class="btn btn--ghost" href="/#line">The line</a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <section class="wp-hero">
+      <div class="container container--narrow">
+        <p class="section__eyebrow spec">HOW IT WORKS · 02</p>
+        <h1 class="wp-title">Assembly Floor OS</h1>
+        <p class="wp-standfirst">A company operating system for manufacturers — written by
+        the person who was running the production floor it was written for. Not a software
+        company's guess at the work. The work, then the software.</p>
+        <p class="spec wp-meta">BUILT INSIDE A WASTEWATER INSTRUMENTATION MANUFACTURER · IN PRODUCTION USE</p>
+      </div>
+    </section>
+
+    <article class="wp">
+      <div class="container container--narrow">
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">01 · THE PROBLEM</p>
+          <h2 class="wp-h2">The floor and the office disagree.</h2>
+          <p>A production operation runs on more systems than anyone admits: paper
+          travellers, a spreadsheet somebody maintains, a whiteboard that is authoritative
+          until it is wiped, and a great deal of one person's memory. None of them are wrong
+          individually. The problem is that they never agree at the same moment.</p>
+          <p>So the office quotes a date the floor cannot hit. Someone reorders a part that
+          is already on a shelf. A device in the field is listed as healthy because the last
+          person to touch it has not written it up yet. Every one of those is a coordination
+          failure, not an effort failure — and you cannot fix coordination failures by
+          working harder, which is exactly what most floors try first.</p>
+        </section>
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">02 · WHY THIS ONE IS DIFFERENT</p>
+          <h2 class="wp-h2">I was the operator, not the vendor.</h2>
+          <p>I did not interview operators to gather requirements. I was second in command
+          of the operation — running production day to day, the people, the throughput, the
+          cost, the quality, and the ordering — and I built this alongside doing that job.</p>
+          <p>That changes what gets built. Software written by someone who has never had to
+          answer for a missed ship date optimises for what demos well. Software written by
+          the person who <em>will</em> be answering for it optimises for the two minutes
+          before a decision gets made. The features that survived are the ones I needed on a
+          bad Tuesday, and the ones that did not survive are the ones that looked good in a
+          plan and cost time on the floor.</p>
+        </section>
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">03 · THE CORE MOVE</p>
+          <h2 class="wp-h2">One record. Everybody reads it.</h2>
+          <p>Jobs, sites and field devices go into one record, and both the floor and the
+          office read that record rather than their own copy of it. This is unglamorous and
+          it is the entire product. Nearly every operational argument I have ever had traces
+          back to two people holding different numbers and each being certain.</p>
+          <p>It matters that this is a source-of-truth design and not a reporting layer
+          bolted on top. A dashboard that reads from four systems inherits the disagreement
+          it was supposed to resolve; it just renders the disagreement more attractively.</p>
+          <figure class="wp-fig">
+            <img src="/img/hiw/34-os-master.webp" alt="Infographic: every source you already use — field forms, jobs and customers, shipping scanner, warehouse and inventory, purchasing, schedules and time clock, maintenance history, sensor telemetry — flowing into one live database called Assembly Floor OS, then through governed access, then to any AI, then answered for anyone." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">EVERY SOURCE INTO ONE LIVE RECORD · THE PRODUCT’S OWN DIAGRAM</figcaption>
+          </figure>
+        </section>
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">04 · THE PAPERWORK</p>
+          <h2 class="wp-h2">It eats what a factory actually produces.</h2>
+          <p>Every operation generates a steady volume of documents that matter and that
+          nobody has time to key in: purchase orders, packing lists, service reports, field
+          notes, photographs of a nameplate taken because it was faster than writing the
+          serial down. The usual outcome is that this material is technically retained and
+          practically unfindable.</p>
+          <p>So intake accepts the mess as it arrives, reads it — including scans with no
+          text layer, which is most of what a real operation produces — and attaches it to
+          the job, site or device it belongs to. The test is not whether it can parse a
+          clean document. The test is whether a photograph of a smudged label taken in a
+          plant room ends up on the right device record.</p>
+          <figure class="wp-fig">
+            <img src="/img/hiw/16-ingester.webp" alt="Infographic: a box arrives with its packing slip, the paper goes in the scanner, it reads itself, it is matched and filed to the job, and everyone who needs to know is told." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">ONE PHYSICAL ACT · EVERYONE WHO NEEDS TO KNOW, KNOWS</figcaption>
+          </figure>
+        </section>
+
+        <section class="wp-sec">
+          <p class="wp-lead spec">05 · THE ASSISTANT</p>
+          <h2 class="wp-h2">Pointed at the operation's own data.</h2>
+          <p>The assistant is called the AI Foreman, and the only interesting thing about it is what it
+          reads. It is wired into the same record the floor runs on — not a separate index,
+          not a copy synced on a schedule, not a general model told about your business in a
+          prompt.</p>
+          <p>That distinction is the difference between an assistant that can answer "which
+          devices at this site are overdue and what did we last ship there" and one that
+          produces a confident paragraph about manufacturing in general. If the assistant's
+          data can drift from the operational data, it will, and the first time it does the
+          floor stops trusting it permanently. Assistants do not get a second chance at
+          credibility.</p>
+          <figure class="wp-fig">
+            <img src="/img/hiw/09-assistant.webp" alt="Infographic: eight existing sources feeding one database, then governed access limiting which tables are readable, then any AI model, then questions asked by warehouse, field, office and management staff." width="1376" height="768" loading="lazy" />
+            <figcaption class="spec">GOVERNED ACCESS TO ONE RECORD · SWAPPING THE MODEL IS A CONFIG CHANGE</figcaption>
+          </figure>
+        </section>
+
+        <section class="wp-sec wp-sec--limits">
+          <p class="wp-lead spec">06 · HONESTLY</p>
+          <h2 class="wp-h2">What it is not.</h2>
+          <p>It would be easy to describe this as a full ERP replacement. It is not, and
+          claiming so to an operations audience is how you lose them in the first meeting:</p>
+          <ul class="wp-list">
+            <li><strong>It is not an ERP or an accounting system.</strong> It does not run
+            your general ledger, your payroll, or your statutory reporting, and it is not
+            trying to.</li>
+            <li><strong>It does not schedule the floor for you.</strong> It makes the state
+            of the floor visible and shared. The judgement about what to run next is still a
+            human one, and I would be suspicious of any product that claimed otherwise.</li>
+            <li><strong>An empty tenant is still a real setup job.</strong> Bootstrapping a
+            new operation from nothing is the open piece of product work, and pretending
+            onboarding is trivial is the most common lie in this category.</li>
+            <li><strong>Custom scope is a change order, not a feature.</strong> Deliberately.
+            An operations tool that bends to every request becomes an unmaintainable fork per
+            customer, and then nobody gets fixes.</li>
+          </ul>
+          <p>The origin is anonymised here on purpose. The system runs inside a live
+          manufacturer, and the specifics of that business are theirs, not mine to publish.</p>
+        </section>
+
+        <section class="wp-sec">
+          <h2 class="wp-h2">Under the hood</h2>
+          <div class="wp-table-wrap">
+            <table class="wp-table">
+              <tbody>
+                <tr><th scope="row">Shape</th><td>Multi-tenant company operating system for manufacturing and field operations</td></tr>
+                <tr><th scope="row">Core objects</th><td>Jobs, sites, field devices — one shared record rather than per-team copies</td></tr>
+                <tr><th scope="row">Consoles</th><td>Devices, memory, intake, and shipping stations, each a door into the same record</td></tr>
+                <tr><th scope="row">Intake</th><td>Accepts operational paperwork including scans with no text layer; attaches to the right object</td></tr>
+                <tr><th scope="row">Assistant</th><td>Reads the operational record directly — no separate index to drift</td></tr>
+                <tr><th scope="row">Platform</th><td>Edge workers, static front end, no framework; durable copy of every inbound submission</td></tr>
+                <tr><th scope="row">Accessibility</th><td>Reduced-motion visitors get a complete static page, not a degraded one</td></tr>
+                <tr><th scope="row">Origin</th><td>Built inside a live wastewater instrumentation manufacturer, then rebuilt to sell</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="wp-sec wp-cta">
+          <h2 class="wp-h2">The rest of the line</h2>
+          <p>The agent infrastructure underneath this, the other platforms, and the résumé.</p>
+          <div class="cv-actions">
+            <a class="btn btn--primary" href="/how/the-agent-os">How the agent OS works</a>
+            <a class="btn btn--ghost" href="/#line">Walk the line</a>
+            <a class="btn btn--ghost" href="/resume">Read the résumé</a>
+          </div>
+        </section>
+
+      </div>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p class="spec">LENNYMADETHAT · SAN DIEGO, CA</p>
+      <p class="spec"><a href="mailto:hello@lennymadethat.com">HELLO@LENNYMADETHAT.COM</a> ·
+      <a href="https://github.com/lennymadethat" target="_blank" rel="noopener">GITHUB</a></p>
+    </div>
+  </footer>
+</body>
+</html>

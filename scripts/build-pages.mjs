@@ -295,7 +295,12 @@ function build404() {
 
 /* ── 4. sitemap + robots ──────────────────────────────────────── */
 function buildSitemap() {
-  const urls = [SITE + "/", SITE + "/resume"].concat(PRODUCTS.map((p) => SITE + "/products/" + p.slug));
+  /* hand-authored long-form explainers live in /how — listed here so they are
+     crawlable; add each new one as it ships. */
+  const HOW = ["/how/the-agent-os", "/how/assembly-floor"];
+  const urls = [SITE + "/", SITE + "/resume"]
+    .concat(HOW.map((h) => SITE + h))
+    .concat(PRODUCTS.map((p) => SITE + "/products/" + p.slug));
   w("sitemap.xml",
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
