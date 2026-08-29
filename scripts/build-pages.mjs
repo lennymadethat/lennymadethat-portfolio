@@ -297,7 +297,7 @@ function build404() {
 function buildSitemap() {
   /* hand-authored long-form explainers live in /how — listed here so they are
      crawlable; add each new one as it ships. */
-  const HOW = ["/how/the-agent-os"];
+  const HOW = ["/how/the-agent-os", "/how/assembly-floor"];
   const urls = [SITE + "/", SITE + "/resume"]
     .concat(HOW.map((h) => SITE + h))
     .concat(PRODUCTS.map((p) => SITE + "/products/" + p.slug));
