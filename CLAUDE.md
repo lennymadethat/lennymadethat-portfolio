@@ -54,8 +54,8 @@ sensitive, never after.
 
 | Surface | Branch | URL | Status |
 |---|---|---|---|
-| Dev site | `dev` | `https://dev.lennymadethat.com` (custom domain) — until wired: `https://dev.lennymadethat-portfolio.pages.dev` | ⚠️ custom domain pending CF dashboard/DNS |
-| Live site | `main` | `https://lennymadethat.com` + `https://www.lennymadethat.com` | ⚠️ apex + www pending CF dashboard/DNS + Squarespace cutover |
+| Dev site | `dev` | `https://dev.lennymadethat-portfolio.pages.dev` | ✅ live, auto-deploys on push to `dev` |
+| Live site | `main` | `https://lennymadethat.com` + `https://www.lennymadethat.com` | ✅ **LIVE since 2026-08-28.** Apex + www are CNAMEs to `lennymadethat-portfolio.pages.dev`, proxied. Squarespace is gone. **Cloudflare Email Routing MX + SPF must never be touched** — they carry `hello@lennymadethat.com`. |
 
 The `*.pages.dev` branch URLs work as soon as the Cloudflare Pages project is
 connected to GitHub. Custom domains require dashboard + DNS steps (see below).
@@ -71,7 +71,7 @@ connected to GitHub. Custom domains require dashboard + DNS steps (see below).
 - Git integration auto-deploys: push to `main` → live; push to any other branch
   (incl. `dev`) → a preview deploy. The `dev` branch preview is the dev site.
 
-### One-time dashboard/DNS setup (NOT automatable via wrangler CLI here)
+### DNS / custom-domain setup — DONE (2026-08-28), kept for reference
 
 Connecting a Pages project to a GitHub repo and attaching custom domains must be
 done in the Cloudflare dashboard. See `DEPLOY-CHECKLIST.md` in this repo for the
@@ -88,9 +88,11 @@ from it:
 
 - `index.html` + `script.js` — landing: hero, THE LINE plate grid, story, proof
   (live data-engine readout), THE AGENT SHOP, hire doors.
-- `product.html` + `product.js` — one template for all product detail pages.
-  Clean URLs via `_redirects` (`/products/* → /product.html 200`); slug resolved
-  from the path, `?p=slug` as fallback. Unknown slug redirects home.
+- `product.html` + `product.js` — the template all product detail pages hydrate
+  from. Each slug also has a GENERATED `products/<slug>.html` (see the builder
+  section below) carrying the real `<title>` and Open Graph tags; Pages serves it
+  directly, so there is no `/products/*` catch-all any more and an unknown slug
+  correctly 404s.
 - `img/products/` — logos. PlayLetter/RIR/Mothership/Yield Agents/The Desk are
   copied from their product repos; Assembly Floor, Personal Agents, Ingester, and
   Harvester are hand-authored house-style SVGs (dark plate, safety-orange detail).
@@ -105,8 +107,31 @@ edit the templates.
 
 ## Repo facts
 
-- GitHub: `retail-investor-report/lennymadethat-portfolio` (PRIVATE for now;
-  flip to PUBLIC at launch — see DEPLOY-CHECKLIST.md).
+- GitHub: `lennymadethat/lennymadethat-portfolio` — **PUBLIC since 2026-08-28**
+  (sanitization audit passed: nothing sensitive in the tree, the kit zips, or git
+  history). The gate above now applies to every commit in the open.
 - Local path: `C:\Users\lenny\Documents\lennymadethat-portfolio`
 - Stack: hand-written `index.html` + `styles.css` + `script.js`. No framework,
   no build step.
+
+## Generated pages — run the builder after editing the catalog or résumé
+
+`resume.html`, `products/<slug>.html` (one per catalog entry), `404.html`,
+`sitemap.xml`, and `robots.txt` are GENERATED, not hand-edited. They exist so
+crawlers and link-preview bots get a real `<title>`, description, and Open
+Graph tags without executing JS — `product.js` only sets `document.title`
+client-side, which those bots never see.
+
+```
+node scripts/build-pages.mjs
+```
+
+Run it after any edit to `products.js` or `resume.json`, and commit the output.
+Editing a generated file by hand will be overwritten on the next run — change
+the source or the generator instead.
+
+Routing note: `_redirects` no longer carries a `/products/* /product 200`
+catch-all. Cloudflare Pages resolves `/products/<slug>` to the generated
+`products/<slug>.html` directly, so an unknown slug now falls through to
+`404.html` instead of silently returning the homepage with a 200.
+`/products/sellstuff` is still redirected to its richer dedicated page.
