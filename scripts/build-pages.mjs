@@ -130,13 +130,27 @@ function buildResume() {
       ].join("\n"))
     .join("\n");
 
+  /* "2022-01—present" is not how a date reads on a resume. Formats YYYY-MM to
+     "Jan 2022" and leaves a bare year alone. `dateLabel` overrides entirely,
+     for entries whose real span is a single year rather than a range. */
+  const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const ymd = (v) => {
+    const m = /^(\d{4})-(\d{2})/.exec(String(v || ""));
+    return m ? MON[+m[2] - 1] + " " + m[1] : String(v || "");
+  };
+  const span = (j) => {
+    if (j.dateLabel) return esc(j.dateLabel);
+    if (!j.startDate) return "";
+    return esc(ymd(j.startDate)) + " – " + esc(j.endDate ? ymd(j.endDate) : "present");
+  };
+
   const work = (RESUME.work || [])
     .map((j) =>
       [
         '        <article class="cv-role">',
         '          <h3 class="cv-role__title">' + esc(j.position || "") + "</h3>",
         '          <p class="spec cv-role__meta">' + esc(j.name || "") +
-          (j.startDate ? " · " + esc(j.startDate) + "—" + esc(j.endDate || "present") : "") + "</p>",
+          (span(j) ? " · " + span(j) : "") + "</p>",
         j.summary ? '          <p class="cv-role__summary">' + esc(j.summary) + "</p>" : "",
         (j.highlights || []).length ? '          <ul class="cv-list">' + j.highlights.map(li).join("") + "</ul>" : "",
         "        </article>",
@@ -155,6 +169,30 @@ function buildResume() {
         "        </article>",
       ].filter((x) => x !== "").join("\n"))
     .join("\n");
+
+  /* Education and certificates were absent from the renderer entirely, so a
+     BSc and an OSHA 30 sat in nobody's view. Dates are rendered from the data
+     rather than hardcoded so resume.json stays the single source of truth. */
+  const edu = (RESUME.education || [])
+    .map((e) =>
+      [
+        '        <article class="cv-role">',
+        '          <h3 class="cv-role__title">' +
+          esc([e.studyType, e.area].filter(Boolean).join(" ")) + "</h3>",
+        '          <p class="spec cv-role__meta">' +
+          esc([e.institution, e.location].filter(Boolean).join(" · ")) +
+          (e.startDate ? " · " + esc(ymd(e.startDate)) + " – " + esc(e.endDate ? ymd(e.endDate) : "present") : "") +
+          "</p>",
+        "        </article>",
+      ].join("\n"))
+    .join("\n");
+
+  const certs = (RESUME.certificates || [])
+    .map((c) =>
+      "<li>" + esc(c.name) +
+      (c.summary ? ' <span class="spec">(' + esc(c.summary) + ")</span>" : "") +
+      "</li>")
+    .join("");
 
   const pubs = (RESUME.publications || [])
     .map((p) => '<li><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' + esc(p.name) + "</a></li>")
@@ -203,6 +241,12 @@ function buildResume() {
     '        <div class="cv-skills">',
     skills,
     "        </div>",
+    "",
+    edu ? '        <h2 class="cv-h2">Education</h2>' : "",
+    edu,
+    "",
+    certs ? '        <h2 class="cv-h2">Certificates</h2>' : "",
+    certs ? '        <ul class="cv-list">' + certs + "</ul>" : "",
     "",
     pubs ? '        <h2 class="cv-h2">Open source</h2>' : "",
     pubs ? '        <ul class="cv-list">' + pubs + "</ul>" : "",
