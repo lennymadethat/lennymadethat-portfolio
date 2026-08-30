@@ -92,7 +92,10 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+/* scroll-padding-top, not a scroll-margin on every target: the header is
+   position:sticky, so without it EVERY in-page anchor lands with its heading
+   tucked underneath the nav. One line fixes every anchor on the site. */
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
