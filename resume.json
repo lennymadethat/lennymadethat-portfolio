@@ -4,7 +4,7 @@
     "name": "Ian Leonard",
     "label": "Manufacturing Operations Leader & AI Systems Builder",
     "email": "hello@lennymadethat.com",
-    "summary": "Manufacturing operations leader and designer-turned-builder in San Diego. I run a production floor day to day — team, throughput, cost, quality, purchasing and shipping — and I design and ship the AI systems and internal tools that make a business run. Designer by training, operator by trade, and the rare one who can build the software the operation needs.",
+    "summary": "I am a manufacturing operations leader with four years experience running an OEM production facility that produces, deploys and maintains thousands of utility devices nationwide. I am an industrial designer by training with hands-on experience fabricating and installing a variety of products in different industries. I also have a passion for building software solutions and AI systems.",
     "location": {
       "city": "San Diego",
       "region": "CA",
@@ -14,37 +14,34 @@
   },
   "skills": [
     {
-      "name": "Operations leadership",
+      "name": "Operations",
       "keywords": [
-        "Manufacturing",
-        "Throughput",
-        "Cost",
-        "Quality",
-        "Process improvement",
-        "Team leadership"
+        "Project management",
+        "Communication",
+        "Purchasing and vendor management",
+        "Shipping and receiving",
+        "Hiring and training",
+        "Production management"
       ]
     },
     {
-      "name": "AI systems",
+      "name": "AI and software",
       "keywords": [
-        "AI agents",
-        "Multi-agent systems",
-        "Model Context Protocol (MCP)",
-        "Automation engineering",
-        "Retrieval / semantic search",
-        "Prompt systems",
-        "Voice modeling"
+        "AI systems and agent building",
+        "Internal tooling and automation",
+        "Web applications",
+        "Model Context Protocol (MCP)"
       ]
     },
     {
-      "name": "Product & build",
+      "name": "Design and build",
       "keywords": [
         "Industrial design",
         "Product design",
-        "Web applications",
-        "Cloudflare Workers/Pages",
-        "Supabase",
-        "dev→live pipelines"
+        "Hardware solutions design",
+        "Custom lighting and furniture",
+        "Carpentry and cabinetmaking",
+        "Site installation"
       ]
     }
   ],
@@ -170,44 +167,63 @@
     {
       "section": "current",
       "name": "Utility Systems Science + Software",
-      "position": "Head of Manufacturing",
+      "position": "Head of Manufacturing / Manufacturing Engineer",
       "startDate": "2022-01",
-      "summary": "Four years running production operations day to day: leading the production team, owning throughput, cost and quality, running purchasing and ordering, and shipping product to customers nationwide. Designer by training, operator by trade — and when the floor needed a system nobody sold, I built and deployed it without leaving the job.",
+      "summary": "Responsible for all operations related to production of products for the company — an OEM facility that produces, deploys and maintains thousands of utility devices nationwide.",
       "highlights": [
-        "Run the production floor day to day — scheduling, throughput, quality and output",
-        "Lead the production team; hire and train every technician",
-        "Own purchasing and ordering end to end",
-        "Own shipping and receiving — product goes to customers across the country",
-        "Lead hardware solutions design",
-        "Replaced the paperwork the floor ran on with a system the technicians use daily for jobs, receiving and shipping — specified, built and deployed it myself, then ran the floor on it",
-        "Turned operator complaints into working software, then owned the result in production"
+        "Day to day management of the production facility",
+        "Responsible for hiring, onboarding and training of all production technicians and local installers",
+        "Head hardware solutions designer",
+        "Built and maintain the company's AI-equipment operating system, which solves multiple pain points and improves efficiency across inventory receiving, product deployment, life-cycle tracking and maintenance"
       ]
     },
     {
       "section": "earlier",
-      "name": "Independent design and build",
-      "position": "Designer / maker — lighting, furniture, fit-out",
+      "name": "Independent Design and Fabrication",
+      "position": "Designer and Fabricator",
       "startDate": "2015",
       "endDate": "2021",
-      "summary": "Design-and-build work in New York: commissioned architectural lighting for bars and restaurants, custom furniture and built-ins, and a full off-grid home conversion inside a cargo trailer that I lived in for six months and drove from New York to San Diego.",
+      "summary": "Founded a custom fabrication practice producing industrial-style lighting fixtures and products for commercial and residential clients. I designed, built, marketed, sold and installed the work — large complex wall pieces, chandeliers, table lamps, wall sconces and more.",
       "highlights": [
-        "Commissioned lighting installations for Manhattan bars and restaurants",
-        "Custom furniture, built-ins and outdoor builds",
-        "Off-grid cargo-trailer home conversion — designed, built and lived in",
-        "Sold direct: online shop, craft fairs and markets across New York City"
+        "Executed the design and installation for various high-end bars and restaurants in Manhattan",
+        "Designed and developed the product strategy for the online shop, Instagram and Etsy accounts",
+        "Attended in-person craft shows and markets across New York City to drive sales",
+        "Completed a full off-grid conversion of a cargo trailer to a tiny home, lived in it for six months, and drove it from New York to San Diego with my dog and now wife"
       ]
     },
     {
       "section": "earlier",
-      "name": "NOTB Construction · Poliform Italian Designs · Temili Design Corp.",
-      "position": "Fabrication, install and site work",
-      "dateLabel": "2020",
+      "name": "Poliform Italian Designs",
+      "position": "Install Specialist",
       "startDate": "2020",
-      "summary": "Hands-on trade work across three New York shops and sites.",
+      "endDate": "2021",
       "highlights": [
-        "Trained install specialist for Poliform Italy kitchens and closets — site survey and dimensional verification before every install",
-        "Cabinet construction, veneering and custom furnishings",
-        "Daily quality assurance for the lead project manager"
+        "Trained specialist in the installation of prefabricated kitchens and custom closets designed by Poliform Italy",
+        "Surveyed sites before install date to ensure dimensions and design drawings were accurate",
+        "Executed floor-to-ceiling Poliform installations for Temili Design Corp. clients across New York City"
+      ]
+    },
+    {
+      "section": "earlier",
+      "name": "Temili Design Corp.",
+      "position": "Carpenter's Assistant",
+      "startDate": "2020",
+      "endDate": "2021",
+      "highlights": [
+        "Assisted in the construction of various custom furnishings for the lead designer",
+        "General carpentry, heavy lifting, cabinet construction and veneering",
+        "Hands-on experience with woodworking techniques"
+      ]
+    },
+    {
+      "section": "earlier",
+      "name": "NOTB Construction Ltd.",
+      "position": "General Laborer",
+      "startDate": "2019",
+      "endDate": "2020",
+      "highlights": [
+        "Executed custom indoor and outdoor builds, including concrete work, landscaping and general site labor",
+        "Led daily quality assurance for the lead Project Manager"
       ]
     }
   ],

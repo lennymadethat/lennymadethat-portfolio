@@ -237,6 +237,7 @@ function buildResume() {
     '          <div class="cv-actions">',
     '            <a class="btn btn--primary" href="mailto:' + esc(b.email || "") +
       '?subject=Role%20for%20Lenny">Email me</a>',
+    '            <a class="btn btn--ghost" href="/Ian_Leonard_Resume_2026.pdf" download>Download PDF</a>',
     '            <a class="btn btn--ghost" href="/resume.json">Résumé as JSON</a>',
     '            <button class="btn btn--ghost" type="button" onclick="window.print()">Print / PDF</button>',
     "          </div>",
