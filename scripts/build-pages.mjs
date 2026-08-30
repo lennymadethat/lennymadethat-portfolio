@@ -147,7 +147,11 @@ function buildResume() {
     return esc(ymd(j.startDate)) + " – " + esc(j.endDate ? ymd(j.endDate) : "present");
   };
 
-  const work = (RESUME.work || [])
+  /* Experience is split so SELECTED BUILDS can sit between the current role and
+     the older history. The builds are the qualification for the work he is
+     applying for, and there is no employer to hang them on — so they have to
+     arrive before a reader reaches lighting and cabinetry, not after. */
+  const renderWork = (list) => list
     .map((j) =>
       [
         '        <article class="cv-role">',
@@ -160,11 +164,20 @@ function buildResume() {
       ].filter((x) => x !== "").join("\n"))
     .join("\n");
 
+  const workNow = renderWork((RESUME.work || []).filter((j) => j.section !== "earlier"));
+  const workThen = renderWork((RESUME.work || []).filter((j) => j.section === "earlier"));
+
+  /* Ten product names sat here as plain text while every one of them had a live
+     page on this same site — ten dead ends on the page whose whole job is to
+     send a hiring reader deeper into the work. */
   const projects = (RESUME.projects || [])
     .map((p) =>
       [
         '        <article class="cv-proj">',
-        '          <h3 class="cv-proj__name">' + esc(p.name) + "</h3>",
+        '          <h3 class="cv-proj__name">' +
+          (p.url
+            ? '<a href="' + esc(p.url) + '">' + esc(p.name) + "</a>"
+            : esc(p.name)) + "</h3>",
         '          <p class="cv-proj__desc">' + esc(p.description) + "</p>",
         (p.keywords || []).length
           ? '          <p class="spec cv-proj__kw">' + p.keywords.map(esc).join(" · ") + "</p>"
@@ -232,13 +245,16 @@ function buildResume() {
     b.summary ? '        <p class="cv-summary">' + esc(b.summary) + "</p>" : "",
     "",
     '        <h2 class="cv-h2">Experience</h2>',
-    work,
+    workNow,
     "",
     '        <h2 class="cv-h2">Selected builds</h2>',
-    '        <p class="cv-note">Every one of these is live and walkable from <a href="/#line">the line</a> — not a description of the work, the work itself.</p>',
+    '        <p class="cv-note">Twenty-one products, fifteen live, all shipped in 2026 while running the floor full time — an app store release with paying subscribers, an investing platform on a self-running data engine, and two open-source tools. Every name below is a link to the thing itself, not a description of it.</p>',
     '        <div class="cv-projects">',
     projects,
     "        </div>",
+    "",
+    workThen ? '        <h2 class="cv-h2">Earlier experience</h2>' : "",
+    workThen,
     "",
     '        <h2 class="cv-h2">Skills</h2>',
     '        <div class="cv-skills">',

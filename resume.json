@@ -4,7 +4,7 @@
     "name": "Ian Leonard",
     "label": "Manufacturing Operations Leader & AI Systems Builder",
     "email": "hello@lennymadethat.com",
-    "summary": "Manufacturing operations leader and designer-turned-builder based in San Diego. I run production operations day to day and design and ship the AI systems, agents, and internal tools that make a business run. Designer by training, operator by trade.",
+    "summary": "Manufacturing operations leader and designer-turned-builder in San Diego. I run a production floor day to day — team, throughput, cost, quality, purchasing and shipping — and I design and ship the AI systems and internal tools that make a business run. Designer by training, operator by trade, and the rare one who can build the software the operation needs.",
     "location": {
       "city": "San Diego",
       "region": "CA",
@@ -62,7 +62,8 @@
         "Atomizes raw input into idea cards",
         "Drafts in a learned voice fingerprint",
         "Drafts-only, human approval to publish"
-      ]
+      ],
+      "url": "/products/rico"
     },
     {
       "name": "Vault Agent Fleet",
@@ -77,7 +78,8 @@
         "Sorter routes files to 8 specialized workers",
         "Multimodal: audio, video, image to text",
         "Surfaces cross-project opportunities"
-      ]
+      ],
+      "url": "/products/the-ingester"
     },
     {
       "name": "The Harvester",
@@ -87,7 +89,8 @@
         "Video understanding",
         "Research",
         "Cloud"
-      ]
+      ],
+      "url": "/products/the-harvester"
     },
     {
       "name": "The Forge",
@@ -107,7 +110,8 @@
         "Fintech",
         "Supabase",
         "Cloudflare Workers"
-      ]
+      ],
+      "url": "/products/retail-investor-report"
     },
     {
       "name": "Yield Observatory",
@@ -117,7 +121,8 @@
         "Data viz",
         "Public data",
         "Static"
-      ]
+      ],
+      "url": "/products/yield-agents"
     },
     {
       "name": "Podcast Studio",
@@ -136,7 +141,8 @@
         "Web app",
         "Operations",
         "Live sync"
-      ]
+      ],
+      "url": "/products/assembly-floor"
     },
     {
       "name": "Income Data API",
@@ -145,7 +151,8 @@
         "API",
         "Monetization",
         "Agent-ready"
-      ]
+      ],
+      "url": "/products/the-data-engine"
     },
     {
       "name": "The Vault System",
@@ -155,49 +162,53 @@
         "MCP",
         "Semantic search",
         "Infrastructure"
-      ]
+      ],
+      "url": "/products/the-vault"
     }
   ],
   "work": [
     {
+      "section": "current",
       "name": "Utility Systems Science + Software",
       "position": "Head of Manufacturing",
       "startDate": "2022-01",
-      "summary": "Four years running production operations day to day for a live manufacturing business: leading the production team, owning throughput, cost and quality, running purchasing and ordering, and shipping product to customers nationwide. Designer by training, operator by trade — and I built and deployed the operating system the floor now runs on while doing the job.",
+      "summary": "Four years running production operations day to day: leading the production team, owning throughput, cost and quality, running purchasing and ordering, and shipping product to customers nationwide. Designer by training, operator by trade — and when the floor needed a system nobody sold, I built and deployed it without leaving the job.",
       "highlights": [
         "Run the production floor day to day — scheduling, throughput, quality and output",
-        "Hire and train the technician team",
+        "Lead the production team; hire and train every technician",
         "Own purchasing and ordering end to end",
-        "Own shipping and receiving; ship product to customers across the country",
+        "Own shipping and receiving — product goes to customers across the country",
         "Lead hardware solutions design",
-        "Designed and deployed the company operating system the floor runs on",
-        "Translated operator pain into software that ships, then ran it in production"
+        "Replaced the paperwork the floor ran on with a system the technicians use daily for jobs, receiving and shipping — specified, built and deployed it myself, then ran the floor on it",
+        "Turned operator complaints into working software, then owned the result in production"
       ]
     },
     {
-      "name": "Independent maker / builder",
-      "position": "Physical builds + AI systems",
-      "startDate": "2009",
-      "summary": "Cargo-trailer tiny home (lived in 6 months, NYC → San Diego), commissioned architectural lighting for NYC bars and restaurants, custom furniture and built-ins, and production AI agents and apps. Same craftsman’s standard across maple, black pipe, and multi-agent pipelines.",
+      "section": "earlier",
+      "name": "Independent design and build",
+      "position": "Designer / maker — lighting, furniture, fit-out",
+      "startDate": "2015",
+      "endDate": "2021",
+      "summary": "Design-and-build work in New York: commissioned architectural lighting for bars and restaurants, custom furniture and built-ins, and a full off-grid home conversion inside a cargo trailer that I lived in for six months and drove from New York to San Diego.",
       "highlights": [
-        "Off-grid cargo-trailer home conversion",
-        "Architectural lighting installations for NYC bars and restaurants",
+        "Commissioned lighting installations for Manhattan bars and restaurants",
         "Custom furniture, built-ins and outdoor builds",
-        "Production AI systems and open-source builder tools"
+        "Off-grid cargo-trailer home conversion — designed, built and lived in",
+        "Sold direct: online shop, craft fairs and markets across New York City"
       ]
     },
     {
+      "section": "earlier",
       "name": "NOTB Construction · Poliform Italian Designs · Temili Design Corp.",
       "position": "Fabrication, install and site work",
+      "dateLabel": "2020",
       "startDate": "2020",
-      "summary": "Hands-on trade work across three New York shops and sites: custom indoor and outdoor builds, precision installation of Italian prefab kitchens and closets, and custom furniture fabrication.",
+      "summary": "Hands-on trade work across three New York shops and sites.",
       "highlights": [
         "Trained install specialist for Poliform Italy kitchens and closets — site survey and dimensional verification before every install",
-        "Floor-to-ceiling installations for clients across New York City",
         "Cabinet construction, veneering and custom furnishings",
-        "Daily quality assurance for the lead project manager on custom builds"
-      ],
-      "dateLabel": "2020"
+        "Daily quality assurance for the lead project manager"
+      ]
     }
   ],
   "publications": [
