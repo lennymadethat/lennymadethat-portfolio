@@ -1295,3 +1295,75 @@ a:focus-visible, button:focus-visible {
 /* the brain rig, when embedded in a long read rather than the homepage */
 .wp-sec--brain { padding-top: 0; }
 .wp-sec--brain .brain-copy__title { color: var(--heading); }
+
+/* ══════════════════════════════════════════════════════════════════
+   PRODUCT DEPTH  (2026-08-29)
+   The catalog pages were all one shape — hook, a paragraph, five
+   bullets — which is why 21 of them read as a list rather than a body
+   of work. These sections carry the parts a hiring reader is actually
+   assessing: the problem, the mechanism, the trade-off, and the honest
+   limit. Every size, duration and space below is a token; the 08-29
+   foundation pass exists to stop this file growing ad-hoc values again.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── the numbers strip, straight under the hero ── */
+.product-numbers { padding: var(--s-7) 0 0; }
+.product-numbers__list {
+  list-style: none; display: flex; flex-wrap: wrap; gap: var(--s-8);
+  padding-bottom: var(--s-7); border-bottom: 1px solid var(--hairline);
+}
+.product-numbers__item { display: flex; flex-direction: column; gap: var(--s-1); }
+.product-numbers__v {
+  font-family: var(--font-display); font-size: var(--t-h2);
+  letter-spacing: var(--track-h2); color: var(--safety); line-height: 1;
+}
+.product-numbers__l { font-size: var(--t-xs); color: var(--plate-muted); }
+
+/* ── shared shell for the four prose sections ── */
+.product-deep { padding: var(--s-9) 0; }
+.product-deep--alt { background: var(--plate-2); }
+.product-deep__lead {
+  font-size: var(--t-lead); line-height: 1.55; color: var(--text-soft);
+  max-width: 62ch; margin-top: var(--s-4);
+}
+.product-deep__q {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: var(--t-h3); letter-spacing: var(--track-h2);
+  color: var(--heading); margin-top: var(--s-3); max-width: 48ch;
+}
+
+/* The honest section earns a marker, not a colour scheme — it should read
+   as a deliberate admission, not a warning box. */
+.product-deep--breaks .product-deep__lead {
+  border-left: 3px solid var(--safety);
+  padding-left: var(--s-5);
+}
+
+/* ── how it works ── */
+.how-steps {
+  list-style: none; counter-reset: step;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: var(--s-7); margin-top: var(--s-7);
+}
+.how-step { counter-increment: step; position: relative; padding-top: var(--s-7); }
+.how-step::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute; top: 0; left: 0;
+  font-family: var(--font-spec); font-size: var(--t-xs);
+  color: var(--safety); letter-spacing: 0.08em;
+}
+.how-step::after {
+  content: ""; position: absolute; top: var(--s-5); left: 0; right: 0;
+  height: 1px; background: var(--hairline);
+}
+.how-step__t {
+  font-family: var(--font-body); font-weight: 700; font-size: var(--t-lg);
+  color: var(--heading); margin-bottom: var(--s-2);
+}
+.how-step__d { font-size: var(--t-sm); line-height: 1.6; color: var(--text-soft); }
+
+.how-figure { margin-top: var(--s-8); }
+.how-figure img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--hairline); border-radius: var(--radius-plate);
+}

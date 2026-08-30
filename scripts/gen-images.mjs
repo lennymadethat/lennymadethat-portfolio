@@ -112,6 +112,65 @@ know which engine did the work".
 At the bottom right corner, a small white card with a green check icon and text exactly:
 "MARGINAL COST: ZERO"`
   },
+  /* ── product how-it-works cards (2026-08-29) ──────────────────────────
+     Step names and counts are copied from the `how` array in products.js on
+     purpose: an infographic that disagrees with the paragraph beside it is
+     worse than no infographic. If the copy changes, change these too. ── */
+  {
+    id: 'P1', file: 'playletter-how.png',
+    prompt: `Create a landscape infographic titled exactly: "FROM INBOX TO EARBUDS"
+With a smaller subtitle directly underneath in grey, exactly: "One render per edition. Any number of listeners."
+
+Four white rounded cards in a single horizontal row, left to right, each with a solid orange
+filled circle marker numbered 1 to 4, a distinct small colourful flat icon, a bold uppercase
+heading and one short grey caption line. Thick smooth orange arrows with rounded arrowheads
+connect each card to the next.
+
+Card 1, heading exactly "INGEST", envelope icon, caption exactly: "Pulls each new edition, strips the layout and the ads"
+Card 2, heading exactly "VOICE", sound-wave icon, caption exactly: "Renders audio once, caches it in private storage"
+Card 3, heading exactly "ALIGN", text-cursor icon, caption exactly: "Word-level timings for tap-to-jump read-along"
+Card 4, heading exactly "DELIVER", headphones icon, caption exactly: "Routines play like a morning show"
+
+Below the row, centred, a crisp realistic smartphone mockup shown COMPLETE with clear white
+margin beneath it — the whole device must sit inside the frame and must NOT be cropped by any
+edge. Its screen shows a simple orange-and-white audio player: a play triangle, a progress bar,
+and below that six horizontal light-grey ROUNDED BARS standing in for lines of text, with the
+third bar filled solid orange to suggest the word being read. Render those lines as plain
+abstract grey bars only — absolutely NO letters, NO words and NO lorem ipsum anywhere on the
+phone screen.
+
+To the right of the phone, a small white card with a green check icon and text exactly:
+"RESUMES ON EVERY DEVICE"`
+  },
+  {
+    id: 'P2', file: 'rico-how.png',
+    prompt: `Create a landscape infographic titled exactly: "RAMBLE IN. YOUR VOICE OUT."
+With a smaller subtitle directly underneath in grey, exactly: "It drafts. A human still presses send."
+
+Left side, ONE bold uppercase column heading printed a single time at the top of the column,
+exactly: "WHAT GOES IN". Directly beneath that single heading, a vertical stack of three small
+white cards. Each card contains ONLY a distinct small colourful flat icon and one bold short
+label — the cards carry NO heading of their own. The three labels are exactly:
+"Typed notes" (notepad icon), "Dictation" (microphone icon), "Voice memo" (smartphone icon).
+The words "WHAT GOES IN" must appear EXACTLY ONCE in the entire image.
+Curved orange arrows sweep from all three cards into the centre.
+
+Centre, a tall white card headed exactly "RICO" containing a friendly semi-realistic illustrated
+portrait avatar inside a circle, and beneath it four short bold labels stacked vertically with
+small orange numbered circle markers 1 to 4, exactly:
+"LEARN THE VOICE", "ATOMIZE", "DRAFT IN VOICE", "CHECK".
+A small grey caption under the card, exactly: "fingerprint built from what was actually published".
+
+A thick orange arrow leads right from the centre card to a white card headed exactly
+"DRAFT, NOT SENT", containing a realistic laptop mockup showing an orange-and-white text editor.
+The laptop screen itself carries NO readable words — only abstract light-grey rounded bars
+standing in for lines of text. Put NO caption or label of any kind INSIDE that card beneath the
+laptop. The card's ONLY words are its heading "DRAFT, NOT SENT".
+Directly BELOW the card, outside it, one grey caption exactly: "lands in the publishing tool with the send button untouched".
+
+At the bottom centre, one wide ORANGE filled card with white text reading exactly
+"ZERO AUTO-PUBLISHES"`
+  },
 ];
 
 const only = process.argv.slice(2);

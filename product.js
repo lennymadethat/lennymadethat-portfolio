@@ -81,6 +81,62 @@
     cta.innerHTML = html;
   }
 
+  /* ── depth sections (2026-08-29) ───────────────────────────────────────
+     Every one is opt-in per product: no data, section stays hidden. That is
+     what lets the depth roll out product by product instead of needing all
+     21 written before any of it can ship. ── */
+  function show(id) {
+    var el = document.getElementById(id);
+    if (el) el.hidden = false;
+  }
+  function fill(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  if (p.numbers && p.numbers.length) {
+    document.getElementById("p-numbers").innerHTML = p.numbers.map(function (n) {
+      return '<li class="product-numbers__item">'
+        + '<span class="product-numbers__v">' + esc(n.v) + "</span>"
+        + '<span class="product-numbers__l spec">' + esc(n.l) + "</span>"
+        + "</li>";
+    }).join("");
+    show("p-numbers-sec");
+  }
+
+  if (p.problem) { fill("p-problem", p.problem); show("p-problem-sec"); }
+
+  if (p.how && p.how.length) {
+    document.getElementById("p-how").innerHTML = p.how.map(function (h) {
+      return '<li class="how-step">'
+        + '<h3 class="how-step__t">' + esc(h.t) + "</h3>"
+        + '<p class="how-step__d">' + esc(h.d) + "</p>"
+        + "</li>";
+    }).join("");
+    show("p-how-sec");
+    if (p.howImage) {
+      var im = document.getElementById("p-how-img");
+      im.src = p.howImage;
+      im.alt = "How " + p.name + " works";
+      document.getElementById("p-how-fig").hidden = false;
+    }
+  }
+
+  if (p.decision && p.decision.q) {
+    fill("p-decision-q", p.decision.q);
+    fill("p-decision-a", p.decision.a || "");
+    show("p-decision-sec");
+  }
+
+  if (p.breaks) { fill("p-breaks", p.breaks); show("p-breaks-sec"); }
+
+  if (p.stack && p.stack.length) {
+    document.getElementById("p-stack").innerHTML = p.stack.map(function (t) {
+      return "<li>" + esc(t) + "</li>";
+    }).join("");
+    show("p-stack-sec");
+  }
+
   // Prev / next unit
   var prev = document.getElementById("p-prev");
   var next = document.getElementById("p-next");

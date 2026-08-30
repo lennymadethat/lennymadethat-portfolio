@@ -31,6 +31,7 @@ try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documen
         <li><a href="/#story">The Story</a></li>
         <li><a href="/#proof">Proof</a></li>
         <li><a href="/#shop">Downloads</a></li>
+        <li><a href="/resume">Résumé</a></li>
         <li><a class="nav__hire" href="/#hire">Hire me</a></li>
       </ul>
     </nav>
@@ -40,6 +41,12 @@ try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documen
     <section class="product-hero">
       <div class="container product-hero__inner" id="p-hero">
         <!-- rendered by product.js -->
+      </div>
+    </section>
+
+    <section class="product-numbers" id="p-numbers-sec" hidden>
+      <div class="container">
+        <ul class="product-numbers__list" id="p-numbers"></ul>
       </div>
     </section>
 
@@ -55,6 +62,45 @@ try{var _t=localStorage.getItem("lmt-theme");if(_t&&_t!=="shop")document.documen
           <ul class="product-does" id="p-does"></ul>
           <ul class="product-tags" id="p-tags"></ul>
         </div>
+      </div>
+    </section>
+
+    <section class="product-deep" id="p-problem-sec" hidden>
+      <div class="container container--narrow">
+        <p class="section__eyebrow spec">THE PROBLEM</p>
+        <p class="product-deep__lead" id="p-problem"></p>
+      </div>
+    </section>
+
+    <section class="product-deep product-deep--alt" id="p-how-sec" hidden>
+      <div class="container">
+        <p class="section__eyebrow spec">HOW IT WORKS</p>
+        <ol class="how-steps" id="p-how"></ol>
+        <figure class="how-figure" id="p-how-fig" hidden>
+          <img id="p-how-img" alt="" loading="lazy" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="product-deep" id="p-decision-sec" hidden>
+      <div class="container container--narrow">
+        <p class="section__eyebrow spec">THE CALL I MADE</p>
+        <h2 class="product-deep__q" id="p-decision-q"></h2>
+        <p class="product-deep__lead" id="p-decision-a"></p>
+      </div>
+    </section>
+
+    <section class="product-deep product-deep--breaks" id="p-breaks-sec" hidden>
+      <div class="container container--narrow">
+        <p class="section__eyebrow spec">WHAT IT DOESN’T DO</p>
+        <p class="product-deep__lead" id="p-breaks"></p>
+      </div>
+    </section>
+
+    <section class="product-deep" id="p-stack-sec" hidden>
+      <div class="container container--narrow">
+        <p class="section__eyebrow spec">WHAT IT RUNS ON</p>
+        <ul class="product-tags" id="p-stack"></ul>
       </div>
     </section>
 

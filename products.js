@@ -22,6 +22,27 @@ window.PRODUCTS = [
       "Offline listening and cross-device resume",
       "Native iOS, Android, desktop, and installable web app"
     ],
+    /* ── depth block (2026-08-29). Optional everywhere: a product without
+       these fields renders exactly as it did before. ── */
+    problem: "People subscribe to more newsletters than they can read. The good ones stack up unread in an inbox that was never built for reading — and the reading has to happen sitting at a screen, which is the one place a commute, a walk or a workout isn't.",
+    how: [
+      { t: "Ingest", d: "Watches the publications you follow, pulls each new edition as it lands, and reduces it to clean canonical text — layout, ads and footer boilerplate stripped, because all of it gets read aloud otherwise." },
+      { t: "Voice", d: "Renders the text to audio in one of six voices and caches it once per edition in a private bucket that only signed requests can reach." },
+      { t: "Align", d: "A forced aligner produces word-level timings, so the app can highlight the exact word being spoken and let you jump by tapping the text." },
+      { t: "Deliver", d: "Routines assemble editions into a running order that plays like a morning show, and position syncs across phone, desktop and web so you resume where you stopped." }
+    ],
+    howImage: "/img/hiw/playletter-how.png",
+    decision: {
+      q: "Why render the audio on a server instead of using the phone's built-in speech engine?",
+      a: "On-device speech is free and instant, and it sounds like a GPS. For something you listen to for twenty minutes, the voice IS the product. So audio is rendered once per edition, server-side, and served to everyone from cache — one render, any number of listeners, so cost flattens as the audience grows instead of scaling with it. The trade is a cold start on a brand-new edition, which routines pre-warm."
+    },
+    breaks: "Not every publication can be voiced. Some prohibit commercial use or machine narration outright in their terms, so the catalog is gated on a rights check rather than on what is technically fetchable — and that check means reading the actual terms, not assuming. Publications that only publish a summary feed can be listed but never read, which is the honest reason some names are missing.",
+    numbers: [
+      { v: "6", l: "AI VOICES" },
+      { v: "4", l: "SHIPPED SURFACES" },
+      { v: "1×", l: "RENDER PER EDITION" }
+    ],
+    stack: ["Native iOS (SwiftUI)", "Native Android (Kotlin)", "Installable web app", "Cloudflare Workers", "Object storage", "Stripe billing"],
     tags: ["iOS + Android", "AI audio", "Consumer SaaS", "Cloudflare"],
     cta: { label: "Open playletter.com", href: "https://playletter.com" }
   },
@@ -230,6 +251,26 @@ window.PRODUCTS = [
       "Delivers to the newsletter tool as a draft — never auto-publishes",
       "Downloadable as The Content Operative kit"
     ],
+    /* ── depth block (2026-08-29) ── */
+    problem: "Writing in your own voice at volume is the bottleneck. A good rant dictated in the car still costs an hour at a keyboard before it is publishable — and handed to a generic model, what comes back is fluent, agreeable, and unmistakably not you.",
+    how: [
+      { t: "Learn the voice", d: "Reads the published corpus — the sentences that actually went out, not a description of the style — and builds a fingerprint: register, sentence shape, and the words that never appear." },
+      { t: "Atomize", d: "Breaks a raw dump (typed, dictated, or a phone voice memo) into discrete idea cards, so the draft is assembled from what was actually said instead of being smoothed into an average." },
+      { t: "Draft in voice", d: "Writes against the fingerprint at the register the format demands — a newsletter and a social post are different voices from the same person." },
+      { t: "Check, then hand over", d: "Every draft passes a voice check and a compliance check, then lands in the publishing tool as a draft with the author's name still on the send button." }
+    ],
+    howImage: "/img/hiw/rico-how.png",
+    decision: {
+      q: "Why draft-only, when auto-publish was two lines away?",
+      a: "Because the failure mode is not a typo. It is a sentence the author would never have said going out under their name, and that is unrecoverable. The human click is the safety rail, not a missing feature — and it changes what the agent optimises for: if a draft needing one edit counts as success, the agent can take risks with voice that an auto-publisher never could."
+    },
+    breaks: "The fingerprint is only as good as the corpus, and the corpus has to be the PUBLISHED final — not the draft that was sent off for editing. Those two routinely differ, and training on drafts teaches the agent to write like the version that got corrected. Keeping that archive honest is manual work no amount of model quality removes.",
+    numbers: [
+      { v: "0", l: "AUTO-PUBLISHES" },
+      { v: "3", l: "WAYS TO GET IDEAS IN" },
+      { v: "2", l: "GATES BEFORE HANDOVER" }
+    ],
+    stack: ["Cloudflare Workers", "Metered LLM gateway with a hard spend cap", "Published-corpus voice fingerprint", "Publishing-tool API — drafts only"],
     tags: ["Voice modeling", "Content", "Newsletter", "Human-in-loop"],
     cta: { label: "Download the kit", href: "/kits/rico-kit.zip", download: true }
   },
