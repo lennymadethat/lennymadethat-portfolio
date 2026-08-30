@@ -1367,3 +1367,108 @@ a:focus-visible, button:focus-visible {
   width: 100%; height: auto; display: block;
   border: 1px solid var(--hairline); border-radius: var(--radius-plate);
 }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   QUICK STATUS CHIPS  (2026-08-30) — replaces the old claim strip.
+   Three rows, deliberately different weights: status (what is true),
+   links (where to go), stack (what it is built on). All sizes are
+   tokens from the 08-29 foundation pass.
+   ══════════════════════════════════════════════════════════════════ */
+.chips { padding: var(--s-7) 0 var(--s-6); border-bottom: 1px solid var(--hairline); }
+.chips__row {
+  list-style: none; display: flex; flex-wrap: wrap;
+  align-items: center; gap: var(--s-2) var(--s-3);
+}
+.chips__row + .chips__row { margin-top: var(--s-3); }
+
+.chip {
+  display: inline-flex; align-items: center; gap: var(--s-2);
+  font-size: var(--t-sm); line-height: 1;
+  padding: var(--s-2) var(--s-4);
+  border: 1px solid var(--hairline); border-radius: 999px;
+  background: var(--plate); color: var(--plate-text);
+  white-space: nowrap;
+}
+.chip__i { display: inline-flex; width: 14px; height: 14px; flex: 0 0 auto; }
+.chip__i svg { width: 100%; height: 100%; display: block; }
+
+/* the one chip that should catch the eye */
+.chip--live { border-color: var(--safety); color: var(--safety); font-weight: 600; }
+.chip--live .chip__i { color: var(--safety); }
+@media (prefers-reduced-motion: no-preference) {
+  .chip--live .chip__i { animation: chip-pulse 2.4s var(--ease) infinite; }
+}
+@keyframes chip-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+a.chip--link { text-decoration: none; transition: border-color var(--dur-fast) var(--ease),
+  color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease); }
+a.chip--link:hover { border-color: var(--safety); color: var(--safety); transform: translateY(-1px); }
+
+/* stack row is quieter -- it is context, not a call to action */
+.chip--stack {
+  font-size: var(--t-xs); padding: var(--s-1) var(--s-3);
+  background: transparent; border-color: var(--hairline);
+  color: var(--plate-muted); letter-spacing: .02em;
+}
+
+@media (max-width: 640px) {
+  .chips { padding: var(--s-6) 0 var(--s-5); }
+  .chips__row { gap: var(--s-2); }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   THE STORY — copy beside a self-advancing photo stack (2026-08-30)
+   Sticky media on desktop so the pictures stay with the reader through
+   a long column of text; stacked on mobile with the photos first.
+   ══════════════════════════════════════════════════════════════════ */
+.story2 {
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: var(--s-9); margin-top: var(--s-7); align-items: start;
+}
+.story2__copy p {
+  font-size: var(--t-lead); line-height: 1.6; color: var(--text-soft);
+  max-width: 54ch;
+}
+.story2__copy p + p { margin-top: var(--s-5); }
+.story2__copy strong { color: var(--heading); font-weight: 600; }
+
+.story2__media { position: sticky; top: calc(var(--s-9) + var(--s-4)); }
+
+/* The stack: every frame occupies the same cell, only one is visible. Using
+   grid rather than absolute positioning means the box is sized by the tallest
+   photo and never collapses before the images decode. */
+.shots {
+  display: grid; border-radius: var(--radius-plate); overflow: hidden;
+  background: var(--plate-2); box-shadow: 0 24px 60px -28px var(--shadow);
+}
+.shot {
+  grid-area: 1 / 1; position: relative; margin: 0;
+  opacity: 0; transition: opacity var(--dur-slow) var(--ease);
+  pointer-events: none;
+}
+.shot.is-on { opacity: 1; pointer-events: auto; }
+.shot img { width: 100%; height: 100%; object-fit: cover; display: block; aspect-ratio: 4 / 3; }
+.shot figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: var(--s-8) var(--s-4) var(--s-3);
+  font-size: var(--t-xs); color: #fff;
+  background: linear-gradient(transparent, rgba(0, 0, 0, .78));
+}
+
+.shots__dots { display: flex; gap: var(--s-2); margin-top: var(--s-3); justify-content: center; }
+.shots__dot {
+  width: 26px; height: 4px; border: 0; padding: 0; border-radius: 999px;
+  background: var(--hairline); cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+.shots__dot[aria-selected="true"] { background: var(--safety); }
+.shots__dot:hover { background: var(--steel-soft); }
+
+@media (max-width: 900px) {
+  .story2 { grid-template-columns: 1fr; gap: var(--s-6); }
+  .story2__media { position: static; order: -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shot { transition: none; }
+}

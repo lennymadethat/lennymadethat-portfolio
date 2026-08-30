@@ -183,3 +183,70 @@
       .catch(function () { if (timer) clearTimeout(timer); /* stay hidden — never show broken */ });
   })();
 })();
+
+/* ── THE STORY: self-advancing photo stack (2026-08-30) ───────────────────
+   Pictures move as the reader reads. Three rules that make an auto-carousel
+   tolerable rather than annoying:
+     1. it stops on hover and on keyboard focus,
+     2. it honours prefers-reduced-motion by never starting,
+     3. it does not run while off-screen — a timer firing against a section
+        nobody is looking at is pure battery cost on a phone.
+   The dots are real buttons, so the reader can always take over. */
+(function () {
+  "use strict";
+  var stack = document.getElementById("shots");
+  var dotsEl = document.getElementById("shots-dots");
+  if (!stack || !dotsEl) return;
+
+  var shots = Array.prototype.slice.call(stack.querySelectorAll(".shot"));
+  if (shots.length < 2) return;
+
+  var HOLD = 4200;
+  var i = 0, timer = null, paused = false, visible = false;
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var dots = shots.map(function (_, n) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "shots__dot";
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-label", "Photo " + (n + 1) + " of " + shots.length);
+    b.addEventListener("click", function () { show(n); restart(); });
+    dotsEl.appendChild(b);
+    return b;
+  });
+
+  function show(n) {
+    i = (n + shots.length) % shots.length;
+    shots.forEach(function (s, k) { s.classList.toggle("is-on", k === i); });
+    dots.forEach(function (d, k) { d.setAttribute("aria-selected", k === i ? "true" : "false"); });
+  }
+
+  function tick() { show(i + 1); }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function start() {
+    stop();
+    if (still || paused || !visible) return;
+    timer = setInterval(tick, HOLD);
+  }
+  function restart() { start(); }
+
+  ["mouseenter", "focusin"].forEach(function (e) {
+    stack.parentNode.addEventListener(e, function () { paused = true; stop(); });
+  });
+  ["mouseleave", "focusout"].forEach(function (e) {
+    stack.parentNode.addEventListener(e, function () { paused = false; start(); });
+  });
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (entries) {
+      visible = entries[0].isIntersecting;
+      start();
+    }, { threshold: 0.2 }).observe(stack);
+  } else {
+    visible = true;
+  }
+
+  show(0);
+  start();
+})();

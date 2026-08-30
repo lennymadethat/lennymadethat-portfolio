@@ -54,10 +54,10 @@ window.addEventListener("load", function () {
         <span class="nav__toggle-bar"></span>
       </button>
       <ul class="nav__menu" id="nav-menu">
-        <li><a href="#factory">Factory</a></li>
+        <li><a href="#story">Story</a></li>
+        <li><a href="#infra">Infrastructure</a></li>
         <li><a href="#line">Platforms</a></li>
         <li><a href="#agents">Agents</a></li>
-        <li><a href="#infra">Infrastructure</a></li>
         <li><a href="#shop">Downloads</a></li>
         <li><a href="/resume">Résumé</a></li>
         <li><a class="nav__hire" href="#hire">Hire me</a></li>
@@ -74,8 +74,8 @@ window.addEventListener("load", function () {
       <div class="forge-content">
         <p class="forge-kicker spec">IAN LEONARD · SAN DIEGO · OPERATOR WHO BUILDS</p>
         <h1 id="hero-heading" class="forge-title">LENNY MADE <span>THAT.</span></h1>
-        <p class="forge-sub">The audio app. The investing platform. The factory OS.
-        The agent crew. All live — this page is the receipts.</p>
+        <p class="forge-sub">Head of Manufacturing &amp; Hardware Operations by day; AI tool
+        developer, digital product builder, and physical fabricator by night.</p>
         <div class="forge-ctas">
           <a class="btn btn--primary" href="#line">See the line</a>
           <a class="btn btn--ghost" href="#hire">Hire me</a>
@@ -83,78 +83,109 @@ window.addEventListener("load", function () {
       </div>
       <p class="forge-cue spec" aria-hidden="true">SCROLL · WALK THE FLOOR</p>
     </section>
-    <!-- ─────────────────────── THE CLAIM ─────────────────────── -->
-    <section class="claim" aria-label="What I do">
-      <div class="container claim__inner">
-        <p class="claim__line">I run a production floor by day and build the AI systems that
-        run my businesses by night — and I ship both.</p>
-        <ul class="claim__facts">
-          <li><span class="claim__fact spec">RUNS A PRODUCTION FLOOR</span></li>
-          <li><span class="claim__fact spec">LEADS THE TEAM</span></li>
-          <li><span class="claim__fact spec">OWNS PURCHASING</span></li>
-          <li><span class="claim__fact spec">SHIPS NATIONWIDE</span></li>
-          <li><span class="claim__fact spec">21 BUILDS · 15 LIVE</span></li>
+    <!-- ──────────────── QUICK STATUS CHIPS ──────────────── -->
+    <section class="chips" aria-label="At a glance">
+      <div class="container">
+
+        <ul class="chips__row chips__row--status">
+          <li class="chip"><span class="chip__i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>San Diego, CA</li>
+          <li class="chip chip--live"><span class="chip__i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg></span>Open to work</li>
+          <li class="chip">21 builds · 15 live</li>
+          <li class="chip">Runs a production floor</li>
+          <li class="chip">Ships nationwide</li>
         </ul>
+
+        <ul class="chips__row chips__row--links">
+          <li><a class="chip chip--link" href="https://github.com/lennymadethat" target="_blank" rel="noopener"><span class="chip__i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 1.8 2.7 1.3 3.4 1 .1-.7.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11 11 0 0 1 6 0C17.5 4.7 18.5 5 18.5 5c.6 1.6.2 2.8.1 3.1.8.9 1.2 1.9 1.2 3.2 0 4.5-2.7 5.5-5.3 5.8.4.4.8 1.1.8 2.2v3.3c0 .4.2.7.8.6 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5z"/></svg></span>GitHub</a></li>
+          <li><a class="chip chip--link" href="mailto:hello@lennymadethat.com"><span class="chip__i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg></span>Email</a></li>
+          <li><a class="chip chip--link" href="/resume"><span class="chip__i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg></span>Résumé</a></li>
+          <li><a class="chip chip--link" href="#hire"><span class="chip__i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Contact me</a></li>
+        </ul>
+
+        <ul class="chips__row chips__row--stack" aria-label="Stack">
+          <li class="chip chip--stack spec">Cloudflare Workers</li>
+          <li class="chip chip--stack spec">Supabase</li>
+          <li class="chip chip--stack spec">Python</li>
+          <li class="chip chip--stack spec">JavaScript</li>
+          <li class="chip chip--stack spec">Three.js</li>
+          <li class="chip chip--stack spec">AI agents</li>
+          <li class="chip chip--stack spec">MCP</li>
+          <li class="chip chip--stack spec">Postgres</li>
+        </ul>
+
       </div>
     </section>
 
-    <!-- ─────────────── PROOF / BUILD-IN-PUBLIC ─────────────── -->
-    <section id="proof" class="section section--dark" aria-labelledby="proof-heading">
-      <div class="container">
-        <p class="section__eyebrow spec">PROOF</p>
-        <h2 id="proof-heading" class="section__title">Receipts, not claims</h2>
-        <div class="live-engine" id="live-engine" hidden>
-          <div class="live-engine__pulse"><span class="live-engine__dot"></span>LIVE&nbsp;·&nbsp;<span class="live-engine__asof"></span></div>
-          <p class="live-engine__line" id="live-engine-line"></p>
-          <p class="live-engine__sub">A market-data engine I built — the entire US market,
-          recomputed automatically every night with my computer off. This number is current,
-          not a screenshot.</p>
-        </div>
-        <ul class="log" aria-label="Build log">
-          <li class="log__item"><span class="log__date spec">AUG 2026</span><span class="log__entry">Shipped Assembly Floor OS — the manufacturing company OS, productized — and put autonomous yield agents live with real capital.</span></li>
-          <li class="log__item"><span class="log__date spec">JUL 2026</span><span class="log__entry">Open-sourced two builder tools — a persistent-memory system for AI agents, and Mothership. Sanitized, MIT-licensed, public.</span></li>
-          <li class="log__item"><span class="log__date spec">JUN 2026</span><span class="log__entry">Built a self-running market-data engine: the whole US market, recomputed nightly, fully autonomous in the cloud. The live readout above runs on it.</span></li>
-          <li class="log__item"><span class="log__date spec">MAY 2026</span><span class="log__entry">Built the shared knowledge vault my AI agents read and write — no more re-explaining context, ever.</span></li>
-        </ul>
-      </div>
-    </section>
 
     <!-- ─────────────────────── THE STORY ─────────────────────── -->
+    <!-- Photos advance on their own beside the copy, so the pictures move as
+         the reader reads. Pauses on hover/focus and honours reduced-motion;
+         the dots are real buttons, because an auto-carousel a reader cannot
+         stop is a nuisance, not an effect. -->
     <section id="story" class="section" aria-labelledby="story-heading">
       <div class="container">
         <p class="section__eyebrow spec">THE STORY</p>
-        <h2 id="story-heading" class="section__title">Operator first. Builder always.</h2>
-        <div class="story">
-          <div class="story__col">
-            <h3 class="story__sub">I’ve run the floor</h3>
-            <p>Four years as head of manufacturing, running the whole
-            operation — people, throughput, cost, quality, and the systems that keep
-            production moving when nobody’s watching. Assembly Floor OS exists because
-            I lived the problem it solves.</p>
+        <h2 id="story-heading" class="section__title">From a street in Ireland to a factory floor in San Diego.</h2>
+
+        <div class="story2">
+          <div class="story2__copy">
+            <p>It started with design. A product design degree in Dublin, and a decade of
+            making things with my hands after it.</p>
+
+            <p>In New York I worked hospitality to pay for it while I freelanced
+            installations — lighting for bars and restaurants, built and fitted myself.
+            That turned into installing high-end kitchens, floor to ceiling, where a
+            millimetre out is a job done twice.</p>
+
+            <p>Then I built a home inside a cargo trailer, lived in it for six months,
+            and drove it across the country. I stopped in San Diego.</p>
+
+            <p>I became <strong>Head of Manufacturing</strong> at a utility manufacturing
+            company. For the last three years I've personally designed the product and
+            owned everything after it — production, ordering the parts, and getting it
+            deployed in the field.</p>
+
+            <p>For the last year I've been building with AI. Not demos — solutions to the
+            things that actually go wrong on a factory floor. I built what the company and
+            I needed, and then I packaged every one of them up for anyone who needs the
+            same. <strong>Explore my builds below.</strong></p>
           </div>
-          <div class="story__col">
-            <h3 class="story__sub">I’ve built with my hands</h3>
-            <p>Before software: a full off-grid home inside a cargo trailer that I
-            lived in for six months, commissioned lighting for NYC bars, custom
-            furniture in Brooklyn. I don’t hand over things I haven’t had to live
-            inside — that’s why the software ships and doesn’t break.</p>
+
+          <div class="story2__media">
+            <div class="shots" id="shots">
+              <figure class="shot is-on"><img src="img/lighting.jpg" alt="Commissioned industrial lighting for a New York bar" loading="lazy" /><figcaption class="spec">COMMISSIONED LIGHTING · NYC</figcaption></figure>
+              <figure class="shot"><img src="img/furniture.jpg" alt="Custom maple and black-pipe shelving" loading="lazy" /><figcaption class="spec">CUSTOM BUILT-INS · BROOKLYN</figcaption></figure>
+              <figure class="shot"><img src="img/trailer.jpg" alt="Off-grid cargo-trailer home conversion" loading="lazy" /><figcaption class="spec">CARGO-TRAILER HOME · NYC → SD</figcaption></figure>
+              <figure class="shot"><img src="img/sofa.jpg" alt="Custom cedar outdoor sectional" loading="lazy" /><figcaption class="spec">CEDAR SECTIONAL · SAN DIEGO</figcaption></figure>
+            </div>
+            <div class="shots__dots" id="shots-dots" role="tablist" aria-label="Choose a photo"></div>
           </div>
-          <div class="story__col">
-            <h3 class="story__sub">Now I build systems that run themselves</h3>
-            <p>Everything on the line runs on the same discipline: a knowledge vault
-            every agent reads and writes, a stable dev surface for every project, and
-            one decision to ship. Capture → build on dev → ship to live. Same three
-            moves, every product.</p>
-          </div>
-        </div>
-        <div class="story__photos">
-          <figure><img src="img/trailer.jpg" alt="Cargo-trailer tiny home conversion" loading="lazy" /><figcaption class="spec">CARGO-TRAILER HOME · NYC → SD</figcaption></figure>
-          <figure><img src="img/lighting.jpg" alt="Industrial lighting for NYC bars" loading="lazy" /><figcaption class="spec">COMMISSIONED LIGHTING · NYC</figcaption></figure>
-          <figure><img src="img/furniture.jpg" alt="Custom maple and black-pipe shelving" loading="lazy" /><figcaption class="spec">CUSTOM BUILT-INS · BROOKLYN</figcaption></figure>
-          <figure><img src="img/sofa.jpg" alt="Custom cedar outdoor sectional" loading="lazy" /><figcaption class="spec">CEDAR SECTIONAL · SAN DIEGO</figcaption></figure>
         </div>
       </div>
     </section>
+
+    <!-- ─────────────────── THE INFRASTRUCTURE ─────────────────── -->
+    <section id="infra" class="line line--infra" aria-labelledby="infra-heading">
+      <div class="container">
+        <div class="line__head">
+          <h2 id="infra-heading" class="line__title">Start here: one memory</h2>
+          <p class="line__count spec">THE FOUNDATION · EVERYTHING BELOW STANDS ON IT</p>
+        </div>
+        <p class="line__lead">Every agent I run reads and writes the same vault. That is the
+        whole trick. An agent with no memory is a chatbot — it re-learns your context every
+        time and forgets the answer the moment it finishes. Give a fleet of agents one shared,
+        permanent, searchable memory and they stop being demos: they hand work to each other,
+        they remember what was decided six months ago, and they get better the longer they run.
+        The platforms and the crew further down are what that made possible.</p>
+        <div id="infra-grid" class="line__grid"></div>
+        <div class="infra-hiw">
+          <p class="infra-hiw__lead">Want the whole thing explained — the memory, the
+          intake line, the two engines, what it costs, and what breaks?</p>
+          <a class="btn btn--primary" href="/how/the-agent-os">How the agent OS works</a>
+        </div>
+      </div>
+    </section>
+
     <!-- ─────────────────────── THE PLATFORMS ─────────────────────── -->
     <section id="line" class="line" aria-labelledby="line-heading">
       <div class="container">
@@ -189,21 +220,6 @@ window.addEventListener("load", function () {
         <div id="agent-grid" class="agent-grid"></div>
       </div>
     </section>
-    <!-- ─────────────────── THE INFRASTRUCTURE ─────────────────── -->
-    <section id="infra" class="line line--infra" aria-labelledby="infra-heading">
-      <div class="container">
-        <div class="line__head">
-          <h2 id="infra-heading" class="line__title">The Infrastructure</h2>
-          <p class="line__count spec">WHAT ALL OF IT RUNS ON</p>
-        </div>
-        <div id="infra-grid" class="line__grid"></div>
-        <div class="infra-hiw">
-          <p class="infra-hiw__lead">Want the whole thing explained — the memory, the
-          intake line, the two engines, what it costs, and what breaks?</p>
-          <a class="btn btn--primary" href="/how/the-agent-os">How the agent OS works</a>
-        </div>
-      </div>
-    </section>
     <!-- ─────────────────────── THE EXPLAINERS ─────────────────────── -->
     <section id="explainers" class="section section--dark" aria-labelledby="explainers-heading">
       <div class="container">
@@ -229,6 +245,44 @@ window.addEventListener("load", function () {
         </div>
       </div>
     </section>
+
+    <!-- ─────────────── THE AGENT SHOP ─────────────── -->
+    <section id="shop" class="section" aria-labelledby="shop-heading">
+      <div class="container">
+        <p class="section__eyebrow spec">THE AGENT SHOP</p>
+        <h2 id="shop-heading" class="section__title">Take an agent home</h2>
+        <p class="section__lead">The agents on the line aren’t just mine — they’re packaged
+        to run for you. Each kit is a self-hostable download: the agent, a setup guide, and a
+        bring-your-own-keys config. Free while the shop is young; paid licensing is coming,
+        and early users keep their kits.</p>
+        <div id="shop-grid" class="shop-grid"></div>
+        <p class="shop-note spec">EVERY KIT: YOUR MACHINE · YOUR KEYS · NO PHONE-HOME ·
+        <a href="mailto:hello@lennymadethat.com?subject=Agent%20Shop">EMAIL FOR FIRST ACCESS TO NEW DROPS</a></p>
+      </div>
+    </section>
+
+
+    <!-- ─────────────── PROOF / BUILD-IN-PUBLIC ─────────────── -->
+    <section id="proof" class="section section--dark" aria-labelledby="proof-heading">
+      <div class="container">
+        <p class="section__eyebrow spec">PROOF</p>
+        <h2 id="proof-heading" class="section__title">Receipts, not claims</h2>
+        <div class="live-engine" id="live-engine" hidden>
+          <div class="live-engine__pulse"><span class="live-engine__dot"></span>LIVE&nbsp;·&nbsp;<span class="live-engine__asof"></span></div>
+          <p class="live-engine__line" id="live-engine-line"></p>
+          <p class="live-engine__sub">A market-data engine I built — the entire US market,
+          recomputed automatically every night with my computer off. This number is current,
+          not a screenshot.</p>
+        </div>
+        <ul class="log" aria-label="Build log">
+          <li class="log__item"><span class="log__date spec">AUG 2026</span><span class="log__entry">Shipped Assembly Floor OS — the manufacturing company OS, productized — and put autonomous yield agents live with real capital.</span></li>
+          <li class="log__item"><span class="log__date spec">JUL 2026</span><span class="log__entry">Open-sourced two builder tools — a persistent-memory system for AI agents, and Mothership. Sanitized, MIT-licensed, public.</span></li>
+          <li class="log__item"><span class="log__date spec">JUN 2026</span><span class="log__entry">Built a self-running market-data engine: the whole US market, recomputed nightly, fully autonomous in the cloud. The live readout above runs on it.</span></li>
+          <li class="log__item"><span class="log__date spec">MAY 2026</span><span class="log__entry">Built the shared knowledge vault my AI agents read and write — no more re-explaining context, ever.</span></li>
+        </ul>
+      </div>
+    </section>
+
     <!-- ─────────────────── HIRE / CONTACT ─────────────────── -->
     <section id="hire" class="section section--dark" aria-labelledby="hire-heading">
       <div class="container">
@@ -257,21 +311,6 @@ window.addEventListener("load", function () {
           </div>
         </div>
         <p class="section__foot spec">hello@lennymadethat.com · San Diego, CA · github.com/lennymadethat</p>
-      </div>
-    </section>
-
-    <!-- ─────────────── THE AGENT SHOP ─────────────── -->
-    <section id="shop" class="section" aria-labelledby="shop-heading">
-      <div class="container">
-        <p class="section__eyebrow spec">THE AGENT SHOP</p>
-        <h2 id="shop-heading" class="section__title">Take an agent home</h2>
-        <p class="section__lead">The agents on the line aren’t just mine — they’re packaged
-        to run for you. Each kit is a self-hostable download: the agent, a setup guide, and a
-        bring-your-own-keys config. Free while the shop is young; paid licensing is coming,
-        and early users keep their kits.</p>
-        <div id="shop-grid" class="shop-grid"></div>
-        <p class="shop-note spec">EVERY KIT: YOUR MACHINE · YOUR KEYS · NO PHONE-HOME ·
-        <a href="mailto:hello@lennymadethat.com?subject=Agent%20Shop">EMAIL FOR FIRST ACCESS TO NEW DROPS</a></p>
       </div>
     </section>
 
