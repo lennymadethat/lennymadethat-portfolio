@@ -201,10 +201,11 @@ window.PRODUCTS = [
     logo: "/img/products/harvester.svg",
     art: "/img/agents/harvester.png",
     hook: "A YouTube link in. A structured brief out.",
-    what: "Paste a YouTube URL, pick a lens, and an AI pipeline watches the video, synthesizes it through your chosen point of view, writes a clean briefing page into your knowledge base, and routes the action items to the right projects. Hours of watching becomes minutes of reading.",
+    what: "Paste a YouTube URL, pick a lens, and an AI pipeline watches the video, synthesizes it through your chosen point of view, writes a clean briefing page into your knowledge base, and routes the action items to the right projects. Hours of watching becomes minutes of reading. New: the Visuals lens reads a video for how it moves, not what it says — a timed, beat-by-beat shot list you can rebuild in code.",
     does: [
       "Native video understanding — no manual transcripts",
       "Synthesizes through a configurable lens you choose",
+      "Visuals lens — timed shot list of a video's motion, filed to its own shelf",
       "Writes a structured briefing page automatically",
       "Routes action items to the right project",
       "Downloadable kit — bring your own keys and run it"
