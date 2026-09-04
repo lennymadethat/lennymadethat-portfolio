@@ -312,16 +312,31 @@
 .pl-scroll a:not(.pl-cta):hover { color: var(--pl-mint); }
 
 /* ── The phone — one traveling anchor across all six beats ──── */
+/* The outer .pl-phone is the thing GSAP moves along the beats; the inner
+   body carries the chassis and its own idle breathe, so the two transforms
+   never overwrite each other. The float is beat 7 of the harvested After
+   Effects shot list — device mocks never sit perfectly still. */
 .pl-phone {
   position: absolute;
   width: var(--pl-phone-w);
   aspect-ratio: 9 / 19.5;
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+.pl-phone__body {
+  height: 100%;
   border-radius: 30px;
   padding: 7px;
   background: linear-gradient(160deg, #39424E, #171C22 42%, #2C343E);
   box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
-  transform-style: preserve-3d;
-  z-index: 1;
+  animation: pl-breathe 6s ease-in-out infinite alternate;
+}
+@keyframes pl-breathe {
+  from { transform: translateY(-5px); }
+  to { transform: translateY(5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pl-phone__body { animation: none; }
 }
 .pl-phone__screen {
   position: relative; height: 100%; width: 100%;
