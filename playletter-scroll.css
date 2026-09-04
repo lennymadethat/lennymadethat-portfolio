@@ -1,0 +1,441 @@
+/* ============================================================
+   PlayLetter scroll section — the product, told in six beats.
+
+   Scoped entirely to `.pl-scroll`. Nothing here touches :root, so the
+   site-wide theme picker (data-theme on <html>) is untouched and this
+   section keeps PlayLetter's own palette in every theme — that IS the
+   per-product theme swap: the screen becomes the product.
+
+   Tokens mirrored from PlayLetter's design tokens (the app's own :root
+   is the source of truth; these are a copy).
+   ============================================================ */
+
+.pl-scroll {
+  /* PlayLetter's palette */
+  --pl-bg: #0D1117;
+  --pl-bg2: #161B22;
+  --pl-card: #1B2330;
+  --pl-card2: #161D28;
+  --pl-border: #2A323D;
+  --pl-borderL: #3A434F;
+  --pl-text: #FFFFFF;
+  --pl-muted: #C2CBD6;
+  --pl-faint: #8B97A6;
+  --pl-mint: #5FB089;
+  --pl-mint-deep: #347C5C;
+  --pl-mint-soft: #7BC9A3;
+  --pl-mint-fog: #1A2E26;
+  --pl-mint-ink: #06231B;
+  --pl-gold: #F5B842;
+  --pl-scrim: #0B0F14;
+
+  --pl-title: "Bebas Neue", "Anton", var(--font-display);
+  --pl-body: "Public Sans", system-ui, sans-serif;
+
+  --pl-phone-w: clamp(178px, 46vw, 262px);
+
+  position: relative;
+  background: var(--pl-bg);
+  color: var(--pl-text);
+  /* the section owns the full width — no container measure. Boards and
+     stages use the whole screen; only prose keeps a measure. */
+  overflow: clip;
+}
+
+/* The track supplies the scroll length; the stage is what gets pinned.
+   Six beats, roughly a screen-height each. Collapsed to `auto` in the
+   static fallback so a dead CDN never leaves a 640vh empty shaft. */
+.pl-scroll__track { height: 640vh; }
+.pl-scroll__stage {
+  position: sticky; top: 0;
+  height: 100svh; min-height: 540px;
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+
+/* ── The ground: the wash that makes the screen become PlayLetter ── */
+.pl-ground {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 80% at 50% 8%, rgba(95, 176, 137, 0.16), transparent 62%),
+    linear-gradient(180deg, var(--pl-bg2) 0%, var(--pl-bg) 46%, var(--pl-scrim) 100%);
+}
+.pl-ground::after {
+  /* paper tooth — keeps the dark ground from reading as flat black */
+  content: ""; position: absolute; inset: 0; opacity: 0.5;
+  background-image:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.02) 0 1px, transparent 1px 7px);
+}
+
+/* ── Beats ──────────────────────────────────────────────────── */
+/* above the phone (z-index 1): the phone is the anchor, the copy is the
+   point. Without this, beat 3's line paints behind the handset. */
+.pl-beat {
+  position: absolute; inset: 0;
+  z-index: 2;
+  display: grid; place-items: center;
+  padding: var(--s-6);
+  pointer-events: none;
+}
+.pl-beat > * { pointer-events: auto; }
+
+.pl-eyebrow {
+  font-family: var(--font-spec);
+  font-size: var(--t-xs); font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--pl-mint);
+}
+.pl-h {
+  font-family: var(--pl-title);
+  font-weight: 400;
+  font-size: clamp(2.2rem, 8vw, 5.4rem);
+  line-height: 0.94;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: var(--pl-text);
+  text-wrap: balance;
+}
+.pl-sub {
+  font-family: var(--pl-body);
+  font-size: var(--t-lead); color: var(--pl-muted);
+  max-width: 34ch; line-height: 1.5;
+}
+
+/* the section's real heading, kept for the outline and hidden visually */
+.pl-sr {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ── BEAT 1 · Threshold ─────────────────────────────────────── */
+.pl-b1 { align-content: center; justify-items: center; text-align: center; gap: var(--s-4); }
+.pl-b1__mark { width: clamp(54px, 12vw, 86px); height: auto; border-radius: 18px; }
+.pl-envelopes { position: absolute; inset: 0; overflow: hidden; }
+.pl-env {
+  position: absolute; top: -60px;
+  width: 26px; height: 18px; border-radius: 3px;
+  /* card tone on the dark ground was invisible in flight — these have to
+     read as paper falling */
+  background: #2B3646; border: 1px solid #4C5867;
+  opacity: 0;
+}
+.pl-env::before {
+  content: ""; position: absolute; inset: -1px 0 auto 0;
+  border-top: 9px solid #4C5867;
+  border-left: 13px solid transparent; border-right: 13px solid transparent;
+}
+
+/* ── BEAT 2 · The flood ─────────────────────────────────────── */
+.pl-notis {
+  position: absolute; inset: 0;
+  display: grid; align-content: start; justify-items: center;
+  gap: 6px;
+  /* the site header is sticky and ~60px tall; the stage slides under it,
+     so anything top-anchored has to start below the nav */
+  padding-top: calc(60px + 3svh);
+}
+.pl-noti {
+  width: min(92vw, 372px);
+  display: grid; grid-template-columns: 30px 1fr auto; gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  background: rgba(27, 35, 48, 0.92);
+  border: 1px solid var(--pl-border);
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.42);
+  opacity: 0;
+}
+.pl-noti__ico {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--pl-mint-fog); color: var(--pl-mint);
+  display: grid; place-items: center;
+  font-family: var(--font-spec); font-size: 0.7rem; font-weight: 500;
+}
+.pl-noti__t { font-size: var(--t-sm); font-weight: 600; color: var(--pl-text); }
+.pl-noti__d { font-size: var(--t-xs); color: var(--pl-faint); }
+.pl-noti__time { font-size: var(--t-xs); color: var(--pl-faint); font-family: var(--font-spec); }
+
+/* bottom-right, not top: the banner stack owns the top of the screen and
+   the counter was landing on the first banner's timestamp */
+.pl-badge {
+  position: absolute; bottom: 6svh; right: max(var(--s-6), 5vw);
+  display: grid; justify-items: center; gap: 2px;
+  opacity: 0;
+}
+.pl-badge__n {
+  font-family: var(--pl-title);
+  font-size: clamp(2.4rem, 9vw, 4.6rem); line-height: 1;
+  color: var(--pl-gold);
+  font-variant-numeric: tabular-nums;
+}
+.pl-badge__l {
+  font-family: var(--font-spec); font-size: var(--t-xs);
+  letter-spacing: 0.14em; color: var(--pl-faint); text-transform: uppercase;
+}
+
+/* ── BEAT 3 · The snap ──────────────────────────────────────── */
+.pl-b3 { text-align: center; }
+.pl-b3 .pl-h { font-size: clamp(2.4rem, 9vw, 6rem); }
+
+/* ── BEAT 4 · Lily ──────────────────────────────────────────── */
+/* Narrow: the phone rides up into the top third and the pitch sits under
+   it — centring both put the karaoke straight through the handset. */
+.pl-b4 {
+  align-content: end; justify-items: center;
+  gap: var(--s-5); text-align: center;
+  padding-bottom: 10svh;
+}
+@media (min-width: 880px) {
+  /* phone travels to the left half; the pitch takes the right */
+  .pl-b4 {
+    align-content: center; justify-items: start; text-align: left;
+    padding-left: 52vw; padding-right: 6vw; padding-bottom: var(--s-6);
+  }
+}
+.pl-karaoke {
+  font-family: var(--pl-body);
+  font-size: clamp(1.3rem, 3.4vw, 2.2rem);
+  font-weight: 600; line-height: 1.35;
+  max-width: 22ch; margin: 0;
+}
+.pl-word { color: rgba(194, 203, 214, 0.3); transition: color 90ms linear; }
+.pl-word.is-lit { color: var(--pl-text); }
+.pl-word.is-lit.pl-word--key { color: var(--pl-mint); }
+
+.pl-lily { display: flex; align-items: center; gap: var(--s-4); }
+.pl-lily__play {
+  width: 62px; height: 62px; flex: 0 0 auto;
+  border: 0; border-radius: 50%;
+  background: var(--pl-mint); color: var(--pl-mint-ink);
+  display: grid; place-items: center; cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease);
+}
+.pl-lily__play:hover { transform: scale(1.06); }
+.pl-lily__play svg { width: 24px; height: 24px; fill: currentColor; }
+.pl-lily__meta { display: grid; gap: 2px; text-align: left; }
+.pl-lily__name { font-family: var(--pl-title); font-size: var(--t-2xl); letter-spacing: 0.03em; }
+.pl-lily__role { font-family: var(--font-spec); font-size: var(--t-xs); color: var(--pl-faint); letter-spacing: 0.1em; }
+/* No voice file in the repo → the button never appears. A control that
+   names an outcome it cannot deliver is a lie; silent karaoke is the
+   default mode, and the tap-to-hear mode is an upgrade when the audio lands. */
+.pl-lily__play[hidden] { display: none; }
+
+/* ── BEAT 5 · Marketplace rail ──────────────────────────────── */
+.pl-rail {
+  position: absolute; inset: 0;
+  display: grid; align-content: center;
+  /* the two ranks part so the counters band lands in the gap between them
+     instead of lying across both rows */
+  gap: 26svh;
+  perspective: 1100px; overflow: hidden;
+}
+.pl-rail__row {
+  display: flex; gap: 14px; width: max-content;
+  transform: rotateX(14deg) rotateZ(-8deg);
+  transform-style: preserve-3d;
+  padding: 7px 0;
+}
+.pl-card-w {
+  width: 166px; flex: 0 0 auto;
+  /* lifted off the ground: at a 14°/-8° rake the plain card tone read as
+     a smudge rather than a rank of cards */
+  background: linear-gradient(180deg, #232D3C, #1A2230);
+  border: 1px solid var(--pl-borderL); border-radius: 14px;
+  padding: 12px; display: grid; gap: 8px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+}
+.pl-card-w__logo {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--pl-mint-fog); color: var(--pl-mint-soft);
+  display: grid; place-items: center;
+  font-family: var(--pl-title); font-size: 1.1rem; letter-spacing: 0.04em;
+}
+.pl-card-w__n { font-size: var(--t-sm); font-weight: 600; line-height: 1.25; }
+.pl-card-w__c {
+  font-family: var(--font-spec); font-size: 0.66rem; letter-spacing: 0.1em;
+  color: var(--pl-faint); text-transform: uppercase;
+}
+
+.pl-counts {
+  position: relative; z-index: 2;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(18px, 6vw, 64px);
+  padding: var(--s-5) var(--s-6);
+  /* nearly opaque: at 0.74 the rail behind it showed through the numbers */
+  background: rgba(11, 15, 20, 0.93);
+  border-top: 1px solid var(--pl-border); border-bottom: 1px solid var(--pl-border);
+  width: 100%;
+}
+
+/* Narrow: the counters take the bottom and the rail spreads over the rest.
+   Centred, the panel sat on top of both rows and the whole beat bunched
+   into the middle third of the screen. */
+@media (max-width: 879px) {
+  .pl-b5 { align-content: end; padding-bottom: 7svh; }
+  .pl-rail { align-content: center; gap: 9svh; padding-bottom: 20svh; }
+  .pl-card-w { width: 140px; }
+  /* three counters on one row at 412px — two rows read as an accident */
+  .pl-counts { gap: 14px; padding-left: var(--s-3); padding-right: var(--s-3); }
+  .pl-count__l { font-size: 0.64rem; letter-spacing: 0.08em; }
+}
+.pl-count { text-align: center; }
+.pl-count__n {
+  font-family: var(--pl-title);
+  font-size: clamp(2.2rem, 7vw, 4rem); line-height: 1;
+  color: var(--pl-mint); font-variant-numeric: tabular-nums;
+}
+.pl-count__l {
+  font-family: var(--font-spec); font-size: var(--t-xs);
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--pl-faint);
+}
+
+/* ── BEAT 6 · Landing ───────────────────────────────────────── */
+.pl-b6 {
+  align-content: end; justify-items: center;
+  padding-bottom: clamp(22px, 7svh, 60px); text-align: center; gap: var(--s-4);
+}
+.pl-b6 .pl-sub { max-width: 40ch; }
+.pl-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 26px; border-radius: 999px;
+  background: var(--pl-mint); color: var(--pl-mint-ink);
+  font-weight: 700; text-decoration: none;
+  font-size: var(--t-lg);
+  transition: transform var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.pl-cta:hover { transform: translateY(-2px); background: var(--pl-mint-soft); }
+.pl-note {
+  font-family: var(--font-spec); font-size: var(--t-xs);
+  letter-spacing: 0.1em; color: var(--pl-faint); text-transform: uppercase;
+}
+/* the site's link teal is unreadable on PlayLetter's ink — mint here */
+.pl-scroll a:not(.pl-cta) { color: var(--pl-mint-soft); }
+.pl-scroll a:not(.pl-cta):hover { color: var(--pl-mint); }
+
+/* ── The phone — one traveling anchor across all six beats ──── */
+.pl-phone {
+  position: absolute;
+  width: var(--pl-phone-w);
+  aspect-ratio: 9 / 19.5;
+  border-radius: 30px;
+  padding: 7px;
+  background: linear-gradient(160deg, #39424E, #171C22 42%, #2C343E);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+.pl-phone__screen {
+  position: relative; height: 100%; width: 100%;
+  border-radius: 24px; overflow: hidden;
+  background: var(--pl-bg);
+  display: grid;
+}
+.pl-phone__island {
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+  width: 34%; height: 13px; border-radius: 999px; background: #05080B; z-index: 5;
+}
+.pl-screen {
+  grid-area: 1 / 1;
+  padding: 26px 12px 12px;
+  display: grid; align-content: start; gap: 8px;
+  opacity: 0;
+}
+.pl-screen--lock { align-content: center; justify-items: center; gap: 4px; }
+.pl-lock__time { font-family: var(--pl-title); font-size: 2.6rem; line-height: 1; color: var(--pl-text); }
+.pl-lock__date {
+  font-family: var(--font-spec); font-size: 0.6rem;
+  letter-spacing: 0.1em; color: var(--pl-faint); text-align: center;
+}
+/* justify-items:center on the screen collapses this to its icon column
+   unless it claims the width itself */
+.pl-lock__list { width: 100%; display: grid; gap: 5px; margin-top: 8px; }
+
+.pl-mini {
+  display: grid; grid-template-columns: 22px 1fr; gap: 7px; align-items: center;
+  background: var(--pl-card); border: 1px solid var(--pl-border);
+  border-radius: 10px; padding: 6px 7px;
+}
+.pl-mini__ico { width: 22px; height: 22px; border-radius: 6px; background: var(--pl-mint-fog); }
+.pl-mini__t { height: 6px; border-radius: 3px; background: var(--pl-borderL); }
+.pl-mini__d { height: 5px; width: 62%; border-radius: 3px; background: var(--pl-border); margin-top: 4px; }
+
+/* player screen — what Lily is */
+.pl-screen--player { align-content: center; justify-items: center; gap: 10px; padding: 26px 14px 14px; }
+.pl-art {
+  width: 76%; aspect-ratio: 1; border-radius: 14px;
+  background: linear-gradient(150deg, var(--pl-mint-deep), var(--pl-mint-fog));
+  display: grid; place-items: center;
+  font-family: var(--pl-title); font-size: 1.55rem; color: var(--pl-mint-soft);
+  letter-spacing: 0.06em;
+}
+.pl-bar { width: 76%; height: 3px; border-radius: 999px; background: var(--pl-border); overflow: hidden; }
+.pl-bar__fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--pl-mint-deep), var(--pl-mint)); }
+.pl-screen__cap {
+  font-size: 0.62rem; color: var(--pl-faint);
+  font-family: var(--font-spec); letter-spacing: 0.08em;
+}
+
+/* real app screen-recording slot — beat 6. Until the recording is in the
+   repo this screen renders the built library view instead. Dropping a
+   <video>/<img> in replaces it; the padding rule below only applies then. */
+.pl-screen--app {
+  align-content: center; justify-items: center; gap: 10px;
+  padding: 26px 14px 14px;
+}
+.pl-screen--app:has(> img), .pl-screen--app:has(> video) { padding: 0; }
+.pl-screen--app > img,
+.pl-screen--app > video { width: 100%; height: 100%; object-fit: cover; }
+.pl-bar__fill--full { width: 100%; }
+
+/* ── Static fallback: no GSAP, no Lenis, or reduced motion ──── */
+.pl-scroll.pl-static .pl-scroll__track { height: auto; }
+.pl-scroll.pl-static .pl-scroll__stage {
+  position: static; height: auto; min-height: 0;
+  display: block; padding: var(--s-8) 0;
+}
+/* `relative`, not `static`: z-index only applies to positioned elements, and
+   an unpositioned beat paints UNDER the absolutely-positioned ground — which
+   swallowed every headline in the fallback. */
+.pl-scroll.pl-static .pl-beat {
+  position: relative; inset: auto;
+  padding: var(--s-8) var(--s-6);
+  opacity: 1 !important; transform: none !important;
+}
+.pl-scroll.pl-static .pl-b4 {
+  padding-left: var(--s-6); padding-right: var(--s-6);
+  justify-items: center; text-align: center;
+}
+.pl-scroll.pl-static .pl-b6 { align-content: center; }
+.pl-scroll.pl-static .pl-notis { position: static; padding-top: 0; }
+.pl-scroll.pl-static .pl-noti { opacity: 1; }
+.pl-scroll.pl-static .pl-badge {
+  position: static; opacity: 1; margin: 0 auto var(--s-5);
+}
+.pl-scroll.pl-static .pl-envelopes { display: none; }
+.pl-scroll.pl-static .pl-rail { position: static; overflow-x: auto; }
+.pl-scroll.pl-static .pl-rail__row { transform: none; }
+.pl-scroll.pl-static .pl-word { color: var(--pl-text); }
+.pl-scroll.pl-static .pl-phone {
+  position: relative; z-index: 2; margin: var(--s-7) auto;
+  transform: none !important; opacity: 1 !important;
+}
+.pl-scroll.pl-static .pl-screen { opacity: 0; }
+.pl-scroll.pl-static .pl-screen--player { opacity: 1; }
+.pl-scroll.pl-static .pl-bar__fill { width: 68%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-scroll .pl-word { transition: none; }
+}
+
+/* ── Lenis' own required rules ──────────────────────────────────
+   Copied from lenis@1.3.4/dist/lenis.css rather than pulling a second
+   stylesheet over the wire for six selectors. Lenis puts `.lenis` on
+   <html> when it boots, so none of this applies if it never loads. */
+html.lenis, html.lenis body { height: auto; }
+.lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-smooth iframe { pointer-events: none; }
+.lenis.lenis-autoToggle {
+  transition-property: overflow;
+  transition-duration: 1ms;
+  transition-behavior: allow-discrete;
+}

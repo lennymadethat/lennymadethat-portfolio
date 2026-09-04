@@ -35,8 +35,12 @@ window.addEventListener("load", function () {
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+  <!-- The PlayLetter section carries PlayLetter's own palette and type
+       (Bebas Neue above). Scoped to .pl-scroll — it never touches :root, so
+       the site theme picker is unaffected. -->
+  <link rel="stylesheet" href="playletter-scroll.css" />
 
   <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Person","name":"Ian Leonard","alternateName":"Lenny","jobTitle":"Product Builder & Manufacturing Operations Leader","url":"https://lennymadethat.com","address":{"@type":"PostalAddress","addressLocality":"San Diego","addressRegion":"CA","addressCountry":"US"},"knowsAbout":["AI agents","Product design","Manufacturing operations","Automation engineering","Model Context Protocol","Web application development"],"description":"One maker with a full line of shipped products — consumer apps, fintech platforms, a company OS for manufacturers, and self-hostable AI agents."}
@@ -200,6 +204,109 @@ window.addEventListener("load", function () {
         </div>
       </div>
     </section>
+    <!-- ──────────────── UNIT 01 · PLAYLETTER, IN SIX BEATS ────────────────
+         A scroll-driven section that behaves like the product: Lily's pitch
+         renders as karaoke text as you scroll, and plays in her real voice
+         when you tap. Decoration is built by playletter-scroll.js; the copy
+         that matters is here in the HTML so crawlers and no-JS visitors get it.
+         Beats: threshold → the flood → the snap → Lily → the rail → landing.
+         ------------------------------------------------------------------ -->
+    <section id="playletter-scroll" class="pl-scroll" aria-labelledby="pl-scroll-heading">
+      <h2 id="pl-scroll-heading" class="pl-sr">PlayLetter — your newsletters, out loud</h2>
+
+      <div class="pl-scroll__track">
+        <div class="pl-scroll__stage">
+          <div class="pl-ground" aria-hidden="true"></div>
+          <div class="pl-envelopes" aria-hidden="true"></div>
+
+          <!-- The phone: one traveling anchor across all six beats -->
+          <div class="pl-phone" aria-hidden="true">
+            <div class="pl-phone__screen">
+              <div class="pl-phone__island"></div>
+
+              <div class="pl-screen pl-screen--lock">
+                <div class="pl-lock__time">7:41</div>
+                <div class="pl-lock__date">TUESDAY · 9 UNREAD BEFORE COFFEE</div>
+                <div class="pl-lock__list"></div>
+              </div>
+
+              <div class="pl-screen pl-screen--player">
+                <div class="pl-art">PL</div>
+                <div class="pl-screen__cap">THE LONG READ · 14 MIN</div>
+                <div class="pl-bar"><div class="pl-bar__fill"></div></div>
+                <div class="pl-screen__cap">READ BY LILY</div>
+              </div>
+
+              <!-- Beat 6. A real screen recording drops in here as
+                   <video src="/img/playletter-app.mp4" muted playsinline loop>;
+                   until it exists this built library view stands in. -->
+              <div class="pl-screen pl-screen--app">
+                <div class="pl-art">847</div>
+                <div class="pl-screen__cap">YOUR LIBRARY</div>
+                <div class="pl-bar"><div class="pl-bar__fill pl-bar__fill--full"></div></div>
+                <div class="pl-screen__cap">OFFLINE READY</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BEAT 1 · Threshold -->
+          <div class="pl-beat pl-b1">
+            <img class="pl-b1__mark" src="/img/products/playletter-512.png" alt="" width="86" height="86" loading="lazy" />
+            <p class="pl-eyebrow">Unit 01 · Consumer app · Live</p>
+            <p class="pl-h">Your newsletters,<br />out loud.</p>
+          </div>
+
+          <!-- BEAT 2 · The flood -->
+          <div class="pl-beat pl-b2">
+            <div class="pl-notis"></div>
+            <div class="pl-badge">
+              <div class="pl-badge__n">3</div>
+              <div class="pl-badge__l">Unread</div>
+            </div>
+          </div>
+
+          <!-- BEAT 3 · The snap -->
+          <div class="pl-beat pl-b3">
+            <p class="pl-h">Too many<br />newsletters?</p>
+          </div>
+
+          <!-- BEAT 4 · Lily -->
+          <div class="pl-beat pl-b4">
+            <p class="pl-eyebrow">One tap · Her real voice</p>
+            <p class="pl-karaoke"></p>
+            <div class="pl-lily">
+              <button class="pl-lily__play" type="button" hidden aria-label="Play Lily reading this out loud">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+              </button>
+              <div class="pl-lily__meta">
+                <div class="pl-lily__name">Lily</div>
+                <div class="pl-lily__role">One of six voices</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BEAT 5 · The rail -->
+          <div class="pl-beat pl-b5">
+            <div class="pl-rail" aria-hidden="true"></div>
+            <div class="pl-counts">
+              <div class="pl-count"><div class="pl-count__n">847</div><div class="pl-count__l">Newsletters</div></div>
+              <div class="pl-count"><div class="pl-count__n">7,645</div><div class="pl-count__l">Episodes voiced</div></div>
+              <div class="pl-count"><div class="pl-count__n">14</div><div class="pl-count__l">Categories</div></div>
+            </div>
+          </div>
+
+          <!-- BEAT 6 · Landing -->
+          <div class="pl-beat pl-b6">
+            <p class="pl-h">Press play.</p>
+            <p class="pl-sub">Free, on the web. Installs from your browser to your home
+              screen — no app store, no download.</p>
+            <a class="pl-cta" href="https://playletter.com" rel="noopener">Open playletter.com</a>
+            <p class="pl-note"><a href="/products/playletter">How I built it →</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ─────────────────────── THE AGENTS ─────────────────────── -->
     <section id="agents" class="line line--agents" aria-labelledby="agents-heading">
       <div class="container">
@@ -328,5 +435,21 @@ window.addEventListener("load", function () {
   <script src="script.js"></script>
   <script src="theme.js"></script>
   <script type="module" src="hero.js"></script>
+
+  <!-- PlayLetter scroll section. GSAP and Lenis are loaded from a CDN rather
+       than vendored: GSAP's licence lets you ship it as a dependency but not
+       redistribute its source, and this repo is public. Pinned versions with
+       SRI hashes; if either fails to load, playletter-scroll.js drops the
+       section to its static stacked fallback rather than leaving a dead shaft. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"
+          integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc"
+          crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"
+          integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh"
+          crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"
+          integrity="sha384-FKTX0CNJ8ngN1oGMBReVu7mvjTJyjFiD5etb1NKnYxc+8eFI2O0KWnksTN+oTFcu"
+          crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script src="playletter-scroll.js" defer></script>
 </body>
 </html>
