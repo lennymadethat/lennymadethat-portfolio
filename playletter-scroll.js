@@ -24,8 +24,8 @@
      Lily's pitch — one of five drafted variants. `~` marks a word that
      lights mint (the product nouns) instead of white. */
   var LILY_LINE =
-    "Forward your newsletters to your ~PlayLetter address and I'll read them " +
-    "out loud. Or pick from ~847 already in the library. I'm ~Lily. Press play.";
+    "I'm ~Lily. Give me your newsletters and I'll read them to you. " +
+    "~847 are already waiting. No app store, free on the web. Press play.";
 
   /* Set this to the voice file once Lily's VO is rendered, e.g.
      "/audio/lily-pitch.mp3". Left null on purpose: a play button that
@@ -159,6 +159,9 @@
     root.classList.add("pl-static");
     words.forEach(function (w) { w.classList.add("is-lit"); });
     setStatic();
+    // reduced motion means the app loop holds on its poster frame too
+    var loop = root.querySelector(".pl-screen--app video");
+    if (loop) { loop.removeAttribute("autoplay"); loop.pause(); }
     return;
   }
 

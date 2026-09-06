@@ -14,13 +14,13 @@ window.PRODUCTS = [
     status: "live",
     logo: "/img/products/playletter-512.png",
     hook: "Your newsletters, out loud.",
-    what: "An app that turns the newsletters you already subscribe to into a personal audio feed — natural AI voices, morning-show routines, offline listening, resume across devices. Shipped to the iOS App Store and Google Play with a live subscriber base. I designed, built, and run the whole thing: product, apps, billing, and the content pipeline behind it.",
+    what: "An app that turns the newsletters you already subscribe to into a personal audio feed — natural AI voices, morning-show routines, offline listening, resume across devices. Live and free on the web today — it installs straight from the browser — with native iOS and Android apps built and in pre-release testing. I designed, built, and run the whole thing: product, apps, billing, and the content pipeline behind it.",
     does: [
       "Reads any newsletter in one of six natural AI voices",
       "Builds personal routines that play like a morning show",
       "Follows publications for you — one tap, no inbox digging",
       "Offline listening and cross-device resume",
-      "Native iOS, Android, desktop, and installable web app"
+      "Installable web app today; native iOS and Android apps in pre-release testing"
     ],
     /* ── depth block (2026-08-29). Optional everywhere: a product without
        these fields renders exactly as it did before. ── */
@@ -39,7 +39,7 @@ window.PRODUCTS = [
     breaks: "Not every publication can be voiced. Some prohibit commercial use or machine narration outright in their terms, so the catalog is gated on a rights check rather than on what is technically fetchable — and that check means reading the actual terms, not assuming. Publications that only publish a summary feed can be listed but never read, which is the honest reason some names are missing.",
     numbers: [
       { v: "6", l: "AI VOICES" },
-      { v: "4", l: "SHIPPED SURFACES" },
+      { v: "4", l: "SURFACES BUILT" },
       { v: "1×", l: "RENDER PER EDITION" }
     ],
     stack: ["Native iOS (SwiftUI)", "Native Android (Kotlin)", "Installable web app", "Cloudflare Workers", "Object storage", "Stripe billing"],

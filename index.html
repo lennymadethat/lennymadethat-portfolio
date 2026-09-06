@@ -238,14 +238,18 @@ window.addEventListener("load", function () {
                 <div class="pl-screen__cap">READ BY LILY</div>
               </div>
 
-              <!-- Beat 6. A real screen recording drops in here as
-                   <video src="/img/playletter-app.mp4" muted playsinline loop>;
-                   until it exists this built library view stands in. -->
+              <!-- Beat 6. Real footage of playletter.com at phone size:
+                   the Discover screen, then a publication page with its
+                   editions ready to hear. Muted loop; the script pauses it
+                   on the static path. -->
               <div class="pl-screen pl-screen--app">
-                <div class="pl-art">847</div>
-                <div class="pl-screen__cap">YOUR LIBRARY</div>
-                <div class="pl-bar"><div class="pl-bar__fill pl-bar__fill--full"></div></div>
-                <div class="pl-screen__cap">OFFLINE READY</div>
+                <video muted playsinline loop autoplay preload="metadata"
+                       poster="/img/playletter-app-poster.jpg"
+                       aria-label="The PlayLetter app on a phone: the Discover screen, then a publication with editions ready to hear"
+                       disablepictureinpicture>
+                  <source src="/img/playletter-app.webm" type="video/webm" />
+                  <source src="/img/playletter-app.mp4" type="video/mp4" />
+                </video>
               </div>
             </div>
            </div>
