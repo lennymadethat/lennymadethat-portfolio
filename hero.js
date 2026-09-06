@@ -275,19 +275,30 @@ function boot() {
     const lineH = fontPx * 1.02;
     const g = c.getContext("2d", { willReadFrequently: true });
     g.font = fontPx + "px " + (cs.fontFamily || "Anton, sans-serif");
-    const text = "LENNY MADE THAT.";
-    const words = text.split(" ");
+    /* Read the h1's REAL line breaks from the DOM (same font, tracking,
+       width) so the particle wordmark never wraps differently than the text. */
     const lines = [];
-    let line = "";
-    for (let i = 0; i < words.length; i++) {
-      const t = line ? line + " " + words[i] : words[i];
-      if (g.measureText(t).width > maxW && line) { lines.push(line); line = words[i]; }
-      else line = t;
+    {
+      const walker = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
+      let node, lastTop = null;
+      while ((node = walker.nextNode())) {
+        const txt = node.nodeValue;
+        const re = /\S+/g; let m;
+        while ((m = re.exec(txt))) {
+          const r = document.createRange();
+          r.setStart(node, m.index); r.setEnd(node, m.index + m[0].length);
+          const b = r.getBoundingClientRect();
+          if (lastTop === null || Math.abs(b.top - lastTop) > fontPx * 0.4) { lines.push(m[0]); lastTop = b.top; }
+          else lines[lines.length - 1] += " " + m[0];
+        }
+      }
+      if (!lines.length) lines.push("LENNY MADE THAT.");
     }
-    if (line) lines.push(line);
+    g.letterSpacing = cs.letterSpacing;
     c.height = Math.ceil(lines.length * lineH + pad * 2);
     /* canvas resize resets state */
     g.font = fontPx + "px " + (cs.fontFamily || "Anton, sans-serif");
+    g.letterSpacing = cs.letterSpacing;
     g.textAlign = "center";
     g.textBaseline = "middle";
     g.fillStyle = "#fff";
