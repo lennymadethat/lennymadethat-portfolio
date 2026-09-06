@@ -27,11 +27,10 @@
     "I'm ~Lily. Give me your newsletters and I'll read them to you. " +
     "~847 are already waiting. No app store, free on the web. Press play.";
 
-  /* Set this to the voice file once Lily's VO is rendered, e.g.
-     "/audio/lily-pitch.mp3". Left null on purpose: a play button that
-     cannot play is a lie, and probing a file that is not there would 404
-     on every load of the live site. */
-  var LILY_AUDIO = null;
+  /* Lily's real voice reading the line above (8.7 s, rendered 2026-09-06
+     by the same voice engine the app uses). Set to null to hide the play
+     button: a play button that cannot play is a lie. */
+  var LILY_AUDIO = "/audio/lily-pitch.mp3";
 
   /* Per-word start times in seconds, from PlayLetter's own forced aligner —
      the same alignment step that powers read-along in the app. Null = fall
@@ -383,7 +382,7 @@
     end: "bottom bottom",
     scrub: true,
     onUpdate: function (self) {
-      if (!words.length) return;
+      if (!words.length || voiceDriving) return;  // the audio clock owns the words while Lily talks
       var p = (self.progress * 100 - 54) / 13;   // beat 4's word window
       var lit = Math.round(Math.max(0, Math.min(1, p)) * words.length);
       for (var i = 0; i < words.length; i++) {
@@ -396,6 +395,7 @@
      Only ever wired up when a real voice file answers. The button stays
      hidden otherwise: a play control that cannot play is a lie. */
   var playBtn = root.querySelector(".pl-lily__play");
+  var voiceDriving = false;
   if (LILY_AUDIO && playBtn) {
     var audio = new Audio(LILY_AUDIO);
     audio.preload = "metadata";
@@ -404,6 +404,7 @@
     playBtn.addEventListener("click", function () {
       if (!audio.paused) { audio.pause(); return; }
       audio.play().then(function () {
+        voiceDriving = true;
         root.querySelector(".pl-lily").classList.add("is-playing");
       }).catch(function () { /* the browser refused; silent karaoke still works */ });
     });
@@ -423,14 +424,19 @@
 
       // and carry the page through beat 4 on the audio clock
       if (lenis && track) {
-        var top = track.offsetTop;
-        var span = track.offsetHeight;
+        // document position, not offsetTop: the track's offsetParent is the
+        // section, so offsetTop reads 0 and the tap would scroll to page top
+        var top = track.getBoundingClientRect().top + window.scrollY;
+        // ScrollTrigger's progress runs over the track minus one viewport,
+        // so the audio clock has to map onto the same span
+        var span = track.offsetHeight - window.innerHeight;
         var from = top + span * 0.54, to = top + span * 0.67;
         lenis.scrollTo(from + (to - from) * (t / d), { immediate: true });
       }
     });
 
-    audio.addEventListener("ended", function () {
+    audio.addEventListener("pause", function () {
+      voiceDriving = false;
       var l = root.querySelector(".pl-lily");
       if (l) l.classList.remove("is-playing");
     });
