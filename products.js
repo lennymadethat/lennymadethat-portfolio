@@ -16,7 +16,7 @@ window.PRODUCTS = [
     hook: "Your newsletters, out loud.",
     what: "An app that turns the newsletters you already subscribe to into a personal audio feed — natural AI voices, morning-show routines, offline listening, resume across devices. Live and free on the web today — it installs straight from the browser — with native iOS and Android apps built and in pre-release testing. I designed, built, and run the whole thing: product, apps, billing, and the content pipeline behind it.",
     does: [
-      "Reads any newsletter in one of six natural AI voices",
+      "Reads any newsletter in one of five natural AI voices",
       "Builds personal routines that play like a morning show",
       "Follows publications for you — one tap, no inbox digging",
       "Offline listening and cross-device resume",
@@ -27,7 +27,7 @@ window.PRODUCTS = [
     problem: "People subscribe to more newsletters than they can read. The good ones stack up unread in an inbox that was never built for reading — and the reading has to happen sitting at a screen, which is the one place a commute, a walk or a workout isn't.",
     how: [
       { t: "Ingest", d: "Watches the publications you follow, pulls each new edition as it lands, and reduces it to clean canonical text — layout, ads and footer boilerplate stripped, because all of it gets read aloud otherwise." },
-      { t: "Voice", d: "Renders the text to audio in one of six voices and caches it once per edition in a private bucket that only signed requests can reach." },
+      { t: "Voice", d: "Renders the text to audio in one of five voices and caches it once per edition in a private bucket that only signed requests can reach." },
       { t: "Align", d: "A forced aligner produces word-level timings, so the app can highlight the exact word being spoken and let you jump by tapping the text." },
       { t: "Deliver", d: "Routines assemble editions into a running order that plays like a morning show, and position syncs across phone, desktop and web so you resume where you stopped." }
     ],
