@@ -14,11 +14,11 @@ window.PRODUCTS = [
     status: "live",
     logo: "/img/products/playletter-512.png",
     hook: "Your newsletters, out loud.",
-    what: "An app that turns the newsletters you already subscribe to into a personal audio feed — natural AI voices, morning-show routines, offline listening, resume across devices. Shipped to the iOS App Store and Google Play with a live subscriber base. I designed, built, and run the whole thing: product, apps, billing, and the content pipeline behind it.",
+    what: "An app that turns the newsletters you already subscribe to into a personal audio feed — natural AI voices, morning-show routines, offline listening, resume across devices. Shipped to the iOS App Store and Google Play. I designed, built, and run the whole thing: product, apps, billing, and the content pipeline behind it.",
     does: [
       "Reads any newsletter in one of five natural AI voices",
       "Builds personal routines that play like a morning show",
-      "Follows publications for you — one tap, no inbox digging",
+      "Add a publication to your library in one tap — every new edition arrives already voiced",
       "Offline listening and cross-device resume",
       "Native iOS, Android, desktop, and installable web app"
     ],
