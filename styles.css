@@ -1297,7 +1297,10 @@ a:focus-visible, button:focus-visible {
 
 /* the brain rig, when embedded in a long read rather than the homepage */
 .wp-sec--brain { padding-top: 0; }
-.wp-sec--brain .brain-copy__title { color: var(--heading); }
+/* The title was pinned to --heading (near-black) here, but .brain-stage is a
+   dark gradient in BOTH the live rig and the static fallback — so the beat
+   headline rendered black-on-black and could not be read in either. The base
+   rule's --text-on-ink is the correct colour over that stage. */
 
 /* ══════════════════════════════════════════════════════════════════
    PRODUCT DEPTH  (2026-08-29)
