@@ -491,26 +491,39 @@ body {
 }
 
 /* ── phone / tablet ─────────────────────────────────────── */
+/* ── phone / tablet: a scrolling dashboard, not a hidden one ───────
+   The desk layout is three columns that fill the viewport exactly. Folding
+   the rails into off-canvas drawers left the phone showing a logo and a toy —
+   the calendar, mail, agent inbox and today list ARE the dashboard, and they
+   were all behind one button. Here the stage takes the top of the page and
+   the widgets stack underneath in ordinary scrolling flow. */
 @media (max-width: 1100px) {
+  html, body { height: auto; min-height: 100%; }
   body {
+    overflow: visible;
     grid-template-columns: 1fr;
+    grid-template-rows: var(--top) auto auto auto;
     grid-template-areas:
       "top"
-      "stage";
+      "stage"
+      "left"
+      "right";
   }
+  .top { position: sticky; top: 0; }
+  .stage { height: 64vh; min-height: 380px; }
+  /* rails rejoin the flow: full width, stacked, no transform, no scrim */
   .rail {
-    position: fixed; top: var(--top); bottom: 0; width: min(340px, 88vw);
-    background: #080a10; z-index: 20;
-    transform: translateX(-110%);
-    transition: transform var(--t2) var(--ease);
+    position: static; width: auto; overflow: visible;
+    border: 0; border-top: 1px solid var(--line);
+    padding: 14px;
   }
-  .rail-r { right: 0; left: auto; transform: translateX(110%); border-left: 1px solid var(--line); }
-  .rail-l { left: 0; border-right: 1px solid var(--line); }
-  body.show-widgets .rail-l,
-  body.show-widgets .rail-r { transform: translateX(0); }
-  body.show-widgets .rail-r { top: auto; height: 46%; }
-  .drawer-toggle { display: block; }
-  :root { --ring: min(42vw, 30vh); --node: 44px; }
+  .rail-l, .rail-r { border-left: 0; border-right: 0; }
+  .drawer-toggle, .drawer-scrim { display: none !important; }
+  /* the caption doubles as the HUD here — heat() already writes the project
+     name and line into it, so showing both stacked them on each other */
+  .hud { display: none !important; }
+  .core-caption { top: auto; bottom: 10px; }
+  :root { --ring: min(38vw, 19vh); --node: 44px; }
   .brand h1 { font-size: 22px; }
   /* the search box is hidden here, so stop reserving its middle column —
      otherwise the clock is squeezed into a two-line wrap */
@@ -520,14 +533,16 @@ body {
   .top-meta time { white-space: nowrap; }
 }
 @media (max-width: 720px) {
-  :root { --node: 40px; --top: 56px; }
+  /* ring is capped in vh, not just vw: on a short viewport the stage is
+     what runs out, and the bottom orbs were landing under the caption */
+  :root { --node: 38px; --top: 56px; --ring: min(36vw, 17vh); }
   .top-meta { font-size: 11px; gap: 10px; }
   .brand p { display: none; }
   /* keep the live pulse, drop its label — the word is what overflowed 412px */
   .live { font-size: 0; gap: 0; }
   .live i { font-size: 11px; }
-  .core-caption { top: calc(50% + 22vh); }
-  .hud { bottom: 64px; }
+  .core-caption strong { font-size: 17px; }
+  .node-orb { font-size: 10px; }
 }
 
 </style>
@@ -1041,7 +1056,14 @@ function createBrain(canvas, opts = {}) {
   const filePts = [];
   for (let i = 0; i < FN; i++) {
     const p = brainPoint();
-    const s = 0.92 + Math.random() * 0.18;
+    /* Portrait pulls the camera back, so the visible half-height shrinks and
+       the outermost files burst close to the frame edge. Measured on an
+       iPhone 13 profile: this tightening leaves 2 chips crowding an edge
+       instead of 7. (The chips ALL banding at the top was a separate bug —
+       a zero-height #files being measured — not this.) */
+    const s = isMobile
+      ? 0.58 + Math.random() * 0.12
+      : 0.92 + Math.random() * 0.18;
     const q = { x: p.x * s, y: p.y * s, z: p.z * s, name: FILES[i] };
     filePts.push(q);
     fBrain[i * 3] = q.x; fBrain[i * 3 + 1] = q.y; fBrain[i * 3 + 2] = q.z;
@@ -1135,7 +1157,9 @@ function createBrain(canvas, opts = {}) {
     const x = q.x * c + q.z * s;
     const z = -q.x * s + q.z * c;
     const ex = fileExplode.value;
-    const mag = 1 + ex * 1.15;
+    /* the burst was tuned for a wide desk stage; at 390px the same throw put
+       half the chips past the screen edge and the rest on top of the ring */
+    const mag = 1 + ex * (isMobile ? 0.55 : 1.15);
     const v = new THREE.Vector3(x * mag, q.y * mag, z * mag);
     v.project(camera);
     return {
@@ -1636,12 +1660,44 @@ function syncFileChips() {
     layer.innerHTML = pos.map((f) => `<span class="file-chip" data-name="${f.name}">${f.name}</span>`).join("");
   }
   const chips = layer.querySelectorAll(".file-chip");
+  /* 36 labelled pills fit a desk stage; on a 390px phone they cover each other
+     and the ring. Label only the frontmost few there — the set turns over as
+     the core rotates, so everything still gets its moment. */
+  const narrow = window.matchMedia("(max-width: 1100px)").matches;
+  let allow = null;
+  if (narrow) {
+    allow = new Set(
+      pos.map((f, i) => ({ i, z: f.z, v: f.visible }))
+        .filter((o) => o.v)
+        .sort((a, b) => a.z - b.z)
+        .slice(0, 12)
+        .map((o) => o.i)
+    );
+  }
+  /* Chips are position:absolute and resolve against .stage, and projectFile
+     returns coordinates in the canvas's own box — so measure the canvas.
+     #files has no CSS of its own: it is a zero-height block, and reading
+     clientHeight off it returned 0, which pinned every chip to y=0. */
+  const cvs = document.getElementById("brain");
+  const W = cvs.clientWidth, H = cvs.clientHeight;
   pos.forEach((f, i) => {
     const c = chips[i];
     if (!c) return;
-    c.style.left = f.x + "px";
-    c.style.top = f.y + "px";
-    const show = exploded && f.visible && f.z < 0.98;
+    /* chips are translate(-50%,-50%), so keep their centre far enough inside
+       the stage that the pill cannot be clipped by the viewport edge */
+    const halfW = (c.offsetWidth || 60) / 2 + 4;
+    const halfH = (c.offsetHeight || 18) / 2 + 4;
+    /* Pull a stray chip back along its own vector from the centre rather than
+       clamping each axis: clamping destroys the angle and stacks every chip
+       into one band on the nearest edge. */
+    const cx = W / 2, cy = H / 2;
+    let dx = f.x - cx, dy = f.y - cy;
+    const maxX = Math.max(1, cx - halfW), maxY = Math.max(1, cy - halfH);
+    const over = Math.max(Math.abs(dx) / maxX, Math.abs(dy) / maxY);
+    if (over > 1) { dx /= over; dy /= over; }
+    c.style.left = (cx + dx) + "px";
+    c.style.top = (cy + dy) + "px";
+    const show = exploded && f.visible && f.z < 0.98 && (!allow || allow.has(i));
     c.classList.toggle("on", show);
   });
 }
