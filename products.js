@@ -18,7 +18,7 @@ window.PRODUCTS = [
     does: [
       "Reads any newsletter in one of five natural AI voices",
       "Builds personal routines that play like a morning show",
-      "Follows publications for you — one tap, no inbox digging",
+      "Add a publication to your library in one tap — every new edition arrives already voiced",
       "Offline listening and cross-device resume",
       "Installable web app today; native iOS and Android apps in pre-release testing"
     ],
@@ -38,7 +38,7 @@ window.PRODUCTS = [
     },
     breaks: "Not every publication can be voiced. Some prohibit commercial use or machine narration outright in their terms, so the catalog is gated on a rights check rather than on what is technically fetchable — and that check means reading the actual terms, not assuming. Publications that only publish a summary feed can be listed but never read, which is the honest reason some names are missing.",
     numbers: [
-      { v: "6", l: "AI VOICES" },
+      { v: "5", l: "AI VOICES" },
       { v: "4", l: "SURFACES BUILT" },
       { v: "1×", l: "RENDER PER EDITION" }
     ],
