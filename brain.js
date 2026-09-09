@@ -381,7 +381,7 @@ function boot() {
   /* ---------- the real brain: baked MRI point cloud (NIH 3DPX-021161, CC BY) ----------
      Hot-swaps over the procedural fallback whenever it arrives; a failed fetch
      simply leaves the procedural brain in place. */
-  Promise.all([fetch("points/brain-mri.bin"), fetch("points/brain-mri.json")])
+  Promise.all([fetch("/points/brain-mri.bin"), fetch("/points/brain-mri.json")])
     .then(function (rs) {
       if (!rs[0].ok || !rs[1].ok) throw new Error("points missing");
       return Promise.all([rs[0].arrayBuffer(), rs[1].json()]);
