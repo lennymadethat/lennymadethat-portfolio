@@ -1301,6 +1301,11 @@ a:focus-visible, button:focus-visible {
    dark gradient in BOTH the live rig and the static fallback — so the beat
    headline rendered black-on-black and could not be read in either. The base
    rule's --text-on-ink is the correct colour over that stage. */
+/* Same trap for the rest of the plate: this page's `.wp p` (0,1,1) outranks
+   `.brain-copy__body` and `.brain-copy__eyebrow` (0,1,0), so both inherited the
+   white-paper's dark --text over the dark stage. Re-assert them from here. */
+.wp-sec--brain .brain-copy__body { color: var(--steel-soft); }
+.wp-sec--brain .brain-copy__eyebrow { color: var(--safety); }
 
 /* ══════════════════════════════════════════════════════════════════
    PRODUCT DEPTH  (2026-08-29)
