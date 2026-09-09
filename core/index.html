@@ -1,0 +1,1784 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CORE — agentic memory · lennymadethat</title>
+<meta name="description" content="CORE: an agentic memory dashboard. Eighteen projects orbit one shared memory core — hover a project to tint the brain, click the core to burst its files.">
+<meta name="robots" content="noindex">
+<meta property="og:title" content="CORE — agentic memory">
+<meta property="og:description" content="Eighteen projects orbit one shared memory core.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314181B'/%3E%3Crect x='7' y='20' width='18' height='4' rx='1' fill='%23EDEBE4'/%3E%3Crect x='7' y='14' width='18' height='4' rx='1' fill='%23EDEBE4'/%3E%3Crect x='10' y='8' width='15' height='4' rx='1' fill='%23F04D23'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<style>
+/* CORE — agentic memory dashboard
+   Dark ground, emitted light, one loud object (the brain). Widgets stay quiet. */
+
+:root {
+  --void: #05060a;
+  --ink: #0b0d14;
+  --panel: rgba(10, 12, 18, 0.72);
+  --line: rgba(240, 236, 228, 0.08);
+  --line-2: rgba(240, 236, 228, 0.16);
+  --paper: #f0ece4;
+  --mute: #8d8894;
+  --ember: #ff6a2a;
+  --violet: #c084fc;
+  --cyan: #2ee6c8;
+  --gold: #e8b45a;
+  --ease: cubic-bezier(.2, .82, .2, 1);
+  --t1: 160ms;
+  --t2: 400ms;
+  --t3: 800ms;
+  --rail: 300px;
+  --top: 64px;
+  --ring: min(40vh, 300px);
+  --node: 54px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+html { background: var(--void); color: var(--paper); }
+body {
+  margin: 0;
+  font-family: Figtree, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 48%, #14101c 0%, var(--void) 62%),
+    var(--void);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: var(--rail) 1fr var(--rail);
+  grid-template-rows: var(--top) 1fr;
+  grid-template-areas:
+    "top top top"
+    "left stage right";
+}
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 40;
+  opacity: .07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+}
+
+/* ── header ─────────────────────────────────────────────── */
+.top {
+  grid-area: top;
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 320px) 1fr;
+  align-items: center;
+  padding: 0 22px;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(to bottom, rgba(5,6,10,.7), rgba(5,6,10,.15));
+  z-index: 5;
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark {
+  width: 28px; height: 28px; border-radius: 50%;
+  background:
+    radial-gradient(circle at 40% 35%, #fff 0 8%, transparent 9%),
+    conic-gradient(from 210deg, var(--ember), var(--violet), var(--cyan), var(--ember));
+  box-shadow: 0 0 18px rgba(255, 106, 42, .45);
+  animation: spin 18s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.brand h1 {
+  margin: 0;
+  font-family: Syne, sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.brand p {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--mute);
+  letter-spacing: 0.02em;
+}
+.find input {
+  width: 100%;
+  height: 36px;
+  border: 1px solid var(--line-2);
+  background: rgba(255,255,255,.03);
+  color: var(--paper);
+  border-radius: 999px;
+  padding: 0 16px;
+  font: 500 13px/1 Figtree, sans-serif;
+  outline: none;
+}
+.find input:focus { border-color: color-mix(in srgb, var(--ember) 55%, transparent); }
+.find input::placeholder { color: var(--mute); }
+.top-meta {
+  display: flex; align-items: center; justify-content: flex-end; gap: 14px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--mute);
+}
+.live { display: inline-flex; align-items: center; gap: 6px; color: var(--cyan); }
+.live i {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: blink 2.4s var(--ease) infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+
+/* ── rails / widgets ────────────────────────────────────── */
+.rail {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 14px 14px 18px;
+  overflow: auto;
+  z-index: 4;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff14 transparent;
+}
+.rail-l { grid-area: left; border-right: 1px solid var(--line); }
+.rail-r { grid-area: right; border-left: 1px solid var(--line); }
+
+.widget {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 14px 12px;
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+.widget::before {
+  content: "";
+  position: absolute; left: 0; top: 12px; bottom: 12px; width: 2px;
+  background: var(--w-accent, var(--ember));
+  border-radius: 2px;
+  opacity: .85;
+}
+.widget-head {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 10px;
+}
+.widget-head h3 {
+  margin: 0;
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--paper);
+}
+.widget-menu { position: relative; }
+.widget-menu > button,
+.add-w {
+  appearance: none; border: 0; background: transparent; color: var(--mute);
+  width: 28px; height: 28px; border-radius: 8px; cursor: pointer;
+  font: 600 14px/1 Figtree, sans-serif;
+}
+.widget-menu > button:hover, .add-w:hover { background: rgba(255,255,255,.06); color: var(--paper); }
+.menu {
+  position: absolute; right: 0; top: 30px; z-index: 8;
+  min-width: 148px;
+  background: #12141c;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.45);
+}
+.menu button {
+  display: block; width: 100%; text-align: left;
+  appearance: none; border: 0; background: transparent;
+  color: var(--paper); font: 500 12px/1.3 Figtree, sans-serif;
+  padding: 8px 10px; border-radius: 7px; cursor: pointer;
+}
+.menu button:hover { background: rgba(255,255,255,.06); }
+
+.add-w {
+  width: 100%; height: 40px;
+  border: 1px dashed var(--line-2);
+  border-radius: 12px;
+  color: var(--mute);
+  font: 500 13px Figtree, sans-serif;
+}
+
+/* widget guts */
+.cal-now {
+  font-family: Syne, sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.cal-date { margin: 4px 0 10px; color: var(--mute); font-size: 12px; }
+.zones { display: flex; gap: 10px; margin-bottom: 12px; }
+.zones span {
+  flex: 1; font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--mute);
+}
+.zones b { display: block; color: var(--paper); font-weight: 500; font-size: 12px; }
+.event {
+  display: grid; grid-template-columns: 52px 1fr; gap: 8px;
+  padding: 6px 0; border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.event time {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px; color: var(--gold); padding-top: 2px;
+}
+
+.stat-row {
+  display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px;
+}
+.stat-row b {
+  font-family: Syne, sans-serif; font-size: 42px; letter-spacing: -0.04em; line-height: 1;
+}
+.stat-row span { color: var(--mute); font-size: 12px; }
+.mail, .agent, .chore {
+  display: grid; grid-template-columns: 8px 1fr auto; gap: 8px; align-items: start;
+  padding: 7px 0; border-top: 1px solid var(--line); font-size: 13px;
+}
+.pip { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; background: var(--c, var(--ember)); }
+.mail small, .agent small, .chore small { color: var(--mute); font-size: 11px; }
+.ago { color: var(--mute); font-family: "IBM Plex Mono", monospace; font-size: 10px; white-space: nowrap; }
+.flag { color: var(--ember); font-size: 11px; font-weight: 600; }
+
+.custom-body { font-size: 13px; color: var(--paper); }
+.custom-body p { margin: 0 0 8px; }
+.custom-body a { color: var(--cyan); }
+
+/* ── stage / brain / ring ───────────────────────────────── */
+.stage {
+  grid-area: stage;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.stage::before {
+  content: "";
+  position: absolute; inset: 8%;
+  background-image:
+    radial-gradient(circle at 50% 50%, transparent 34%, rgba(0,0,0,.35) 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='24'><path d='M14 1 L27 8 V16 L14 23 L1 16 V8 Z' fill='none' stroke='rgba(255,255,255,.035)' stroke-width='.7'/></svg>");
+  background-position: center;
+  mask-image: radial-gradient(circle at 50% 50%, #000 0 42%, transparent 70%);
+  pointer-events: none;
+}
+#brain {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+}
+.arcs { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.ring-track {
+  position: absolute; left: 50%; top: 50%;
+  width: calc(var(--ring) * 2); height: calc(var(--ring) * 2);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px dashed rgba(255,255,255,.1);
+  box-shadow:
+    0 0 0 18px rgba(255,255,255,.015),
+    inset 0 0 80px rgba(196, 132, 252, .05);
+  pointer-events: none;
+}
+.ring { position: absolute; inset: 0; pointer-events: none; }
+.node {
+  position: absolute;
+  left: calc(50% + cos(var(--a)) * var(--ring));
+  top: calc(50% + sin(var(--a)) * var(--ring));
+  width: var(--node); height: var(--node);
+  transform: translate(-50%, -50%);
+  border: 0; padding: 0;
+  background: transparent;
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 1;
+  transition: transform var(--t2) var(--ease), filter var(--t2) var(--ease), opacity var(--t2) var(--ease);
+}
+.node-orb {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--c);
+  background:
+    radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--c) 22%, #2a2e3c), #0a0c12 64%);
+  border: 1px solid color-mix(in srgb, var(--c) 70%, transparent);
+  box-shadow:
+    0 0 0 1px #000,
+    0 0 18px color-mix(in srgb, var(--c) 40%, transparent);
+  transition: box-shadow var(--t2) var(--ease), transform var(--t2) var(--ease);
+}
+.node-name {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--paper);
+  opacity: 0;
+  pointer-events: none;
+  text-shadow: 0 2px 10px #000;
+  transition: opacity var(--t1) var(--ease);
+}
+.node:hover,
+.node.is-hot {
+  z-index: 6;
+  transform:
+    translate(-50%, -50%)
+    translate(calc(cos(var(--a)) * 26px), calc(sin(var(--a)) * 26px))
+    scale(1.48);
+}
+.node:hover .node-orb,
+.node.is-hot .node-orb {
+  box-shadow:
+    0 0 0 1px #000,
+    0 0 0 6px color-mix(in srgb, var(--c) 18%, transparent),
+    0 0 28px color-mix(in srgb, var(--c) 55%, transparent);
+}
+.node:hover .node-name,
+.node.is-hot .node-name { opacity: 1; }
+.node.is-dim { opacity: .28; filter: saturate(.4); }
+.node.is-dim:hover { opacity: 1; filter: none; }
+
+.core-hit {
+  position: absolute; left: 50%; top: 50%;
+  width: 168px; height: 168px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+  background: transparent;
+}
+.core-caption {
+  position: absolute; left: 50%; top: calc(50% + min(18vh, 132px));
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+  z-index: 3;
+}
+.core-caption strong {
+  display: block;
+  font-family: Syne, sans-serif;
+  font-size: 20px;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  text-shadow: 0 2px 18px #05060a;
+}
+.core-caption span { font-size: 11px; color: var(--mute); }
+
+.hud {
+  position: absolute; left: 50%; bottom: 28px;
+  transform: translateX(-50%);
+  width: min(420px, 80%);
+  background: var(--panel);
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+  padding: 12px 14px;
+  backdrop-filter: blur(18px);
+  z-index: 7;
+  box-shadow: 0 16px 50px rgba(0,0,0,.4);
+}
+.hud b { display: block; font-size: 15px; }
+.hud p { margin: 4px 0 0; color: var(--mute); font-size: 13px; }
+.hud .tag {
+  display: inline-block; margin-top: 8px;
+  font-family: "IBM Plex Mono", monospace; font-size: 10px;
+  color: var(--c, var(--ember));
+}
+
+.file-chip {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  color: var(--paper);
+  background: rgba(8, 10, 16, .72);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--t2) var(--ease);
+  z-index: 3;
+}
+.file-chip.on { opacity: 1; }
+
+/* ── overlays ───────────────────────────────────────────── */
+.picker, .edit-sheet {
+  position: fixed; inset: 0; z-index: 30;
+  background: rgba(0,0,0,.45);
+  display: grid; place-items: center;
+  padding: 24px;
+}
+.picker[hidden], .edit-sheet[hidden], .drawer-scrim[hidden], .hud[hidden] {
+  display: none !important;
+}
+.picker-card {
+  width: min(420px, 100%);
+  background: #101218;
+  border: 1px solid var(--line-2);
+  border-radius: 16px;
+  padding: 16px;
+}
+.picker-card header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.picker-card h2 { margin: 0; font-family: Syne, sans-serif; font-size: 20px; letter-spacing: -0.03em; }
+.icon-x {
+  appearance: none; border: 0; background: transparent; color: var(--mute);
+  font-size: 22px; cursor: pointer; width: 32px; height: 32px;
+}
+.picker-list { display: grid; gap: 6px; }
+.pick {
+  display: flex; align-items: center; gap: 10px;
+  width: 100%; text-align: left;
+  appearance: none; border: 1px solid var(--line); background: transparent;
+  color: var(--paper); border-radius: 10px; padding: 10px 12px; cursor: pointer;
+  font: 500 14px Figtree, sans-serif;
+}
+.pick:hover { border-color: var(--line-2); background: rgba(255,255,255,.04); }
+.pick i {
+  width: 10px; height: 10px; border-radius: 50%; background: var(--c, var(--ember));
+}
+.field { display: block; margin: 10px 0; }
+.field span { display: block; font-size: 12px; color: var(--mute); margin-bottom: 6px; }
+.field input, .field textarea {
+  width: 100%;
+  background: #0a0c12;
+  border: 1px solid var(--line-2);
+  color: var(--paper);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: 13px/1.4 "IBM Plex Mono", ui-monospace, monospace;
+}
+.edit-actions { display: flex; gap: 8px; margin-top: 12px; }
+.btn {
+  appearance: none; border: 0; cursor: pointer;
+  background: var(--ember); color: #1a0b05;
+  font: 600 13px Figtree, sans-serif;
+  border-radius: 999px; padding: 8px 16px;
+}
+.btn.ghost { background: transparent; color: var(--paper); border: 1px solid var(--line-2); }
+
+.drawer-toggle {
+  display: none;
+  position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+  z-index: 8;
+  appearance: none; border: 1px solid var(--line-2);
+  background: var(--panel); color: var(--paper);
+  backdrop-filter: blur(12px);
+  border-radius: 999px; padding: 8px 16px;
+  font: 600 13px Figtree, sans-serif;
+  cursor: pointer;
+}
+
+/* ── reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark, .live i { animation: none; }
+  .node { transition: none; }
+}
+
+/* ── phone / tablet ─────────────────────────────────────── */
+@media (max-width: 1100px) {
+  body {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "top"
+      "stage";
+  }
+  .rail {
+    position: fixed; top: var(--top); bottom: 0; width: min(340px, 88vw);
+    background: #080a10; z-index: 20;
+    transform: translateX(-110%);
+    transition: transform var(--t2) var(--ease);
+  }
+  .rail-r { right: 0; left: auto; transform: translateX(110%); border-left: 1px solid var(--line); }
+  .rail-l { left: 0; border-right: 1px solid var(--line); }
+  body.show-widgets .rail-l,
+  body.show-widgets .rail-r { transform: translateX(0); }
+  body.show-widgets .rail-r { top: auto; height: 46%; }
+  .drawer-toggle { display: block; }
+  :root { --ring: min(42vw, 30vh); --node: 44px; }
+  .brand h1 { font-size: 22px; }
+  /* the search box is hidden here, so stop reserving its middle column —
+     otherwise the clock is squeezed into a two-line wrap */
+  .find { display: none; }
+  .top { grid-template-columns: minmax(0, 1fr) auto; }
+  .top-meta { min-width: 0; }
+  .top-meta time { white-space: nowrap; }
+}
+@media (max-width: 720px) {
+  :root { --node: 40px; --top: 56px; }
+  .top-meta { font-size: 11px; gap: 10px; }
+  .brand p { display: none; }
+  /* keep the live pulse, drop its label — the word is what overflowed 412px */
+  .live { font-size: 0; gap: 0; }
+  .live i { font-size: 11px; }
+  .core-caption { top: calc(50% + 22vh); }
+  .hud { bottom: 64px; }
+}
+
+</style>
+
+  <!--
+    CORE — standalone demo of an agentic memory dashboard.
+    Isolated on purpose: does not touch Mothership or any other dashboard session.
+    Open via a local server (ES modules). Drop the folder into another site, or iframe it.
+  -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="top">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div>
+        <h1>CORE</h1>
+        <p>agentic memory · morning brief</p>
+      </div>
+    </div>
+    <label class="find">
+      <span class="sr">Find a project</span>
+      <input id="find" type="search" placeholder="find a project" autocomplete="off" />
+    </label>
+    <div class="top-meta">
+      <time id="clock" datetime=""></time>
+      <span class="live"><i></i> demo data</span>
+    </div>
+  </header>
+
+  <aside class="rail rail-l" id="railL"></aside>
+
+  <main class="stage" id="stage">
+    <canvas id="brain"></canvas>
+    <svg class="arcs" id="arcs" aria-hidden="true"></svg>
+    <div class="ring-track" aria-hidden="true"></div>
+    <div class="ring" id="ring"></div>
+    <div class="file-layer" id="files"></div>
+    <div class="core-hit" id="coreHit" title="Click the core"></div>
+    <div class="core-caption">
+      <strong id="coreTitle">memory core</strong>
+      <span id="coreSub">18 projects · 36 files · demo data</span>
+    </div>
+    <div class="hud" id="hud" hidden></div>
+  </main>
+
+  <aside class="rail rail-r" id="railR"></aside>
+
+  <button class="drawer-toggle" id="drawerToggle" type="button">widgets</button>
+  <div class="drawer-scrim" id="drawerScrim" hidden></div>
+
+  <div class="picker" id="picker" hidden>
+    <div class="picker-card">
+      <header>
+        <h2>Add a widget</h2>
+        <button type="button" class="icon-x" id="pickerClose" aria-label="Close">×</button>
+      </header>
+      <div class="picker-list" id="pickerList"></div>
+    </div>
+  </div>
+
+  <div class="edit-sheet" id="editSheet" hidden>
+    <div class="picker-card">
+      <header>
+        <h2 id="editTitle">Edit widget</h2>
+        <button type="button" class="icon-x" id="editClose" aria-label="Close">×</button>
+      </header>
+      <label class="field">
+        <span>Title</span>
+        <input id="editName" type="text" />
+      </label>
+      <label class="field" id="editHtmlWrap">
+        <span>HTML — vibe-code this card</span>
+        <textarea id="editHtml" rows="8" spellcheck="false"></textarea>
+      </label>
+      <div class="edit-actions">
+        <button type="button" class="btn" id="editSave">Save</button>
+        <button type="button" class="btn ghost" id="editCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+/* CORE memory brain — GPU point cloud + geodesic cage + synapse pulses.
+   House recipe: dark ground, additive glow, depth, mouse heat.
+   three.js r169 MIT, vendored. Procedural brain surface (no model file). */
+import * as THREE from "/vendor/three.module.min.js";
+
+const FILES = [
+  "CLAUDE.md", "digest.json", "state-of-play", "rico-voice.md",
+  "morning-brief", "sentinel.json", "carl-schema", "vault/index",
+  "playletter.apk", "aloud/karaoke", "us3-ops", "gym/mesocycle",
+  "family/kylo", "yield/watch", "rir/sunday", "particle-forge",
+  "mothership", "harvester", "voice-engine", "brief.mp3",
+  "agent-inbox", "lonzone", "chronos", "assembly",
+  "health/sleep", "tax-2025", "irish-estate", "photo-engine",
+  "fleet/workers", "lenny-os", "triton", "flip-desk",
+  "newsletter", "g-brain", "coach", "sellstuff"
+];
+
+function brainPoint() {
+  let x = 0, y = 0, z = 0, l = 0;
+  do {
+    x = Math.random() * 2 - 1; y = Math.random() * 2 - 1; z = Math.random() * 2 - 1;
+    l = Math.sqrt(x * x + y * y + z * z);
+  } while (l < 0.0001 || l > 1);
+  x /= l; y /= l; z /= l;
+  let px = x * 1.32, py = y * 0.92, pz = z * 1.02;
+  const w =
+    Math.sin(px * 3.4 + py * 1.7) * 0.55 +
+    Math.sin(py * 4.6 + pz * 2.2) * 0.3 +
+    Math.sin(pz * 5.3 + px * 2.9) * 0.25;
+  px += x * 0.13 * w; py += y * 0.13 * w; pz += z * 0.13 * w;
+  const fz = Math.max(0, 1 - Math.abs(px) / 0.2);
+  if (py > -0.25) py -= 0.3 * fz * fz;
+  px += (px < 0 ? -1 : 1) * 0.05 * fz;
+  if (py < -0.15 && Math.abs(px) > 0.45) { px *= 1.08; py *= 1.04; }
+  if (py < -0.5) { py = -0.5 - (py + 0.5) * 0.45; px *= 0.9; pz *= 0.92; }
+  const ta = -0.12, ct = Math.cos(ta), st = Math.sin(ta);
+  return { x: px * ct - py * st, y: px * st + py * ct, z: pz };
+}
+
+function lobeColor(p) {
+  const ang = Math.atan2(p.z, p.x);
+  const t = (ang + Math.PI) / (Math.PI * 2);
+  const bands = [
+    [1.00, 0.42, 0.16],
+    [0.75, 0.42, 1.00],
+    [0.18, 0.90, 0.80],
+    [0.91, 0.71, 0.35],
+    [0.36, 0.62, 1.00],
+    [0.95, 0.36, 0.56],
+  ];
+  const u = t * bands.length;
+  const i = Math.floor(u) % bands.length;
+  const j = (i + 1) % bands.length;
+  const f = u - Math.floor(u);
+  const a = bands[i], b = bands[j];
+  const mix = (q) => a[q] + (b[q] - a[q]) * f;
+  const r = mix(0);
+  const g = mix(1);
+  const bl = mix(2);
+  return [r, g, bl];
+}
+
+function icosphere(subdiv) {
+  const t = (1 + Math.sqrt(5)) / 2;
+  const nrm = (v) => {
+    const l = Math.hypot(v[0], v[1], v[2]) || 1;
+    return [v[0] / l, v[1] / l, v[2] / l];
+  };
+  let verts = [
+    [-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
+    [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
+    [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1],
+  ].map(nrm);
+  let faces = [
+    [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+    [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+    [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+    [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1],
+  ];
+  const midCache = new Map();
+  const mid = (a, b) => {
+    const k = a < b ? a + "," + b : b + "," + a;
+    if (midCache.has(k)) return midCache.get(k);
+    const va = verts[a], vb = verts[b];
+    const i = verts.length;
+    verts.push(nrm([(va[0] + vb[0]) / 2, (va[1] + vb[1]) / 2, (va[2] + vb[2]) / 2]));
+    midCache.set(k, i);
+    return i;
+  };
+  for (let s = 0; s < subdiv; s++) {
+    const next = [];
+    midCache.clear();
+    for (const [a, b, c] of faces) {
+      const ab = mid(a, b), bc = mid(b, c), ca = mid(c, a);
+      next.push([a, ab, ca], [b, bc, ab], [c, ca, bc], [ab, bc, ca]);
+    }
+    faces = next;
+  }
+  const edges = new Set();
+  const pushE = (a, b) => edges.add(a < b ? a + "-" + b : b + "-" + a);
+  for (const [a, b, c] of faces) { pushE(a, b); pushE(b, c); pushE(c, a); }
+  const pos = [];
+  for (const e of edges) {
+    const [a, b] = e.split("-").map(Number);
+    pos.push(...verts[a], ...verts[b]);
+  }
+  return { verts, pos: new Float32Array(pos) };
+}
+
+const VERT = /* glsl */ `
+  uniform float uTime;
+  uniform float uForm;
+  uniform float uExplode;
+  uniform float uRot;
+  uniform vec2  uPointer;
+  uniform float uHeat;
+  uniform vec3  uTint;
+  uniform float uTintAmt;
+  uniform float uDpr;
+  uniform float uSize;
+  attribute vec3 aBrain;
+  attribute vec3 aScatter;
+  attribute vec3 aColor;
+  attribute vec4 aSeed;
+  varying vec3 vColor;
+  varying float vHeat;
+  varying float vAlpha;
+
+  vec3 rotY(vec3 p, float a) {
+    float c = cos(a), s = sin(a);
+    return vec3(p.x * c + p.z * s, p.y, -p.x * s + p.z * c);
+  }
+  float easeS(float t) { t = clamp(t, 0.0, 1.0); return t * t * (3.0 - 2.0 * t); }
+
+  void main() {
+    float stagger = aSeed.x;
+    float form = easeS((uForm - stagger * 0.45) / 0.55);
+    vec3 brain = aBrain;
+    float breathe = 1.0 + 0.018 * sin(uTime * 1.4 + aSeed.y * 6.28);
+    brain *= breathe;
+    float ex = easeS(uExplode) * (0.55 + aSeed.z * 0.9);
+    vec3 n = normalize(aBrain + 0.0001);
+    brain += n * ex;
+    vec3 pos = mix(aScatter, brain, form);
+    pos = rotY(pos, uRot);
+
+    vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+    vec4 clip = projectionMatrix * mv;
+    vec2 ndc = clip.xy / max(clip.w, 0.0001);
+    vec2 dp = ndc - uPointer;
+    float d2 = dot(dp, dp);
+    float inf = exp(-d2 * 16.0) * uHeat;
+    mv.xy += normalize(dp + 0.0001) * inf * 0.22;
+
+    float depth = clamp((-mv.z - 1.6) / 2.8, 0.0, 1.0);
+    float front = mix(0.18, 1.0, 1.0 - depth);
+    vHeat = aSeed.w * 0.28 + inf * 0.9;
+    vHeat = clamp(vHeat, 0.0, 1.2);
+    vColor = mix(aColor, uTint, uTintAmt * 0.85);
+    vAlpha = front * mix(0.2, 1.0, form) * (0.75 + 0.35 * (1.0 - ex * 0.4));
+
+    gl_Position = projectionMatrix * mv;
+    float sz = uSize * (0.75 + aSeed.z * 1.1) * mix(0.55, 1.35, front) * (1.0 + inf * 1.4) * (1.2 - length(aBrain) * 0.4);
+    gl_PointSize = sz * uDpr;
+  }
+`;
+
+const FRAG = /* glsl */ `
+  precision mediump float;
+  varying vec3 vColor;
+  varying float vHeat;
+  varying float vAlpha;
+  void main() {
+    vec2 uv = gl_PointCoord - 0.5;
+    float d = length(uv);
+    float disc = smoothstep(0.5, 0.08, d);
+    float core = smoothstep(0.22, 0.0, d);
+    vec3 hot = mix(vColor * 1.15, vec3(1.0, 0.86, 0.58), clamp(vHeat * 0.22, 0.0, 1.0));
+    vec3 col = hot * disc + vec3(1.0, 0.94, 0.82) * core * vHeat * 0.45;
+    float a = (disc * 0.85 + core * 0.55) * vAlpha;
+    if (a < 0.01) discard;
+    gl_FragColor = vec4(col, a);
+  }
+`;
+
+const LINE_VERT = /* glsl */ `
+  uniform float uTime;
+  uniform float uRot;
+  uniform float uForm;
+  uniform float uAlpha;
+  attribute vec3 aColor;
+  varying vec3 vColor;
+  varying float vA;
+  vec3 rotY(vec3 p, float a) {
+    float c = cos(a), s = sin(a);
+    return vec3(p.x * c + p.z * s, p.y, -p.x * s + p.z * c);
+  }
+  void main() {
+    vec3 p = rotY(position, uRot);
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    float front = clamp(1.0 - ((-mv.z - 1.4) / 3.0), 0.12, 1.0);
+    vColor = aColor;
+    vA = uAlpha * front * uForm;
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+const LINE_FRAG = /* glsl */ `
+  precision mediump float;
+  varying vec3 vColor;
+  varying float vA;
+  void main() { gl_FragColor = vec4(vColor, vA); }
+`;
+
+const PULSE_VERT = /* glsl */ `
+  uniform float uTime;
+  uniform float uRot;
+  uniform float uDpr;
+  attribute vec3 aFrom;
+  attribute vec3 aTo;
+  attribute vec4 aSeed;
+  attribute vec3 aColor;
+  varying vec3 vColor;
+  varying float vA;
+  vec3 rotY(vec3 p, float a) {
+    float c = cos(a), s = sin(a);
+    return vec3(p.x * c + p.z * s, p.y, -p.x * s + p.z * c);
+  }
+  void main() {
+    float u = fract(uTime * (0.12 + aSeed.y * 0.22) + aSeed.x);
+    vec3 mid = mix(aFrom, aTo, 0.5);
+    mid += normalize(mid + 0.0001) * 0.28;
+    vec3 p = mix(mix(aFrom, mid, u), mix(mid, aTo, u), u);
+    p = rotY(p, uRot);
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    vColor = aColor;
+    vA = sin(u * 3.14159);
+    gl_Position = projectionMatrix * mv;
+    gl_PointSize = (4.2 + vA * 5.5) * uDpr;
+  }
+`;
+const PULSE_FRAG = /* glsl */ `
+  precision mediump float;
+  varying vec3 vColor;
+  varying float vA;
+  void main() {
+    vec2 uv = gl_PointCoord - 0.5;
+    float d = length(uv);
+    float disc = smoothstep(0.5, 0.05, d);
+    gl_FragColor = vec4(mix(vColor, vec3(1.0), 0.45) * disc, disc * vA);
+  }
+`;
+
+const GLOW_VERT = /* glsl */ `
+  uniform float uRot;
+  uniform float uForm;
+  varying vec3 vN;
+  varying vec3 vV;
+  vec3 rotY(vec3 p, float a) {
+    float c = cos(a), s = sin(a);
+    return vec3(p.x * c + p.z * s, p.y, -p.x * s + p.z * c);
+  }
+  void main() {
+    vec3 p = rotY(position * (0.92 + 0.08 * uForm), uRot);
+    vec4 w = modelMatrix * vec4(p, 1.0);
+    vN = normalize(p);
+    vV = cameraPosition - w.xyz;
+    gl_Position = projectionMatrix * viewMatrix * w;
+  }
+`;
+const GLOW_FRAG = /* glsl */ `
+  precision mediump float;
+  uniform vec3 uTint;
+  uniform float uTintAmt;
+  varying vec3 vN;
+  varying vec3 vV;
+  void main() {
+    float f = pow(1.0 - abs(dot(normalize(vN), normalize(vV))), 2.6);
+    vec3 c = mix(vec3(0.75, 0.35, 1.0), vec3(1.0, 0.45, 0.18), 0.4);
+    c = mix(c, uTint, uTintAmt);
+    gl_FragColor = vec4(c, f * 0.42);
+  }
+`;
+
+function createBrain(canvas, opts = {}) {
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const renderer = new THREE.WebGLRenderer({
+    canvas, alpha: true, antialias: false, powerPreference: "high-performance",
+  });
+  renderer.setClearColor(0x000000, 0);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 40);
+  camera.position.set(0, 0.06, 3.9);
+  camera.lookAt(0, 0, 0);
+
+  const uniforms = {
+    uTime: { value: 0 },
+    uForm: { value: reduce ? 1 : 0 },
+    uExplode: { value: 0 },
+    uRot: { value: 0 },
+    uPointer: { value: new THREE.Vector2(8, 8) },
+    uHeat: { value: 1 },
+    uTint: { value: new THREE.Vector3(1.0, 0.42, 0.16) },
+    uTintAmt: { value: 0 },
+    uDpr: { value: 1 },
+    uSize: { value: 7.2 },
+    uAlpha: { value: 0.16 },
+  };
+
+  const isMobile = Math.min(window.innerWidth, window.innerHeight) < 720;
+  const N = isMobile ? 9000 : 18000;
+
+  const aBrain = new Float32Array(N * 3);
+  const aScatter = new Float32Array(N * 3);
+  const aColor = new Float32Array(N * 3);
+  const aSeed = new Float32Array(N * 4);
+  const pts = [];
+  for (let i = 0; i < N; i++) {
+    const p = brainPoint();
+    /* dense core: most motes live inside the vault, not on a giant shell */
+    const roll = Math.random();
+    const s = roll < 0.55 ? 0.10 + Math.random() * 0.22
+      : roll < 0.88 ? 0.32 + Math.random() * 0.22
+      : 0.52 + Math.random() * 0.16;
+    p.x *= s; p.y *= s; p.z *= s;
+    aBrain[i * 3] = p.x; aBrain[i * 3 + 1] = p.y; aBrain[i * 3 + 2] = p.z;
+    pts.push(p);
+    const ang = Math.random() * Math.PI * 2;
+    const rad = 1.6 + Math.random() * 2.4;
+    aScatter[i * 3] = Math.cos(ang) * rad;
+    aScatter[i * 3 + 1] = (Math.random() - 0.5) * 1.8;
+    aScatter[i * 3 + 2] = Math.sin(ang) * rad;
+    const c = lobeColor(p);
+    aColor[i * 3] = c[0]; aColor[i * 3 + 1] = c[1]; aColor[i * 3 + 2] = c[2];
+    aSeed[i * 4] = Math.random();
+    aSeed[i * 4 + 1] = Math.random();
+    aSeed[i * 4 + 2] = Math.random();
+    aSeed[i * 4 + 3] = Math.random();
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("aBrain", new THREE.BufferAttribute(aBrain, 3));
+  geo.setAttribute("aScatter", new THREE.BufferAttribute(aScatter, 3));
+  geo.setAttribute("aColor", new THREE.BufferAttribute(aColor, 3));
+  geo.setAttribute("aSeed", new THREE.BufferAttribute(aSeed, 4));
+  geo.setAttribute("position", new THREE.BufferAttribute(aBrain, 3));
+  const cloud = new THREE.Points(geo, new THREE.ShaderMaterial({
+    uniforms, vertexShader: VERT, fragmentShader: FRAG,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  }));
+  scene.add(cloud);
+
+  const ico = icosphere(2);
+  const cageGeo = new THREE.BufferGeometry();
+  const cagePos = ico.pos.map((v) => v * 1.28);
+  cageGeo.setAttribute("position", new THREE.BufferAttribute(cagePos, 3));
+  const cageCol = new Float32Array(cagePos.length);
+  for (let i = 0; i < cageCol.length; i += 3) {
+    cageCol[i] = 0.42; cageCol[i + 1] = 0.46; cageCol[i + 2] = 0.58;
+  }
+  cageGeo.setAttribute("aColor", new THREE.BufferAttribute(cageCol, 3));
+  const cage = new THREE.LineSegments(cageGeo, new THREE.ShaderMaterial({
+    uniforms, vertexShader: LINE_VERT, fragmentShader: LINE_FRAG,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  }));
+  scene.add(cage);
+
+  const SYN = isMobile ? 180 : 360;
+  const synPos = [];
+  const synCol = [];
+  const used = [];
+  for (let i = 0; i < SYN; i++) {
+    const a = (Math.random() * N) | 0;
+    let best = a, bestD = 99;
+    for (let k = 0; k < 12; k++) {
+      const b = (Math.random() * N) | 0;
+      const dx = pts[a].x - pts[b].x, dy = pts[a].y - pts[b].y, dz = pts[a].z - pts[b].z;
+      const d = dx * dx + dy * dy + dz * dz;
+      if (d < bestD && d > 0.04) { bestD = d; best = b; }
+    }
+    synPos.push(pts[a].x, pts[a].y, pts[a].z, pts[best].x, pts[best].y, pts[best].z);
+    const ca = lobeColor(pts[a]);
+    synCol.push(ca[0], ca[1], ca[2], ca[0], ca[1], ca[2]);
+    used.push([a, best]);
+  }
+  const synGeo = new THREE.BufferGeometry();
+  synGeo.setAttribute("position", new THREE.Float32BufferAttribute(synPos, 3));
+  synGeo.setAttribute("aColor", new THREE.Float32BufferAttribute(synCol, 3));
+  const synUni = {
+    ...uniforms,
+    uAlpha: { value: 0.13 },
+  };
+  scene.add(new THREE.LineSegments(synGeo, new THREE.ShaderMaterial({
+    uniforms: synUni, vertexShader: LINE_VERT, fragmentShader: LINE_FRAG,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  })));
+
+  const PUL = isMobile ? 28 : 56;
+  const pFrom = new Float32Array(PUL * 3);
+  const pTo = new Float32Array(PUL * 3);
+  const pSeed = new Float32Array(PUL * 4);
+  const pCol = new Float32Array(PUL * 3);
+  for (let i = 0; i < PUL; i++) {
+    const pair = used[(Math.random() * used.length) | 0];
+    const A = pts[pair[0]], B = pts[pair[1]];
+    pFrom[i * 3] = A.x; pFrom[i * 3 + 1] = A.y; pFrom[i * 3 + 2] = A.z;
+    pTo[i * 3] = B.x; pTo[i * 3 + 1] = B.y; pTo[i * 3 + 2] = B.z;
+    pSeed[i * 4] = Math.random();
+    pSeed[i * 4 + 1] = Math.random();
+    pSeed[i * 4 + 2] = Math.random();
+    pSeed[i * 4 + 3] = Math.random();
+    const c = lobeColor(A);
+    pCol[i * 3] = c[0]; pCol[i * 3 + 1] = c[1]; pCol[i * 3 + 2] = c[2];
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute("position", new THREE.BufferAttribute(pFrom, 3));
+  pGeo.setAttribute("aFrom", new THREE.BufferAttribute(pFrom, 3));
+  pGeo.setAttribute("aTo", new THREE.BufferAttribute(pTo, 3));
+  pGeo.setAttribute("aSeed", new THREE.BufferAttribute(pSeed, 4));
+  pGeo.setAttribute("aColor", new THREE.BufferAttribute(pCol, 3));
+  scene.add(new THREE.Points(pGeo, new THREE.ShaderMaterial({
+    uniforms, vertexShader: PULSE_VERT, fragmentShader: PULSE_FRAG,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  })));
+
+  const FN = FILES.length;
+  const fBrain = new Float32Array(FN * 3);
+  const fScatter = new Float32Array(FN * 3);
+  const fColor = new Float32Array(FN * 3);
+  const fSeed = new Float32Array(FN * 4);
+  const filePts = [];
+  for (let i = 0; i < FN; i++) {
+    const p = brainPoint();
+    const s = 0.92 + Math.random() * 0.18;
+    const q = { x: p.x * s, y: p.y * s, z: p.z * s, name: FILES[i] };
+    filePts.push(q);
+    fBrain[i * 3] = q.x; fBrain[i * 3 + 1] = q.y; fBrain[i * 3 + 2] = q.z;
+    const ang = (i / FN) * Math.PI * 2;
+    fScatter[i * 3] = Math.cos(ang) * 2.6;
+    fScatter[i * 3 + 1] = Math.sin(i * 1.7) * 0.4;
+    fScatter[i * 3 + 2] = Math.sin(ang) * 2.6;
+    const c = lobeColor(p);
+    fColor[i * 3] = c[0]; fColor[i * 3 + 1] = c[1]; fColor[i * 3 + 2] = c[2];
+    fSeed[i * 4] = 0.15 + (i / FN) * 0.5;
+    fSeed[i * 4 + 1] = Math.random();
+    fSeed[i * 4 + 2] = 0.85;
+    fSeed[i * 4 + 3] = 0.8;
+  }
+  const fGeo = new THREE.BufferGeometry();
+  fGeo.setAttribute("aBrain", new THREE.BufferAttribute(fBrain, 3));
+  fGeo.setAttribute("aScatter", new THREE.BufferAttribute(fScatter, 3));
+  fGeo.setAttribute("aColor", new THREE.BufferAttribute(fColor, 3));
+  fGeo.setAttribute("aSeed", new THREE.BufferAttribute(fSeed, 4));
+  fGeo.setAttribute("position", new THREE.BufferAttribute(fBrain, 3));
+  const fileExplode = { value: 0 };
+  const fUni = {
+    uTime: uniforms.uTime,
+    uForm: uniforms.uForm,
+    uExplode: fileExplode,
+    uRot: uniforms.uRot,
+    uPointer: uniforms.uPointer,
+    uHeat: uniforms.uHeat,
+    uTint: uniforms.uTint,
+    uTintAmt: uniforms.uTintAmt,
+    uDpr: uniforms.uDpr,
+    uSize: { value: 4.2 },
+  };
+  scene.add(new THREE.Points(fGeo, new THREE.ShaderMaterial({
+    uniforms: fUni, vertexShader: VERT, fragmentShader: FRAG,
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+  })));
+
+  const glow = new THREE.Mesh(
+    new THREE.SphereGeometry(0.42, 48, 32),
+    new THREE.ShaderMaterial({
+      uniforms, vertexShader: GLOW_VERT, fragmentShader: GLOW_FRAG,
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide,
+    })
+  );
+  scene.add(glow);
+
+  let W = 1, H = 1, dpr = 1;
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    renderer.setPixelRatio(dpr);
+    renderer.setSize(W, H, false);
+    camera.aspect = W / H;
+    /* portrait: horizontal extent shrinks with aspect, so the core would swell
+       past the project ring. Back the camera off by 1/aspect (capped) to keep
+       the brain the same share of the WIDTH on a phone as it is on a desk. */
+    camera.position.z = 3.9 * (camera.aspect < 1 ? Math.min(1.62, 1 / camera.aspect) : 1);
+    camera.updateProjectionMatrix();
+    uniforms.uDpr.value = dpr;
+    uniforms.uSize.value = isMobile ? 3.8 : 4.8;
+  }
+  resize();
+  const ro = new ResizeObserver(resize);
+  ro.observe(canvas.parentElement || canvas);
+
+  let rot = 0;
+  let rotVel = reduce ? 0 : 0.18;
+  let dragging = false;
+  let lastX = 0;
+  let explodeT = 0;
+  let explodeDir = 0;
+  let form = reduce ? 1 : 0;
+  let tintAmt = 0;
+  let targetTintAmt = 0;
+  const tint = new THREE.Color("#ff6a2a");
+  let pointerNdc = new THREE.Vector2(8, 8);
+  let running = true;
+  const t0 = performance.now();
+
+  function hexToVec(hex) {
+    const c = new THREE.Color(hex);
+    uniforms.uTint.value.set(c.r, c.g, c.b);
+  }
+
+  function projectFile(i, rotAngle) {
+    const q = filePts[i];
+    const c = Math.cos(rotAngle), s = Math.sin(rotAngle);
+    const x = q.x * c + q.z * s;
+    const z = -q.x * s + q.z * c;
+    const ex = fileExplode.value;
+    const mag = 1 + ex * 1.15;
+    const v = new THREE.Vector3(x * mag, q.y * mag, z * mag);
+    v.project(camera);
+    return {
+      name: q.name,
+      x: (v.x * 0.5 + 0.5) * W,
+      y: (-v.y * 0.5 + 0.5) * H,
+      z: v.z,
+      visible: v.z < 1,
+    };
+  }
+
+  let raf = 0;
+  function frame(now) {
+    if (!running) return;
+    raf = requestAnimationFrame(frame);
+    const t = (now - t0) / 1000;
+    uniforms.uTime.value = t;
+    if (!reduce && !dragging) rot += rotVel * 0.016;
+    rotVel *= 0.96;
+    if (!reduce && !dragging) rotVel += 0.18 * 0.016;
+    uniforms.uRot.value = rot;
+    if (form < 1) {
+      form = Math.min(1, form + 0.02);
+      uniforms.uForm.value = form * form * (3 - 2 * form);
+      if (form >= 1 && opts.onFormed) opts.onFormed();
+    }
+    if (explodeDir !== 0) {
+      explodeT = Math.max(0, Math.min(1, explodeT + explodeDir * 0.022));
+      fileExplode.value = explodeT * explodeT * (3 - 2 * explodeT);
+      if (explodeT >= 1 && explodeDir > 0) explodeDir = 0;
+      if (explodeT <= 0 && explodeDir < 0) explodeDir = 0;
+    }
+    tintAmt += (targetTintAmt - tintAmt) * 0.08;
+    uniforms.uExplode.value = 0;
+    uniforms.uTintAmt.value = tintAmt;
+    uniforms.uPointer.value.copy(pointerNdc);
+    renderer.render(scene, camera);
+    if (opts.onFrame) opts.onFrame({ rot, explode: uniforms.uExplode.value, form: uniforms.uForm.value });
+  }
+  raf = requestAnimationFrame(frame);
+
+  const el = canvas.parentElement || canvas;
+  el.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    /* The stage is the drag-to-rotate surface, but the project ring and the HUD
+       live inside it. Capturing the pointer here stole it from those controls:
+       the node got pointerdown, then pointerleave, and never a click — so a
+       project could never actually be pinned. Only capture on empty stage. */
+    if (e.target.closest && e.target.closest(".node, .hud, .core-hit, .file-chip")) return;
+    dragging = true;
+    lastX = e.clientX;
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener("pointerup", () => { dragging = false; });
+  el.addEventListener("pointerleave", () => {
+    pointerNdc.set(8, 8);
+    dragging = false;
+  });
+  el.addEventListener("pointermove", (e) => {
+    const r = canvas.getBoundingClientRect();
+    const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
+    const ny = -(((e.clientY - r.top) / r.height) * 2 - 1);
+    pointerNdc.set(nx, ny);
+    if (dragging) {
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      rot += dx * 0.008;
+      rotVel = dx * 0.12;
+    }
+  });
+
+  return {
+    setTint(hex, amt = 1) {
+      hexToVec(hex);
+      targetTintAmt = amt;
+    },
+    clearTint() { targetTintAmt = 0; },
+    explode() {
+      if (explodeT > 0.5) explodeDir = -1;
+      else explodeDir = 1;
+    },
+    isExploded() { return explodeT > 0.5; },
+    files() { return filePts; },
+    projectFiles() {
+      const out = [];
+      for (let i = 0; i < FN; i++) out.push(projectFile(i, rot));
+      return out;
+    },
+    destroy() {
+      running = false;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      renderer.dispose();
+    },
+  };
+}
+
+
+/* CORE dashboard — project ring, edge widgets, brain glue.
+   Vibe-code widgets by adding to WIDGET_CATALOG or using the Custom card. */
+/* createBrain is defined above in this same module */
+
+const PROJECTS = [
+  { id: "playletter",  mark: "PL",  name: "PlayLetter",     color: "#3ddc84", line: "Letters that read themselves." },
+  { id: "rir",         mark: "RIR", name: "Retail Investor",color: "#22d3ee", line: "The report for people who actually own the funds." },
+  { id: "mothership",  mark: "MS",  name: "Mothership",     color: "#5b9dff", line: "The phone that runs the shop." },
+  { id: "us3",         mark: "US3", name: "US3 Ops",        color: "#f2b84b", line: "Gas-monitor ops floor. Paper still happens." },
+  { id: "aloud",       mark: "AL",  name: "Aloud",          color: "#ff7a45", line: "Karaoke for anything you write." },
+  { id: "harvester",   mark: "HV",  name: "Harvester",      color: "#b6e34a", line: "Overnight research that shows up ready." },
+  { id: "rico",        mark: "RC",  name: "RICO",           color: "#ff5d8f", line: "Lenny's ghostwriter. Don't let him sound like a robot." },
+  { id: "family",      mark: "FAM", name: "Family OS",      color: "#ff9a3c", line: "The house, the dogs, the calendar." },
+  { id: "gym",         mark: "GYM", name: "Gym",            color: "#f87171", line: "The mesocycle, not the vibe." },
+  { id: "yield",       mark: "YA",  name: "Yield Agents",   color: "#cdd5e0", line: "On-chain income that doesn't sleep." },
+  { id: "vault",       mark: "GB",  name: "G-Brain",        color: "#d68cff", line: "The second brain every agent reads." },
+  { id: "desk",        mark: "DK",  name: "The Desk",       color: "#8be8b4", line: "Posts that go out without opening a tab." },
+  { id: "lennyos",     mark: "OS",  name: "Lenny OS",       color: "#7ec8ff", line: "The private dashboard." },
+  { id: "triton",      mark: "TL",  name: "Triton Labs",    color: "#8b7cff", line: "Experiments that earned a name." },
+  { id: "assembly",    mark: "AF",  name: "Assembly Floor", color: "#9aa5b5", line: "The shop, in software." },
+  { id: "chronos",     mark: "CH",  name: "Chronos",        color: "#94a3b8", line: "The workstation that never sleeps." },
+  { id: "lmt",         mark: "LMT", name: "lennymadethat",  color: "#fb923c", line: "The public face." },
+  { id: "health",      mark: "HT",  name: "Health",         color: "#fb7185", line: "Sleep, gut, the cut." },
+];
+
+const TZ = [
+  { id: "pt", label: "Pacific", zone: "America/Los_Angeles" },
+  { id: "et", label: "Eastern", zone: "America/New_York" },
+  { id: "ie", label: "Dublin",  zone: "Europe/Dublin" },
+];
+
+function pad(n) { return String(n).padStart(2, "0"); }
+function fmtTime(d, zone) {
+  try {
+    return new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: zone }).format(d);
+  } catch { return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
+}
+function fmtClock(d) {
+  try {
+    return new Intl.DateTimeFormat("en-US", {
+      weekday: "short", month: "short", day: "numeric",
+      hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/Los_Angeles",
+    }).format(d) + " PT";
+  } catch { return d.toLocaleString(); }
+}
+
+function calEvents(d) {
+  return [
+    { t: "06:10", title: "Morning Brief" },
+    { t: "09:00", title: "US3 pipeline" },
+    { t: "12:30", title: "Family — lunch window" },
+    { t: "16:00", title: "RIR Sunday pass" },
+    { t: "19:00", title: "Gym — mesocycle" },
+  ];
+}
+
+const MAIL = [
+  { from: "Beehiiv",   sub: "Sunday report is in draft", when: "14m", c: "#ff5d8f" },
+  { from: "Ming / US3",sub: "Sensor lot ETA Thursday",   when: "1h",  c: "#f2b84b" },
+  { from: "Gartlan Furey", sub: "Estate questionnaire follow-up", when: "3h", c: "#7ec8ff" },
+  { from: "PlayLetter", sub: "Author invite ready to send", when: "5h", c: "#3ddc84" },
+];
+
+const AGENTS = [
+  { who: "Sentinel",  msg: "29 checks green. Nothing to wake you for.", when: "2m", c: "#2ee6c8" },
+  { who: "RICO",      msg: "Voice pass queued on the Sunday draft.", when: "11m", c: "#ff5d8f" },
+  { who: "Harvester", msg: "12 overnight items. 3 flagged for you.", when: "41m", c: "#b6e34a" },
+  { who: "CARL",      msg: "Two names moved on the yield watch.", when: "1h", c: "#22d3ee" },
+];
+
+const CHORES = [
+  { t: "06:10", title: "Morning Brief", state: "done" },
+  { t: "09:00", title: "US3 pipeline review", state: "next" },
+  { t: "11:30", title: "Inbox zero the agent tray", state: "open" },
+  { t: "16:00", title: "RIR newsletter pass", state: "open" },
+  { t: "21:00", title: "Wrap it up — vault log", state: "open" },
+];
+
+const WIDGET_CATALOG = {
+  calendar: {
+    title: "Calendar",
+    accent: "#e8b45a",
+    render() {
+      const d = new Date();
+      const zones = TZ.map((z) => `<span>${z.label}<b>${fmtTime(d, z.zone)}</b></span>`).join("");
+      const events = calEvents(d).map((e) =>
+        `<div class="event"><time>${e.t}</time><div>${e.title}</div></div>`
+      ).join("");
+      return `
+        <div class="cal-now">${fmtTime(d, "America/Los_Angeles")}</div>
+        <div class="cal-date">${d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</div>
+        <div class="zones">${zones}</div>
+        ${events}`;
+    },
+  },
+  email: {
+    title: "Mail",
+    accent: "#ff6a2a",
+    render() {
+      const rows = MAIL.map((m) =>
+        `<div class="mail"><i class="pip" style="--c:${m.c}"></i><div>${m.sub}<small><br>${m.from}</small></div><span class="ago">${m.when}</span></div>`
+      ).join("");
+      return `<div class="stat-row"><b>${MAIL.length}</b><span>waiting</span></div>${rows}`;
+    },
+  },
+  inbox: {
+    title: "Agent inbox",
+    accent: "#c084fc",
+    render() {
+      const rows = AGENTS.map((a) =>
+        `<div class="agent"><i class="pip" style="--c:${a.c}"></i><div><strong>${a.who}</strong> — ${a.msg}</div><span class="ago">${a.when}</span></div>`
+      ).join("");
+      return rows;
+    },
+  },
+  today: {
+    title: "Today",
+    accent: "#2ee6c8",
+    render() {
+      return CHORES.map((c) =>
+        `<div class="chore"><i class="pip" style="--c:${c.state === "done" ? "#2ee6c8" : c.state === "next" ? "#ff6a2a" : "#8d8894"}"></i><div>${c.title}<small><br>${c.t}${c.state === "next" ? " · up next" : c.state === "done" ? " · done" : ""}</small></div><span class="ago">${c.state === "next" ? "NOW" : ""}</span></div>`
+      ).join("");
+    },
+  },
+  skills: {
+    title: "Skills on deck",
+    accent: "#5b9dff",
+    render() {
+      const items = [
+        ["rir-newsletter", "Sunday voice pass"],
+        ["particle-forge", "brain orb (this)"],
+        ["wrap-it-up", "session harvest"],
+        ["frontend-design", "CORE dashboard"],
+      ];
+      return items.map(([k, v]) =>
+        `<div class="chore"><i class="pip" style="--c:#5b9dff"></i><div><strong>${k}</strong><small><br>${v}</small></div></div>`
+      ).join("");
+    },
+  },
+  custom: {
+    title: "Custom",
+    accent: "#e8b45a",
+    editable: true,
+    render(w) {
+      return `<div class="custom-body">${w.html || "<p>Click the menu and choose Edit. Paste HTML. This is your vibe-coded card.</p>"}</div>`;
+    },
+  },
+};
+
+const DEFAULT_LAYOUT = {
+  left: [
+    { type: "calendar", id: "w1" },
+    { type: "inbox", id: "w2" },
+  ],
+  right: [
+    { type: "email", id: "w3" },
+    { type: "today", id: "w4" },
+  ],
+};
+
+const LS_KEY = "core-dashboard-layout-v1";
+function loadLayout() {
+  try {
+    const v = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if (v && Array.isArray(v.left) && Array.isArray(v.right)) return v;
+  } catch { /* ignore */ }
+  return structuredClone(DEFAULT_LAYOUT);
+}
+function saveLayout(l) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(l)); } catch { /* ignore */ }
+}
+
+const $ = (id) => document.getElementById(id);
+const layout = loadLayout();
+let brain = null;
+let addTarget = "left";
+let editId = null;
+let hotId = null;
+let pinned = null;
+let thoughtTimer = 0;
+
+function renderRing() {
+  const ring = $("ring");
+  const n = PROJECTS.length;
+  ring.innerHTML = PROJECTS.map((p, i) => {
+    const a = ((i / n) * 360 - 90) * Math.PI / 180;
+    return `<button class="node" data-id="${p.id}" style="--a:${a}rad;--c:${p.color}" type="button">
+      <span class="node-orb">${p.mark}</span>
+      <span class="node-name">${p.name}</span>
+    </button>`;
+  }).join("");
+  ring.querySelectorAll(".node").forEach((el) => {
+    el.addEventListener("pointerenter", () => heat(el.dataset.id, true));
+    el.addEventListener("pointerleave", () => heat(el.dataset.id, false));
+    el.addEventListener("focus", () => heat(el.dataset.id, true));
+    el.addEventListener("blur", () => heat(el.dataset.id, false));
+    el.addEventListener("click", () => select(el.dataset.id));
+  });
+  drawArcs();
+}
+
+function drawArcs() {
+  const svg = $("arcs");
+  const stage = $("stage");
+  const w = stage.clientWidth, h = stage.clientHeight;
+  const cx = w / 2, cy = h / 2;
+  const cs = getComputedStyle(document.documentElement);
+  const ring = parseFloat(cs.getPropertyValue("--ring")) || 260;
+  svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+  svg.innerHTML = PROJECTS.map((p, i) => {
+    const a = ((i / PROJECTS.length) * 360 - 90) * Math.PI / 180;
+    const x = cx + Math.cos(a) * ring;
+    const y = cy + Math.sin(a) * ring;
+    const mx = cx + Math.cos(a) * ring * 0.55;
+    const my = cy + Math.sin(a) * ring * 0.55;
+    return `<path class="spoke" data-id="${p.id}" d="M ${cx} ${cy} Q ${mx} ${my} ${x} ${y}"
+      fill="none" stroke="${p.color}" stroke-width="1.2" stroke-linecap="round"
+      opacity="0.07" pathLength="1" />
+      <circle class="pkt" data-id="${p.id}" r="2.4" fill="${p.color}" opacity="0">
+        <animateMotion dur="2.4s" rotate="auto" fill="freeze">
+          <mpath href="#none"/>
+        </animateMotion>
+      </circle>`;
+  }).join("");
+}
+
+function fireSpoke(id) {
+  const svg = $("arcs");
+  const path = svg.querySelector(`.spoke[data-id="${id}"]`);
+  if (!path) return;
+  path.style.transition = "opacity 400ms";
+  path.style.opacity = "0.55";
+  path.style.strokeDasharray = "0.18 0.82";
+  path.style.strokeDashoffset = "1";
+  path.animate(
+    [{ strokeDashoffset: "1" }, { strokeDashoffset: "0" }],
+    { duration: 900, easing: "cubic-bezier(.2,.82,.2,1)" }
+  );
+  setTimeout(() => { path.style.opacity = hotId === id ? "0.35" : "0.07"; path.style.strokeDasharray = "none"; }, 1000);
+}
+
+function heat(id, on) {
+  const p = PROJECTS.find((x) => x.id === id);
+  if (!p) return;
+  const node = document.querySelector(`.node[data-id="${id}"]`);
+  if (on) {
+    if (hotId && hotId !== id) {
+      document.querySelector(`.node[data-id="${hotId}"]`)?.classList.remove("is-hot");
+    }
+    hotId = id;
+    node?.classList.add("is-hot");
+    brain?.setTint(p.color, 0.85);
+    const hud = $("hud");
+    hud.hidden = false;
+    hud.innerHTML = `<b style="color:${p.color}">${p.name}</b><p>${p.line}</p><span class="tag" style="--c:${p.color}">${pinned === id ? "pinned" : "click to pin · hover to jump"}</span>`;
+    $("coreTitle").textContent = p.name;
+    $("coreSub").textContent = p.line;
+    fireSpoke(id);
+  } else if (hotId === id) {
+    if (pinned === id) return;
+    hotId = null;
+    node?.classList.remove("is-hot");
+    brain?.clearTint();
+    $("hud").hidden = true;
+    $("coreTitle").textContent = "memory core";
+    $("coreSub").textContent = `${PROJECTS.length} projects · 36 files · demo data`;
+  }
+}
+
+function select(id) {
+  const p = PROJECTS.find((x) => x.id === id);
+  if (!p) return;
+  if (pinned && pinned !== id) {
+    document.querySelector(`.node[data-id="${pinned}"]`)?.classList.remove("is-hot");
+  }
+  pinned = id;
+  heat(id, true);
+  const hud = $("hud");
+  hud.hidden = false;
+  hud.innerHTML = `<b style="color:${p.color}">${p.name}</b><p>${p.line}</p>
+    <span class="tag" style="--c:${p.color}">pinned · click the core or press Esc to release</span>`;
+}
+
+function unpin() {
+  const id = pinned;
+  pinned = null;
+  if (id) heat(id, false);
+}
+
+function filterProjects(q) {
+  q = q.trim().toLowerCase();
+  document.querySelectorAll(".node").forEach((el) => {
+    const p = PROJECTS.find((x) => x.id === el.dataset.id);
+    const hit = !q || p.name.toLowerCase().includes(q) || p.mark.toLowerCase().includes(q) || p.line.toLowerCase().includes(q);
+    el.classList.toggle("is-dim", !hit);
+    if (q && hit && document.querySelectorAll(".node:not(.is-dim)").length === 1) heat(p.id, true);
+  });
+  if (!q) {
+    document.querySelectorAll(".node.is-hot").forEach((el) => el.classList.remove("is-hot"));
+    brain?.clearTint();
+  }
+}
+
+function widgetHtml(w, side) {
+  const spec = WIDGET_CATALOG[w.type] || WIDGET_CATALOG.custom;
+  const body = spec.render(w);
+  return `<article class="widget" data-id="${w.id}" style="--w-accent:${w.accent || spec.accent}">
+    <div class="widget-head">
+      <h3>${w.title || spec.title}</h3>
+      <div class="widget-menu">
+        <button type="button" data-menu="${w.id}" aria-label="Widget menu">⋯</button>
+        <div class="menu" data-for="${w.id}" hidden>
+          <button type="button" data-act="up">Move up</button>
+          <button type="button" data-act="down">Move down</button>
+          <button type="button" data-act="flip">Move to other side</button>
+          ${spec.editable || w.type === "custom" ? `<button type="button" data-act="edit">Edit / vibe-code</button>` : ""}
+          <button type="button" data-act="remove">Remove</button>
+        </div>
+      </div>
+    </div>
+    <div class="widget-body">${body}</div>
+  </article>`;
+}
+
+function renderRails() {
+  for (const side of ["left", "right"]) {
+    const el = side === "left" ? $("railL") : $("railR");
+    el.innerHTML = layout[side].map((w) => widgetHtml(w, side)).join("")
+      + `<button class="add-w" type="button" data-add="${side}">+ widget</button>`;
+  }
+}
+
+function findWidget(id) {
+  for (const side of ["left", "right"]) {
+    const i = layout[side].findIndex((w) => w.id === id);
+    if (i >= 0) return { side, i, w: layout[side][i] };
+  }
+  return null;
+}
+
+function closeMenus() {
+  document.querySelectorAll(".menu").forEach((m) => { m.hidden = true; });
+}
+
+function uid() { return "w" + Math.random().toString(36).slice(2, 8); }
+
+function addWidget(type) {
+  const spec = WIDGET_CATALOG[type];
+  const w = { type, id: uid(), title: spec.title, accent: spec.accent };
+  if (type === "custom") w.html = "<p>Write anything. This card is yours.</p>";
+  layout[addTarget].push(w);
+  saveLayout(layout);
+  renderRails();
+}
+
+function openPicker(side) {
+  addTarget = side;
+  const box = $("pickerList");
+  box.innerHTML = Object.entries(WIDGET_CATALOG).map(([k, v]) =>
+    `<button class="pick" type="button" data-type="${k}"><i style="--c:${v.accent}"></i>${v.title}</button>`
+  ).join("");
+  $("picker").hidden = false;
+}
+
+function openEdit(id) {
+  const found = findWidget(id);
+  if (!found) return;
+  editId = id;
+  $("editTitle").textContent = "Edit · " + (found.w.title || "widget");
+  $("editName").value = found.w.title || "";
+  const wrap = $("editHtmlWrap");
+  wrap.style.display = (found.w.type === "custom") ? "" : "none";
+  $("editHtml").value = found.w.html || "";
+  $("editSheet").hidden = false;
+}
+
+function tickClock() {
+  const d = new Date();
+  const el = $("clock");
+  el.dateTime = d.toISOString();
+  el.textContent = fmtClock(d);
+}
+
+function thoughtLoop() {
+  thoughtTimer = setInterval(() => {
+    if (hotId) return;
+    const p = PROJECTS[(Math.random() * PROJECTS.length) | 0];
+    fireSpoke(p.id);
+    brain?.setTint(p.color, 0.35);
+    setTimeout(() => { if (!hotId) brain?.clearTint(); }, 1200);
+  }, 4200);
+}
+
+function syncFileChips() {
+  if (!brain) return;
+  const layer = $("files");
+  const exploded = brain.isExploded();
+  const pos = brain.projectFiles();
+  if (!layer.childElementCount) {
+    layer.innerHTML = pos.map((f) => `<span class="file-chip" data-name="${f.name}">${f.name}</span>`).join("");
+  }
+  const chips = layer.querySelectorAll(".file-chip");
+  pos.forEach((f, i) => {
+    const c = chips[i];
+    if (!c) return;
+    c.style.left = f.x + "px";
+    c.style.top = f.y + "px";
+    const show = exploded && f.visible && f.z < 0.98;
+    c.classList.toggle("on", show);
+  });
+}
+
+function boot() {
+  renderRing();
+  renderRails();
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  const canvas = $("brain");
+  try {
+    brain = createBrain(canvas, {
+      onFormed() {
+        $("coreSub").textContent = `${PROJECTS.length} projects · 36 files · demo data`;
+      },
+      onFrame() { syncFileChips(); },
+    });
+  } catch (err) {
+    console.warn("WebGL brain failed", err);
+    $("coreSub").textContent = "static core · WebGL unavailable";
+  }
+
+  $("find").addEventListener("input", (e) => filterProjects(e.target.value));
+
+  $("coreHit").addEventListener("pointerdown", (e) => e.stopPropagation());
+  $("coreHit").addEventListener("click", () => {
+    unpin();
+    const was = brain?.isExploded();
+    brain?.explode();
+    const on = !was;
+    $("coreTitle").textContent = on ? "memory burst" : "memory core";
+    $("coreSub").textContent = on
+      ? "files peeling off the core — click again to fold them back"
+      : `${PROJECTS.length} projects · 36 files · demo data`;
+  });
+
+  document.addEventListener("click", (e) => {
+    const add = e.target.closest("[data-add]");
+    if (add) { openPicker(add.dataset.add); return; }
+    const menuBtn = e.target.closest("[data-menu]");
+    if (menuBtn) {
+      const id = menuBtn.dataset.menu;
+      const menu = document.querySelector(`.menu[data-for="${id}"]`);
+      const open = menu && !menu.hidden;
+      closeMenus();
+      if (menu && !open) menu.hidden = false;
+      return;
+    }
+    const act = e.target.closest("[data-act]");
+    if (act) {
+      const menu = act.closest(".menu");
+      const id = menu?.dataset.for;
+      const found = findWidget(id);
+      if (found) {
+        const { side, i } = found;
+        const other = side === "left" ? "right" : "left";
+        if (act.dataset.act === "remove") layout[side].splice(i, 1);
+        if (act.dataset.act === "up" && i > 0) {
+          const [w] = layout[side].splice(i, 1);
+          layout[side].splice(i - 1, 0, w);
+        }
+        if (act.dataset.act === "down" && i < layout[side].length - 1) {
+          const [w] = layout[side].splice(i, 1);
+          layout[side].splice(i + 1, 0, w);
+        }
+        if (act.dataset.act === "flip") {
+          const [w] = layout[side].splice(i, 1);
+          layout[other].push(w);
+        }
+        if (act.dataset.act === "edit") openEdit(id);
+        saveLayout(layout);
+        renderRails();
+      }
+      closeMenus();
+      return;
+    }
+    if (!e.target.closest(".widget-menu")) closeMenus();
+  });
+
+  $("pickerClose").addEventListener("click", () => { $("picker").hidden = true; });
+  $("picker").addEventListener("click", (e) => {
+    if (e.target.id === "picker") $("picker").hidden = true;
+    const pick = e.target.closest("[data-type]");
+    if (pick) {
+      addWidget(pick.dataset.type);
+      $("picker").hidden = true;
+    }
+  });
+  $("editClose").addEventListener("click", () => { $("editSheet").hidden = true; });
+  $("editCancel").addEventListener("click", () => { $("editSheet").hidden = true; });
+  $("editSave").addEventListener("click", () => {
+    const found = findWidget(editId);
+    if (found) {
+      found.w.title = $("editName").value.trim() || found.w.title;
+      if (found.w.type === "custom") found.w.html = $("editHtml").value;
+      saveLayout(layout);
+      renderRails();
+    }
+    $("editSheet").hidden = true;
+  });
+
+  $("drawerToggle").addEventListener("click", () => {
+    document.body.classList.toggle("show-widgets");
+    $("drawerScrim").hidden = !document.body.classList.contains("show-widgets");
+  });
+  $("drawerScrim").addEventListener("click", () => {
+    document.body.classList.remove("show-widgets");
+    $("drawerScrim").hidden = true;
+  });
+
+  window.addEventListener("resize", () => { drawArcs(); });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      $("picker").hidden = true;
+      $("editSheet").hidden = true;
+      document.body.classList.remove("show-widgets");
+      unpin();
+    }
+    if (e.target.matches("input, textarea")) return;
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      const i = Math.max(0, PROJECTS.findIndex((p) => p.id === hotId));
+      const n = PROJECTS.length;
+      const j = e.key === "ArrowRight" ? (i + 1) % n : (i - 1 + n) % n;
+      if (hotId) document.querySelector(`.node[data-id="${hotId}"]`)?.classList.remove("is-hot");
+      heat(PROJECTS[j].id, true);
+    }
+  });
+
+  thoughtLoop();
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+
+</script>
+
+</body>
+</html>
