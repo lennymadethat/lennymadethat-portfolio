@@ -188,8 +188,7 @@ window.PRODUCTS = [
       "Extracts action items and routes them to the right project",
       "Cloud-scheduled — runs while you sleep"
     ],
-    tags: ["Multi-agent", "Automation", "Semantic search", "Cloud"],
-    cta: { label: "Download the kit", href: "/kits/vault-fleet-kit.zip", download: true }
+    tags: ["Multi-agent", "Automation", "Semantic search", "Cloud"]
   },
   {
     slug: "the-harvester",
@@ -207,11 +206,9 @@ window.PRODUCTS = [
       "Synthesizes through a configurable lens you choose",
       "Visuals lens — timed shot list of a video's motion, filed to its own shelf",
       "Writes a structured briefing page automatically",
-      "Routes action items to the right project",
-      "Downloadable kit — bring your own keys and run it"
+      "Routes action items to the right project"
     ],
-    tags: ["AI pipeline", "Video understanding", "Research", "Self-hosted"],
-    cta: { label: "Download the kit", href: "/kits/harvester-kit.zip", download: true }
+    tags: ["AI pipeline", "Video understanding", "Research", "Self-hosted"]
   },
   {
     slug: "sentinel",
@@ -249,8 +246,7 @@ window.PRODUCTS = [
       "Learns a voice fingerprint from the real published corpus",
       "Atomizes raw dumps into idea cards, then drafts",
       "Voice + compliance checks on every draft",
-      "Delivers to the newsletter tool as a draft — never auto-publishes",
-      "Downloadable as The Content Operative kit"
+      "Delivers to the newsletter tool as a draft — never auto-publishes"
     ],
     /* ── depth block (2026-08-29) ── */
     problem: "Writing in your own voice at volume is the bottleneck. A good rant dictated in the car still costs an hour at a keyboard before it is publishable — and handed to a generic model, what comes back is fluent, agreeable, and unmistakably not you.",
@@ -272,8 +268,7 @@ window.PRODUCTS = [
       { v: "2", l: "GATES BEFORE HANDOVER" }
     ],
     stack: ["Cloudflare Workers", "Metered LLM gateway with a hard spend cap", "Published-corpus voice fingerprint", "Publishing-tool API — drafts only"],
-    tags: ["Voice modeling", "Content", "Newsletter", "Human-in-loop"],
-    cta: { label: "Download the kit", href: "/kits/rico-kit.zip", download: true }
+    tags: ["Voice modeling", "Content", "Newsletter", "Human-in-loop"]
   },
   {
     slug: "carl",
@@ -495,11 +490,6 @@ window.PRODUCT_STATUS = {
 
 /* THE AGENT SHOP — downloadable / sellable agents and kits. */
 window.SHOP = [
-  { name: "The Ingester", desc: "Drop any file in one inbox; a fleet of agents files it into a searchable knowledge base.", price: "FREE KIT", kit: "/kits/vault-fleet-kit.zip", page: "the-ingester" },
-  { name: "The Harvester", desc: "YouTube link in, structured brief out — through the lens you choose.", price: "FREE KIT", kit: "/kits/harvester-kit.zip", page: "the-harvester" },
-  { name: "RICO — The Content Operative", desc: "Ramble in, on-brand draft out. A ghostwriter with a learned voice fingerprint.", price: "FREE KIT", kit: "/kits/rico-kit.zip", page: "rico" },
-  { name: "The Forge", desc: "Draw a workflow as a graph, press run. One interpreter executes any graph you draw.", price: "FREE KIT", kit: "/kits/forge-runner-kit.zip" },
-  { name: "Income Data API", desc: "The investing platform's dataset behind tiered, agent-priced keys.", price: "KIT", kit: "/kits/rir-api-kit.zip" },
   { name: "Persistent Memory", desc: "Permanent, searchable memory for any AI agent — MCP server + vector store.", price: "OPEN SOURCE · MIT", href: "https://github.com/lennymadethat/persistent-memory", page: "persistent-memory" },
   { name: "Mothership", desc: "Any-model, always-on harness for your home machine — reach it from your phone.", price: "OPEN SOURCE · MIT", href: "https://github.com/lennymadethat/mothership", page: "mothership" }
 ];
