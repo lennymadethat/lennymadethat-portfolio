@@ -1,6 +1,6 @@
 // lennymadethat.com — SKELETON (F0). Renders data/site.js into the five sections and runs the
 // mechanics: nav, product swipe, pinned agent select, scroll-scrubbed Second Brain, downloads.
-import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20260926a";
+import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20260929a";
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (tag, attrs = {}, html = "") => {
@@ -33,18 +33,23 @@ const sectionObs = new IntersectionObserver((entries) => {
 {
   const track = $(".sk-products__track");
   const dots = $("#platforms > .sk-dots");
+  const mobileFilm = matchMedia("(max-width: 640px)");
+  const sourceFor = (p) => mobileFilm.matches && p.videoMobile ? p.videoMobile : p.video;
+  const posterFor = (p) => mobileFilm.matches && p.posterMobile ? p.posterMobile : p.poster;
   products.forEach((p, i) => {
     const media = p.video
-      ? `<video src="${esc(p.video)}"${p.poster ? ` poster="${esc(p.poster)}"` : ""} muted loop playsinline preload="metadata"></video>`
+      ? `<video${posterFor(p) ? ` poster="${esc(posterFor(p))}"` : ""} aria-label="${esc(p.name)} product film" controls muted loop playsinline preload="none"></video>`
       : `<div class="sk-placeholder"><p>FILM SLOT<br>${esc(p.name)}</p></div>`;
-    const slide = el("article", { class: "sk-slide", "aria-roledescription": "slide", "aria-label": `${i + 1} of ${products.length}: ${p.name}` },
+    const slide = el("article", { class: `sk-slide${p.film ? " sk-slide--film" : ""}`, "aria-roledescription": "slide", "aria-label": `${i + 1} of ${products.length}: ${p.name}` },
       `<div class="sk-slide__media">${media}</div>
-       ${todo(p.todo, p.video ? "stand-in footage" : "film")}
+       ${p.todo ? todo(p.todo, p.video ? "stand-in footage" : "film") : ""}
        <div class="sk-slide__copy">
          ${p.logo ? `<img class="sk-slide__logo" src="${esc(p.logo)}" alt="" />` : ""}
-         <h2 class="sk-slide__name">${esc(p.name)}</h2>
-         <p class="sk-slide__hook">${esc(p.hook)}</p>
-         <div class="sk-slide__ctas">${linkBtn(p.visit)}${linkBtn(p.explainer ?? { label: "How it's built", todo: "P2" }, "sk-btn sk-btn--ghost")}</div>
+         <div class="sk-slide__text">
+           <h2 class="sk-slide__name">${esc(p.name)}</h2>
+           <p class="sk-slide__hook">${esc(p.hook)}</p>
+         </div>
+         <div class="sk-slide__ctas">${linkBtn(p.visit)}${p.film && !p.explainer ? "" : linkBtn(p.explainer ?? { label: "How it's built", todo: "P2" }, "sk-btn sk-btn--ghost")}</div>
        </div>`);
     track.append(slide);
     const d = el("button", { type: "button", role: "tab", "aria-label": p.name, "aria-selected": i === 0 ? "true" : "false" });
@@ -55,7 +60,7 @@ const sectionObs = new IntersectionObserver((entries) => {
   let cur = 0;
   const go = (i) => { i = (i + slides.length) % slides.length; track.scrollTo({ left: i * track.clientWidth, behavior: reduced ? "auto" : "smooth" }); };
   const sync = () => {
-    const i = Math.round(track.scrollLeft / track.clientWidth);
+    const i = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
     if (i === cur) return;
     cur = i;
     [...dots.children].forEach((d, j) => d.setAttribute("aria-selected", j === i ? "true" : "false"));
@@ -64,14 +69,41 @@ const sectionObs = new IntersectionObserver((entries) => {
   track.addEventListener("scroll", () => requestAnimationFrame(sync), { passive: true });
   $("#platforms .sk-arrow--prev").addEventListener("click", () => go(cur - 1));
   $("#platforms .sk-arrow--next").addEventListener("click", () => go(cur + 1));
-  track.addEventListener("keydown", (e) => { if (e.key === "ArrowRight") go(cur + 1); if (e.key === "ArrowLeft") go(cur - 1); });
+  track.addEventListener("keydown", (e) => {
+    if (e.target.closest("video, a, button")) return;
+    if (e.key === "ArrowRight") { e.preventDefault(); go(cur + 1); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); go(cur - 1); }
+  });
   let onScreen = false;
   const playVisible = () => slides.forEach((s, j) => {
     const v = s.querySelector("video");
     if (!v) return;
-    if (onScreen && j === cur && !reduced) v.play().catch(() => {}); else v.pause();
+    const active = onScreen && j === cur && !document.hidden;
+    if (active) {
+      // Load only the visible film, in the format appropriate for this screen.
+      const p = products[j], src = sourceFor(p);
+      if (v.getAttribute("src") !== src) {
+        v.poster = posterFor(p) || "";
+        v.src = src;
+      }
+      if (!reduced) v.play().catch(() => {});
+    } else v.pause();
   });
   new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; playVisible(); }, { threshold: 0.4 }).observe($("#platforms"));
+  document.addEventListener("visibilitychange", playVisible);
+  mobileFilm.addEventListener("change", () => {
+    slides.forEach((s, j) => {
+      const v = s.querySelector("video");
+      if (v) v.poster = posterFor(products[j]) || "";
+    });
+    playVisible();
+  });
+  // A review link can open a product without changing the carousel's order.
+  const requested = products.findIndex((p) => p.slug === new URLSearchParams(location.search).get("product"));
+  if (requested >= 0) requestAnimationFrame(() => {
+    track.scrollTo({ left: requested * track.clientWidth, behavior: "instant" });
+    sync();
+  });
 }
 
 // ---------- 2. agent select (pinned; scroll moves through the roster) ----------
