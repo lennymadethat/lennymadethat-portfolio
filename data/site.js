@@ -33,7 +33,11 @@ export const products = [
     name: "Assembly Floor",
     hook: "Agents installed in your company, by the person who built them.",
     logo: "/img/products/assembly-floor.svg",
-    video: null, poster: null, todo: "V3",
+    // Original film is a temporary stand-in while the showcase is reworked.
+    film: true,
+    video: "/media/films/assembly-floor-placeholder-v1.mp4",
+    poster: "/media/films/assembly-floor-placeholder-v1.png",
+    todo: null,
     visit: { label: "See Assembly Floor", href: null, todo: "P1" }, // its own landing page, four tiers
     explainer: null,
   },
