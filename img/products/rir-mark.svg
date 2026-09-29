@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Retail Investor Report">
+  <rect width="512" height="512" rx="112" fill="#14181B"/>
+  <!-- the report -->
+  <rect x="118" y="118" width="216" height="276" rx="22" fill="#EDEBE4"/>
+  <rect x="150" y="156" width="120" height="18" rx="9" fill="#5B6670"/>
+  <rect x="150" y="192" width="152" height="18" rx="9" fill="#C9CFD4"/>
+  <rect x="150" y="228" width="132" height="18" rx="9" fill="#C9CFD4"/>
+  <!-- the income line, leaving the page -->
+  <path d="M150 344 L226 296 L286 318 L396 200" fill="none" stroke="#F04D23" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M396 200 L396 262 M396 200 L334 200" fill="none" stroke="#F04D23" stroke-width="26" stroke-linecap="round"/>
+</svg>

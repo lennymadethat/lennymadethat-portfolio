@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Assembly Floor OS">
+  <rect width="512" height="512" rx="112" fill="#14181B"/>
+  <!-- floor slats: two seated, one sliding into place -->
+  <rect x="96" y="304" width="320" height="56" rx="12" fill="#EDEBE4"/>
+  <rect x="96" y="224" width="320" height="56" rx="12" fill="#EDEBE4"/>
+  <rect x="148" y="144" width="268" height="56" rx="12" fill="#F04D23"/>
+  <rect x="96" y="144" width="36" height="56" rx="12" fill="#5B6670"/>
+  <!-- guide dots -->
+  <circle cx="124" cy="392" r="8" fill="#5B6670"/>
+  <circle cx="164" cy="392" r="8" fill="#5B6670"/>
+  <circle cx="204" cy="392" r="8" fill="#5B6670"/>
+</svg>

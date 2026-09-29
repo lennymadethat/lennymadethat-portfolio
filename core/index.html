@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CORE — agentic memory</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23ff6a2a'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/app.css?v=4" />
+</head>
+<body>
+  <!--
+    CORE — agentic memory dashboard demo. Project orbs are real links.
+  -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="top">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div>
+        <h1>CORE</h1>
+        <p>agentic memory · morning brief</p>
+      </div>
+    </div>
+    <label class="find">
+      <span class="sr">Find a project</span>
+      <input id="find" type="search" placeholder="find a project" autocomplete="off" />
+    </label>
+    <div class="top-meta">
+      <time id="clock" datetime=""></time>
+      <span class="live"><i></i> live</span>
+    </div>
+  </header>
+
+  <aside class="rail rail-l" id="railL"></aside>
+
+  <main class="stage" id="stage">
+    <canvas id="brain"></canvas>
+    <svg class="arcs" id="arcs" aria-hidden="true"></svg>
+    <div class="ring-track" aria-hidden="true"></div>
+    <div class="ring" id="ring"></div>
+    <div class="file-layer" id="files"></div>
+    <div class="core-hit" id="coreHit" title="Click the core"></div>
+    <div class="core-caption">
+      <strong id="coreTitle">memory core</strong>
+      <span id="coreSub">18 projects · 36 files · assembling</span>
+    </div>
+    <div class="hud" id="hud" hidden></div>
+  </main>
+
+  <aside class="rail rail-r" id="railR"></aside>
+
+  <button class="drawer-toggle" id="drawerToggle" type="button">widgets</button>
+  <div class="drawer-scrim" id="drawerScrim" hidden></div>
+
+  <div class="picker" id="picker" hidden>
+    <div class="picker-card">
+      <header>
+        <h2>Add a widget</h2>
+        <button type="button" class="icon-x" id="pickerClose" aria-label="Close">×</button>
+      </header>
+      <div class="picker-list" id="pickerList"></div>
+    </div>
+  </div>
+
+  <div class="edit-sheet" id="editSheet" hidden>
+    <div class="picker-card">
+      <header>
+        <h2 id="editTitle">Edit widget</h2>
+        <button type="button" class="icon-x" id="editClose" aria-label="Close">×</button>
+      </header>
+      <label class="field">
+        <span>Title</span>
+        <input id="editName" type="text" />
+      </label>
+      <label class="field" id="editHtmlWrap">
+        <span>HTML — vibe-code this card</span>
+        <textarea id="editHtml" rows="8" spellcheck="false"></textarea>
+      </label>
+      <div class="edit-actions">
+        <button type="button" class="btn" id="editSave">Save</button>
+        <button type="button" class="btn ghost" id="editCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js?v=4"></script>
+</body>
+</html>

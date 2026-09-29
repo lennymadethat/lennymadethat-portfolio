@@ -80,7 +80,17 @@ flag this to Lenny rather than silently pushing.
 
 ---
 
-## Site architecture (since the 2026-08-06 "THE LINE" redesign)
+## Site architecture — 2026-09-26 SKELETON (current)
+
+The homepage is a grey wireframe (row F0 of the rebuild to-do list): `index.html` + `skeleton.css` +
+`skeleton.js`, all content in **`data/site.js`** (products, agents, crews, Second Brain frames + beats,
+downloads, contact). Five sections: product swipe → agent select (pinned scroll, arrows, dots, skip,
+grid) → crews → Second Brain (scroll-scrubbed frames in `frames/second-brain/`) → downloads → contact.
+Every unfinished slot shows a dashed badge naming its to-do row. Colours/type are neutral tokens at the
+top of `skeleton.css` — the design-token session replaces that block only. The forge opening still uses
+`hero.js` + the forge rules in `styles.css`. NOT a hire-me site: no résumé link, no "hire me".
+
+## Old architecture (the 2026-08-06 "THE LINE" redesign — archived, kept for reference)
 
 Product-led portfolio. **`products.js` is the single source of truth** — it holds
 the 9-product catalog (THE LINE) and the Agent Shop kit list. Both surfaces render

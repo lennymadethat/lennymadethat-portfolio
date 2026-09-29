@@ -1,0 +1,11 @@
+{
+  "count": 60000,
+  "stride": 6,
+  "fit": 2.6,
+  "size": {
+    "x": 2.6,
+    "y": 2.02,
+    "z": 1.913
+  },
+  "credit": "Brain model: Johnson J, NIH 3D (3DPX-021161), CC BY 4.0"
+}
