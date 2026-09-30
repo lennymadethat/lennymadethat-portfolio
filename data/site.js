@@ -20,13 +20,16 @@ export const products = [
     hook: "Your newsletters, out loud.",
     logo: "/img/products/playletter-512.png",
     film: true,
-    video: "/media/films/playletter-wide-v4.mp4",
-    videoMobile: "/media/films/playletter-mobile-v1.mp4",
-    poster: "/media/films/playletter-wide-v4.jpg",
-    posterMobile: "/media/films/playletter-mobile-v1.jpg",
+    // v5 = the karaoke loop: Lily's words lighting up on the real word clock, 12 s, seamless,
+    // reads with the sound off (the carousel autoplays muted). Unmute and she speaks.
+    video: "/media/films/playletter-wide-v5.mp4",
+    videoMobile: "/media/films/playletter-mobile-v2.mp4",
+    poster: "/media/films/playletter-wide-v5.jpg",
+    posterMobile: "/media/films/playletter-mobile-v2.jpg",
     todo: null,
     visit: { label: "Visit PlayLetter", href: "https://playletter.com" },
-    explainer: null,
+    // The maker's cut (32 s, narrated by Lily, sound on) opens on tap.
+    explainer: { label: "Watch the film", href: "/media/films/playletter-maker-v1.mp4" },
   },
   {
     slug: "assembly-floor",
