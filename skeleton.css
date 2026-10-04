@@ -45,7 +45,7 @@ body { background: var(--sk-bg); color: var(--sk-text); }
 .sk-nav__links { display: flex; gap: 18px; overflow-x: auto; scrollbar-width: none; }
 .sk-nav__links a { color: var(--sk-muted); text-decoration: none; font: 500 14px/44px var(--sk-font); white-space: nowrap; }
 .sk-nav__links a.is-active, .sk-nav__links a:hover { color: var(--sk-text); }
-@media (max-width: 640px) { .sk-nav__brand { display: none; } .sk-nav__links { gap: 14px; } .sk-nav__links a { font-size: 13px; } }
+@media (max-width: 640px) { .sk-nav__brand { display: none; } .sk-nav__links { gap: 8px; } .sk-nav__links a { font-size: 13px; } }
 
 .sk-scrollcue { display: inline-block; margin-top: 28px; color: var(--sk-muted); font: 500 13px/1 var(--sk-mono); letter-spacing: .1em; text-transform: uppercase; text-decoration: none; }
 
