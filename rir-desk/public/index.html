@@ -3,93 +3,224 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Carl on the desk</title>
+<title>Retail Investor Report</title>
+<meta name="description" content="Every income fund. One desk. Ask Carl.">
 <style>
   html, body { margin: 0; height: 100%; background: #070b12; }
   body { display: grid; place-items: center; }
   .stage {
     position: relative;
-    width: min(100vw, calc(100vh * 1360 / 752));
-    aspect-ratio: 1360 / 752;
+    width: min(100vw, calc(100vh * 1376 / 752));
+    aspect-ratio: 1376 / 752;
     overflow: hidden;
-    perspective: 1100px;
+    container-type: inline-size;
+    background: #070b12;
   }
   .plate { width: 100%; height: 100%; display: block; }
+
   .logo {
     position: absolute;
-    z-index: 5;
+    z-index: 6;
     left: 50%;
-    top: 1.6%;
-    width: 62%;
+    top: 2.1%;
+    width: 38%;
     height: auto;
     transform: translateX(-50%);
     pointer-events: none;
-    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, .55));
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .6));
   }
+  .tag {
+    position: absolute;
+    z-index: 6;
+    left: 50%;
+    top: 8.15%;
+    margin: 0;
+    transform: translateX(-50%);
+    font-family: "Segoe UI", sans-serif;
+    font-size: 1.12cqi;
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    max-width: 46%;
+    text-align: center;
+    text-transform: uppercase;
+    color: rgba(214, 230, 242, .78);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .85);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  .label {
+    position: absolute;
+    z-index: 4;
+    margin: 0;
+    text-align: center;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 0.88cqi;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(206, 226, 240, .62);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, .85);
+    pointer-events: none;
+  }
+  #label-income { left: 9.6%; top: 9.6%; width: 15.2%; }
+  #label-market { left: 74.6%; top: 10.6%; width: 13.6%; }
+
+  .card {
+    position: absolute;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #071018;
+    box-shadow:
+      0 18px 36px rgba(0, 0, 0, .46),
+      inset 0 0 0 1px rgba(186, 220, 236, .4);
+    animation: drift var(--d) ease-in-out infinite;
+    animation-delay: var(--delay);
+    will-change: transform;
+  }
+  .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #income .card { left: 9.6%; width: 15.2%; aspect-ratio: 1100 / 578; }
+  #market .card { left: 74.6%; width: 13.6%; aspect-ratio: 1100 / 578; }
+  #income .card:nth-child(1) { top: 13.4%; --y: -12px; --d: 16s; --delay: -3s; }
+  #income .card:nth-child(2) { top: 31.2%; --y: 10px; --d: 19s; --delay: -8s; }
+  #income .card:nth-child(3) { top: 49%; --y: -9px; --d: 14.5s; --delay: -5s; }
+  #market .card:nth-child(1) { top: 14.4%; --y: 11px; --d: 17.5s; --delay: -6s; }
+  #market .card:nth-child(2) { top: 31%; --y: -10px; --d: 15s; --delay: -2s; }
+  #market .card:nth-child(3) { top: 47.6%; --y: 8px; --d: 20s; --delay: -11s; }
+  @keyframes drift {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(var(--y)); }
+  }
+
+  .monitor {
+    position: absolute;
+    z-index: 3;
+    left: 37.936%;
+    top: 42.553%;
+    width: 24.128%;
+    height: 14.628%;
+    overflow: hidden;
+    -webkit-mask: url(monitor-mask.png) center / 100% 100% no-repeat;
+    mask: url(monitor-mask.png) center / 100% 100% no-repeat;
+    box-shadow: inset 0 0 16px rgba(0, 0, 0, .4);
+  }
+  .monitor .shot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 0;
+  }
+  .monitor .shot:first-child { opacity: 1; }
+
+  .phone {
+    position: absolute;
+    z-index: 3;
+    left: 69.041%;
+    top: 68.883%;
+    width: 3.779%;
+    height: 13.298%;
+    overflow: hidden;
+    background: #0c1522;
+    -webkit-mask: url(phone-mask.png) center / 100% 100% no-repeat;
+    mask: url(phone-mask.png) center / 100% 100% no-repeat;
+    container-type: size;
+  }
+  .ph {
+    box-sizing: border-box;
+    height: 100%;
+    padding: 15% 7% 6%;
+    display: flex;
+    flex-direction: column;
+    font-family: "Segoe UI", sans-serif;
+    color: #e8f4fb;
+  }
+  .ph .k {
+    font-size: 6cqh;
+    font-weight: 650;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8eabbf;
+    white-space: nowrap;
+  }
+  .ph .n {
+    margin-top: 2%;
+    font-size: 15.5cqh;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: #5dffa8;
+    animation: pay 4.8s ease-in-out infinite;
+  }
+  .ph .rows { margin-top: 7%; display: flex; flex-direction: column; gap: 5%; }
+  .ph .row {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 6.7cqh;
+    font-weight: 700;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .ph .row b { font-weight: 700; color: #5dffa8; }
+  @keyframes pay {
+    0%, 100% { opacity: .82; }
+    50% { opacity: 1; }
+  }
+
   canvas {
     position: absolute; inset: 0; width: 100%; height: 100%;
     pointer-events: none; z-index: 40;
   }
-  .fan { position: absolute; inset: 0; pointer-events: none; }
-  .card {
-    position: absolute;
-    width: 25.2%;
-    height: 23.8%;
-    border-radius: 2.4%;
-    overflow: hidden;
-    background: #071018;
-    box-shadow:
-      0 22px 36px rgba(0, 0, 0, .5),
-      inset 0 0 0 1px rgba(186, 220, 236, .42);
+
+  @media (prefers-reduced-motion: reduce) {
+    .card, .ph .n { animation: none; }
   }
-  #income .card { transform-origin: 100% 58%; }
-  #market .card { transform-origin: 0% 58%; }
-  .card img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .cap {
-    position: absolute;
-    z-index: 6;
-    margin: 0;
-    width: 25%;
-    text-align: center;
-    font-family: "Segoe UI", sans-serif;
-    font-size: clamp(11px, 1.35vw, 18px);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #e7f6ff;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, .85);
-    pointer-events: none;
-    transition: opacity .35s ease;
-  }
-  #cap-income { left: 7%; top: 71.5%; }
-  #cap-market { left: 67.8%; top: 71.5%; }
 </style>
 </head>
 <body>
   <div class="stage">
-    <img class="plate" src="plate.jpg" alt="A man at a desk at night, with an empty gold star ring in the window.">
+    <img class="plate" src="plate.jpg" alt="A man at a desk at night, city lights beyond the glass.">
     <img class="logo" src="logo.png" alt="Retail Investor Report">
-    <div class="fan" id="income">
-      <div class="card" data-name="Performance Backtester"><img src="income/backtester.png" alt="Performance Backtester"></div>
-      <div class="card" data-name="The Income Board"><img src="income/board.png" alt="The Income Board"></div>
-      <div class="card" data-name="Head to Head"><img src="income/head-to-head.png" alt="Head to head"></div>
-      <div class="card" data-name="Fund Issuers"><img src="income/issuers.png" alt="Fund issuers"></div>
-      <div class="card" data-name="Your Income Factory"><img src="income/factory.png" alt="Your Income Factory"></div>
+    <p class="tag">Every income fund. One desk. Ask Carl.</p>
+
+    <p class="label" id="label-income">Income</p>
+    <div id="income">
+      <div class="card"><img src="income/board.png" alt="The Income Board"></div>
+      <div class="card"><img src="income/backtester.png" alt="Performance Backtester"></div>
+      <div class="card"><img src="income/factory.png" alt="Your Income Factory"></div>
     </div>
-    <div class="fan" id="market">
-      <div class="card" data-name="The Dossier"><img src="market/dossier.png" alt="The Dossier"></div>
-      <div class="card" data-name="Stage Board"><img src="market/stage.png" alt="Stage Board"></div>
-      <div class="card" data-name="META vs GOOGL"><img src="market/charts.png" alt="META versus GOOGL"></div>
-      <div class="card" data-name="Compare"><img src="market/compare.png" alt="Compare two stocks"></div>
-      <div class="card" data-name="ETF Database"><img src="market/etf.png" alt="The ETF Database"></div>
+
+    <p class="label" id="label-market">Market</p>
+    <div id="market">
+      <div class="card"><img src="market/dossier.png" alt="The Dossier"></div>
+      <div class="card"><img src="market/stage.png" alt="Stage Board"></div>
+      <div class="card"><img src="market/charts.png" alt="META versus GOOGL"></div>
     </div>
-    <p class="cap" id="cap-income"></p>
-    <p class="cap" id="cap-market"></p>
+
+    <div class="monitor" id="monitor">
+      <img class="shot" src="income/backtester.png" alt="Performance Backtester on the monitor">
+      <img class="shot" src="income/board.png" alt="The Income Board on the monitor">
+      <img class="shot" src="income/factory.png" alt="Your Income Factory on the monitor">
+    </div>
+
+    <div class="phone" aria-label="This week's paycheck and three holdings">
+      <div class="ph">
+        <div class="k">This week</div>
+        <div class="n">$157</div>
+        <div class="rows">
+          <div class="row"><span>MRNY</span><b>168%</b></div>
+          <div class="row"><span>MSTY</span><b>121%</b></div>
+          <div class="row"><span>CONY</span><b>77%</b></div>
+        </div>
+      </div>
+    </div>
+
     <canvas id="fx"></canvas>
   </div>
 <script>
-/* Carl is drawn once, centered in the gold ring. The screens are real product
-   shots, turned in toward the chair. The front card of each fan cycles back. */
 const TAU = Math.PI * 2;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const rand = (a, b) => a + Math.random() * (b - a);
@@ -100,12 +231,17 @@ const cv = document.getElementById('fx');
 const ctx = cv.getContext('2d');
 let DPR = 1, W = 1, H = 1;
 
-const orb = { x: 0.50, y: 0.255, r: 0.068, breathT: 0 };
+/* On the man's centerline, in the open sky just above the monitor. */
+const orb = { x: 0.510, y: 0.292, r: 0.052, breathT: 0 };
 const TARGETS = [
-  { x: 0.18, y: 0.56 },
-  { x: 0.80, y: 0.56 },
-  { x: 0.50, y: 0.40 }
+  { x: 0.172, y: 0.40 },
+  { x: 0.814, y: 0.38 },
+  { x: 0.50, y: 0.448 }
 ];
+
+const shots = Array.from(document.querySelectorAll('#monitor .shot'));
+const HOLD = 6.4, FADE = 1.5;
+const force = new URLSearchParams(location.search).get('shot');
 
 const N_INNER = 48;
 const inner = [];
@@ -115,7 +251,7 @@ for (let i = 0; i < N_INNER; i++) inner.push({
   r: rand(1.0, 2.2), hot: Math.random() < .25, al: rand(.14, .32)
 });
 
-let t0 = performance.now();
+let t0 = performance.now() - 2200;
 
 function resize() {
   const r = stage.getBoundingClientRect();
@@ -131,27 +267,27 @@ function drawOrb(t) {
   const breath = 0.5 - 0.5 * Math.cos(TAU * orb.breathT);
   let dy = 0, dxx = 0;
   if (!REDUCED) {
-    dy = 4 * Math.sin(TAU * t / 9);
-    dxx = 2 * Math.sin(TAU * t / 14.6 + 1.3);
+    dy = 3.2 * Math.sin(TAU * t / 9);
+    dxx = 1.6 * Math.sin(TAU * t / 14.6 + 1.3);
   }
   const x = orb.x * W + dxx;
   const y = orb.y * H + dy;
   const r = orb.r * H;
   const cx = x * DPR, cy = y * DPR, R = r * DPR;
 
-  let hg = ctx.createRadialGradient(cx, cy, R * 0.7, cx, cy, R * 1.28);
-  hg.addColorStop(0, 'rgba(120,186,214,' + (0.16 + breath * 0.06).toFixed(3) + ')');
+  let hg = ctx.createRadialGradient(cx, cy, R * 0.7, cx, cy, R * 1.22);
+  hg.addColorStop(0, 'rgba(120,186,214,' + (0.14 + breath * 0.05).toFixed(3) + ')');
   hg.addColorStop(1, 'rgba(120,186,214,0)');
-  ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(cx, cy, R * 1.28, 0, TAU); ctx.fill();
+  ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(cx, cy, R * 1.22, 0, TAU); ctx.fill();
 
   ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU);
   ctx.fillStyle = '#0B0E14'; ctx.fill();
 
-  const coreB = 0.55 + breath * 0.12;
+  const coreB = 0.5 + breath * 0.1;
   let cg = ctx.createRadialGradient(cx, cy - R * 0.08, 0, cx, cy, R * 0.96);
   cg.addColorStop(0, 'rgba(214,236,246,' + coreB.toFixed(3) + ')');
-  cg.addColorStop(0.28, 'rgba(110,186,214,0.85)');
-  cg.addColorStop(0.62, 'rgba(36,110,140,0.75)');
+  cg.addColorStop(0.28, 'rgba(110,186,214,0.82)');
+  cg.addColorStop(0.62, 'rgba(36,110,140,0.72)');
   cg.addColorStop(1, 'rgba(11,14,20,0.2)');
   ctx.save();
   ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.clip();
@@ -172,13 +308,13 @@ function drawOrb(t) {
   }
   ctx.restore();
 
-  const rimA = clamp(0.28 + breath * 0.22, 0.1, 0.6);
+  const rimA = clamp(0.26 + breath * 0.18, 0.1, 0.55);
   ctx.save();
   ctx.shadowColor = 'rgba(120,190,214,' + rimA.toFixed(3) + ')';
-  ctx.shadowBlur = (8 + breath * 6) * DPR;
+  ctx.shadowBlur = (7 + breath * 5) * DPR;
   ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU);
   ctx.strokeStyle = 'rgba(150,205,224,' + rimA.toFixed(3) + ')';
-  ctx.lineWidth = 1.6 * DPR;
+  ctx.lineWidth = 1.5 * DPR;
   ctx.stroke();
   ctx.restore();
   return { x, y, r };
@@ -188,8 +324,8 @@ function drawBolt(i, a, sx, sy, ex, ey) {
   let dx = ex - sx, dy = ey - sy;
   const d = Math.hypot(dx, dy) || 1;
   dx /= d; dy /= d;
-  const mx = (sx + ex) / 2 - dy * d * 0.16;
-  const my = (sy + ey) / 2 + dx * d * 0.16;
+  const mx = (sx + ex) / 2 - dy * d * 0.14;
+  const my = (sy + ey) / 2 + dx * d * 0.14;
   let alpha;
   if (a < 0.15) alpha = a / 0.15;
   else if (a < 1.35) alpha = 1;
@@ -206,7 +342,7 @@ function drawBolt(i, a, sx, sy, ex, ey) {
     const u = k / SEG, iu = 1 - u;
     const bx = iu * iu * sx + 2 * iu * u * mx + u * u * ex;
     const by = iu * iu * sy + 2 * iu * u * my + u * u * ey;
-    const amp = Math.min(22, d * 0.11) * Math.sin(Math.PI * u);
+    const amp = Math.min(18, d * 0.09) * Math.sin(Math.PI * u);
     const j = (rnd(k) - 0.5) * 2 * amp;
     pts.push([bx - dy * j, by + dx * j]);
   }
@@ -217,18 +353,18 @@ function drawBolt(i, a, sx, sy, ex, ey) {
     ctx.stroke();
   };
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.globalAlpha = alpha * 0.18; ctx.strokeStyle = '#6FB6D8'; ctx.lineWidth = 5 * DPR;
-  ctx.shadowColor = '#8AC7DE'; ctx.shadowBlur = 10 * DPR; trace();
-  ctx.globalAlpha = alpha * 0.7; ctx.strokeStyle = '#9FD8EE'; ctx.lineWidth = 1.7 * DPR;
-  ctx.shadowBlur = 6 * DPR; trace();
-  ctx.globalAlpha = alpha * 0.9; ctx.strokeStyle = '#EAF7FF'; ctx.lineWidth = 0.8 * DPR;
+  ctx.globalAlpha = alpha * 0.16; ctx.strokeStyle = '#6FB6D8'; ctx.lineWidth = 4.2 * DPR;
+  ctx.shadowColor = '#8AC7DE'; ctx.shadowBlur = 8 * DPR; trace();
+  ctx.globalAlpha = alpha * 0.65; ctx.strokeStyle = '#9FD8EE'; ctx.lineWidth = 1.5 * DPR;
+  ctx.shadowBlur = 5 * DPR; trace();
+  ctx.globalAlpha = alpha * 0.88; ctx.strokeStyle = '#EAF7FF'; ctx.lineWidth = 0.7 * DPR;
   ctx.shadowBlur = 0; trace();
 
-  ctx.globalAlpha = alpha * 0.4; ctx.strokeStyle = '#9FD8EE'; ctx.lineWidth = 1 * DPR;
+  ctx.globalAlpha = alpha * 0.35; ctx.strokeStyle = '#9FD8EE'; ctx.lineWidth = 1 * DPR;
   for (let f = 0; f < 2; f++) {
     const at = 4 + Math.floor(rnd(90 + f) * (SEG - 8));
     const [px0, py0] = pts[at];
-    const len = 8 + rnd(70 + f) * 16;
+    const len = 7 + rnd(70 + f) * 14;
     const ang = Math.atan2(pts[at + 1][1] - py0, pts[at + 1][0] - px0) + (rnd(50 + f) - 0.5) * 1.6;
     ctx.beginPath();
     ctx.moveTo(px0 * DPR, py0 * DPR);
@@ -239,97 +375,34 @@ function drawBolt(i, a, sx, sy, ex, ey) {
   ctx.shadowBlur = 0; ctx.globalAlpha = 1;
 }
 
-function Fan(selector, capId, slots, phaseMs) {
-  const cards = Array.from(document.querySelectorAll(selector + ' .card'));
-  const cap = document.getElementById(capId);
-  const order = cards.map((_, i) => i);
-  const HOLD = 5.4, MOVE = 1.2;
-  let mode = 'hold';
-  let modeAt = performance.now() - phaseMs;
-  const ease = (p) => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-  const lerp = (a, b, p) => a + (b - a) * p;
-  const paint = (el, s, z) => {
-    el.style.left = s.x + '%';
-    el.style.top = s.y + '%';
-    el.style.zIndex = String(z);
-    el.style.filter = 'brightness(' + s.b.toFixed(3) + ')';
-    el.style.transform = 'rotateY(' + s.ry.toFixed(2) + 'deg) rotateX(' + s.rx.toFixed(2) + 'deg)';
-  };
-  const nameOf = () => { cap.textContent = cards[order[0]].dataset.name; cap.style.opacity = '1'; };
-  const rest = () => {
-    order.forEach((cardIndex, slot) => paint(cards[cardIndex], slots[slot], slots[slot].z));
-    nameOf();
-  };
-  const move = (raw) => {
-    const e = ease(raw);
-    const back = slots.length - 1;
-    cap.style.opacity = raw < 0.25 || raw > 0.8 ? '1' : '0.15';
-    order.forEach((cardIndex, slot) => {
-      const el = cards[cardIndex];
-      if (slot === 0) {
-        const a = slots[0], b = slots[back];
-        const lift = Math.sin(Math.PI * raw) * 2.2;
-        paint(el, {
-          x: lerp(a.x, b.x, e),
-          y: lerp(a.y, b.y, e) - lift,
-          ry: lerp(a.ry, b.ry, e),
-          rx: lerp(a.rx, b.rx, e),
-          b: lerp(a.b, b.b, e)
-        }, raw < 0.78 ? 60 : 2);
-      } else {
-        const q = ease(Math.min(1, Math.max(0, (raw - 0.16) / 0.84)));
-        const a = slots[slot], b = slots[slot - 1];
-        paint(el, {
-          x: lerp(a.x, b.x, q),
-          y: lerp(a.y, b.y, q),
-          ry: lerp(a.ry, b.ry, q),
-          rx: lerp(a.rx, b.rx, q),
-          b: lerp(a.b, b.b, q)
-        }, b.z);
-      }
-    });
-  };
-  rest();
-  return function tick(now) {
-    if (REDUCED) { rest(); return; }
-    const elapsed = (now - modeAt) / 1000;
-    if (mode === 'hold') {
-      rest();
-      if (elapsed >= HOLD) { mode = 'move'; modeAt = now; }
-      return;
-    }
-    const raw = Math.min(1, elapsed / MOVE);
-    move(raw);
-    if (raw >= 1) {
-      order.push(order.shift());
-      mode = 'hold';
-      modeAt = now;
-      rest();
-    }
-  };
+function monitor(t) {
+  if (force != null) {
+    const n = Math.max(0, Math.min(shots.length - 1, Number(force) || 0));
+    shots.forEach((el, i) => { el.style.opacity = i === n ? '1' : '0'; });
+    return;
+  }
+  if (REDUCED) {
+    shots.forEach((el, i) => { el.style.opacity = i === 0 ? '1' : '0'; });
+    return;
+  }
+  const span = HOLD + FADE;
+  const cycle = shots.length * span;
+  const u = (((t + FADE) % cycle) + cycle) % cycle;
+  shots.forEach((el, i) => {
+    let age = u - i * span;
+    if (age < 0) age += cycle;
+    let o = 0;
+    if (age < FADE) o = age / FADE;
+    else if (age < FADE + HOLD) o = 1;
+    else if (age < FADE + HOLD + FADE) o = 1 - (age - FADE - HOLD) / FADE;
+    el.style.opacity = o.toFixed(3);
+  });
 }
-
-const income = Fan('#income', 'cap-income', [
-  { x: 6.4, y: 44.6, ry: 34, rx: 8, z: 50, b: 1 },
-  { x: 3.6, y: 39.8, ry: 42, rx: 10, z: 40, b: 0.78 },
-  { x: 1.2, y: 35.2, ry: 48, rx: 12, z: 30, b: 0.64 },
-  { x: -0.6, y: 31.0, ry: 54, rx: 13, z: 20, b: 0.54 },
-  { x: -2.0, y: 27.2, ry: 58, rx: 14, z: 10, b: 0.46 }
-], 0);
-
-const market = Fan('#market', 'cap-market', [
-  { x: 68.4, y: 44.6, ry: -34, rx: 8, z: 50, b: 1 },
-  { x: 71.0, y: 39.8, ry: -42, rx: 10, z: 40, b: 0.78 },
-  { x: 73.2, y: 35.2, ry: -48, rx: 12, z: 30, b: 0.64 },
-  { x: 75.0, y: 31.0, ry: -54, rx: 13, z: 20, b: 0.54 },
-  { x: 76.4, y: 27.2, ry: -58, rx: 14, z: 10, b: 0.46 }
-], 3200);
 
 function frame(now) {
   const t = (now - t0) / 1000;
   orb.breathT = (t % 4) / 4;
-  income(now);
-  market(now);
+  monitor(t);
   ctx.clearRect(0, 0, cv.width, cv.height);
   const o = drawOrb(t);
   if (!REDUCED) {
@@ -338,7 +411,7 @@ function frame(now) {
       const start = t - n * (cycle / 2);
       const idx = Math.floor(start / cycle);
       const a = start - idx * cycle;
-      if (a < 0) continue;
+      if (a < 0 || a > 1.75) continue;
       const tgt = TARGETS[((idx % TARGETS.length) + TARGETS.length) % TARGETS.length];
       const ex = tgt.x * W, ey = tgt.y * H;
       let dx = ex - o.x, dy = ey - o.y;
