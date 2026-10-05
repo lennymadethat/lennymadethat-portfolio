@@ -1,0 +1,9 @@
+{
+  "name": "pl-desk",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "routes": [{ "pattern": "pl.lennymadethat.com", "custom_domain": true }],
+  "assets": {
+    "directory": "./public"
+  }
+}
