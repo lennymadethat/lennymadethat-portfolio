@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sunday desk — Retail Investor Report</title>
+<meta name="description" content="A living scene for Retail Investor Report. A man at the Sunday desk, Carl moving through the room, and the product on the other half.">
+<style>
+  :root {
+    --ink: #1c1916;
+    --paper: #f3eee4;
+    --teal: #8ac7de;
+    --teal-dim: #1c4a58;
+    --room: #241c16;
+    --serif: Georgia, "Palatino Linotype", Palatino, serif;
+    --sans: "Segoe UI", sans-serif;
+    --mono: Consolas, "Cascadia Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #0c0a09; color: var(--paper); }
+  body {
+    min-height: 100%;
+    display: grid;
+    place-items: center;
+    font-family: var(--sans);
+  }
+  .stage {
+    width: min(100vw, calc(100vh * 16 / 9));
+    aspect-ratio: 16 / 9;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    background: var(--room);
+    overflow: hidden;
+    position: relative;
+  }
+  .room { position: relative; min-width: 0; }
+  .room svg.plate { width: 100%; height: 100%; display: block; }
+  .carl {
+    position: absolute;
+    width: 86px;
+    height: 112px;
+    z-index: 3;
+    animation: zip 16s ease-in-out infinite;
+    filter: drop-shadow(0 10px 8px rgba(0,0,0,.45));
+  }
+  .carl svg { width: 100%; height: 100%; display: block; animation: bob 1.5s ease-in-out infinite alternate; }
+  .proof {
+    position: relative;
+    background:
+      radial-gradient(120% 80% at 80% 0%, rgba(138,199,222,.14), transparent 46%),
+      #14110e;
+    border-left: 1px solid rgba(243,238,228,.08);
+    padding: 7% 7% 6%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: clamp(10px, 1.15vw, 13px);
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 8px;
+  }
+  .proof h1 {
+    font-family: var(--serif);
+    font-weight: normal;
+    font-size: clamp(28px, 3.4vw, 52px);
+    line-height: .95;
+    margin: 0 0 6%;
+    letter-spacing: -0.02em;
+  }
+  .stack { position: relative; flex: 1; min-height: 0; }
+  .card {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    padding: 7% 7% 6%;
+    opacity: 0;
+    animation: show 18s linear infinite;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .card:nth-child(1) { animation-delay: 0s; }
+  .card:nth-child(2) { animation-delay: 4.5s; }
+  .card:nth-child(3) { animation-delay: 9s; }
+  .card:nth-child(4) { animation-delay: 13.5s; }
+  .card.paper { background: var(--paper); color: var(--ink); }
+  .card.screen { background: #101820; color: #e7f4f8; border: 1px solid rgba(138,199,222,.28); }
+  .kicker {
+    font-family: var(--mono);
+    font-size: clamp(10px, 1.05vw, 12px);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+  .paper .kicker { color: #8a5a32; }
+  .screen .kicker { color: var(--teal); }
+  .card > * { min-width: 0; }
+  .card h2 {
+    font-family: var(--serif);
+    font-weight: normal;
+    font-size: clamp(22px, 2.5vw, 36px);
+    line-height: 1.05;
+    margin: 0 0 12px;
+  }
+  .card p { margin: 0; font-size: clamp(14px, 1.35vw, 18px); line-height: 1.4; max-width: 28em; }
+  .rules { margin-top: 8%; display: grid; gap: 8px; }
+  .rules i {
+    display: block;
+    height: 8px;
+    border-radius: 99px;
+    background: #e4d8c4;
+  }
+  .rules i:nth-child(1) { width: 92%; }
+  .rules i:nth-child(2) { width: 84%; }
+  .rules i:nth-child(3) { width: 70%; background: var(--teal); height: 10px; }
+  .rules i:nth-child(4) { width: 78%; }
+  .rows { margin-top: 6%; display: grid; gap: 8px; }
+  .row {
+    display: grid;
+    grid-template-columns: 1.4fr .6fr .8fr;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(138,199,222,.06);
+    font-size: clamp(12px, 1.2vw, 15px);
+  }
+  .row b { font-weight: 600; }
+  .row.on { background: rgba(138,199,222,.2); outline: 1px solid rgba(138,199,222,.7); }
+  .say {
+    margin-top: auto;
+    background: #fff;
+    color: var(--ink);
+    border-radius: 16px 16px 16px 4px;
+    padding: 16px 18px;
+    font-family: var(--serif);
+    font-size: clamp(16px, 1.7vw, 22px);
+    line-height: 1.35;
+  }
+  .ticks {
+    display: flex;
+    gap: 8px;
+    margin-top: 5%;
+  }
+  .ticks span {
+    width: 36px;
+    height: 3px;
+    background: rgba(243,238,228,.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .ticks span::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--teal);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: tick 18s linear infinite;
+  }
+  .ticks span:nth-child(2)::after { animation-delay: 4.5s; }
+  .ticks span:nth-child(3)::after { animation-delay: 9s; }
+  .ticks span:nth-child(4)::after { animation-delay: 13.5s; }
+
+  .tree { transform-box: fill-box; transform-origin: 50% 100%; animation: sway 7.5s ease-in-out infinite alternate; }
+  .far { transform-box: fill-box; transform-origin: 50% 100%; animation: sway 18s ease-in-out infinite alternate-reverse; }
+  .clouds { animation: drift 42s linear infinite; }
+  .curtain { transform-box: fill-box; transform-origin: 50% 0%; animation: hang 5.2s ease-in-out infinite alternate; }
+  .glow { animation: breathe 9s ease-in-out infinite alternate; }
+  .steam { transform-box: fill-box; transform-origin: 50% 100%; animation: rise 4.8s ease-in infinite; }
+  .steam.b { animation-delay: 1.6s; }
+  .steam.c { animation-delay: 3.1s; }
+  .mote { animation: mote 11s linear infinite; }
+  .mote.b { animation-duration: 14s; animation-delay: -4s; }
+  .mote.c { animation-duration: 9s; animation-delay: -7s; }
+
+  @keyframes zip {
+    0%   { left: 36%; top: 40%; }
+    22%  { left: 18%; top: 16%; }
+    48%  { left: 6%;  top: 46%; }
+    74%  { left: 30%; top: 56%; }
+    100% { left: 36%; top: 40%; }
+  }
+  @keyframes bob {
+    from { transform: translateY(0); }
+    to { transform: translateY(-7px); }
+  }
+  @keyframes sway {
+    from { transform: rotate(-1.8deg); }
+    to { transform: rotate(2.2deg); }
+  }
+  @keyframes drift {
+    from { transform: translateX(-24px); }
+    to { transform: translateX(36px); }
+  }
+  @keyframes hang {
+    from { transform: skewX(-1.2deg); }
+    to { transform: skewX(2.4deg); }
+  }
+  @keyframes breathe { from { opacity: .28; } to { opacity: .72; } }
+  @keyframes rise {
+    0% { transform: translateY(8px) scale(.85); opacity: 0; }
+    20% { opacity: .55; }
+    100% { transform: translateY(-36px) scale(1.15); opacity: 0; }
+  }
+  @keyframes mote {
+    0% { transform: translate(0, 12px); opacity: 0; }
+    15% { opacity: .8; }
+    100% { transform: translate(18px, -70px); opacity: 0; }
+  }
+  @keyframes show {
+    0% { opacity: 1; transform: none; }
+    20% { opacity: 1; transform: none; }
+    25% { opacity: 0; transform: translateY(-8px); }
+    96% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes tick {
+    0%, 2% { transform: scaleX(0); }
+    25% { transform: scaleX(1); }
+    27%, 100% { transform: scaleX(0); }
+  }
+  @media (max-aspect-ratio: 1/1) {
+    body { display: block; }
+    .stage {
+      width: 100vw;
+      aspect-ratio: auto;
+      grid-template-columns: 1fr;
+    }
+    .room { height: 92vw; }
+    .proof { min-height: 520px; padding: 28px 22px 32px; }
+    .carl { width: 72px; height: 94px; }
+    .card p { max-width: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tree, .far, .clouds, .curtain, .glow, .steam, .mote, .carl, .carl svg, .card, .ticks span::after {
+      animation: none;
+    }
+    .card:nth-child(1) { opacity: 1; transform: none; }
+    .ticks span:first-child { background: var(--teal); }
+  }
+</style>
+</head>
+<body>
+  <main class="stage" aria-label="Retail Investor Report, Sunday desk">
+    <div class="room">
+      <svg class="plate" viewBox="0 0 720 810" role="img" aria-label="A man at a desk by a window. A tree moves outside. Carl crosses the room.">
+        <rect width="720" height="810" fill="#2a221b"/>
+        <rect y="640" width="720" height="170" fill="#1a1511"/>
+        <g>
+          <polygon points="0,640 720,640 720,810 0,810" fill="#3a2c22"/>
+          <g stroke="#2b211a" stroke-width="2" opacity=".45">
+            <line x1="0" y1="690" x2="720" y2="706"/>
+            <line x1="0" y1="742" x2="720" y2="758"/>
+            <line x1="0" y1="792" x2="720" y2="808"/>
+          </g>
+        </g>
+
+        <g clip-path="url(#win)">
+          <rect x="58" y="54" width="390" height="430" fill="url(#sky)"/>
+          <ellipse cx="360" cy="390" rx="90" ry="40" fill="#f0c48a" opacity=".85"/>
+          <g class="clouds" fill="#f7efe4" opacity=".8">
+            <ellipse cx="120" cy="120" rx="54" ry="16"/>
+            <ellipse cx="150" cy="114" rx="28" ry="14"/>
+            <ellipse cx="300" cy="150" rx="40" ry="12"/>
+          </g>
+          <path d="M40 430 C 140 360, 220 390, 300 350 C 380 312, 430 360, 470 340 L 470 490 L 40 490 Z" fill="#31404c"/>
+          <g class="far" fill="#24323c">
+            <rect x="250" y="300" width="8" height="70"/>
+            <ellipse cx="254" cy="292" rx="26" ry="34"/>
+          </g>
+          <g class="tree">
+            <rect x="168" y="300" width="14" height="130" rx="4" fill="#4a3424"/>
+            <ellipse cx="176" cy="250" rx="78" ry="62" fill="#2f5c45"/>
+            <ellipse cx="130" cy="278" rx="40" ry="32" fill="#27543d"/>
+            <ellipse cx="214" cy="286" rx="36" ry="28" fill="#3d6e52"/>
+            <ellipse cx="168" cy="230" rx="22" ry="14" fill="#6fbf8a" opacity=".35"/>
+          </g>
+        </g>
+        <rect x="46" y="42" width="414" height="454" rx="6" fill="none" stroke="#1a140f" stroke-width="22"/>
+        <rect x="57" y="53" width="392" height="432" fill="none" stroke="#5c4634" stroke-width="6"/>
+        <g class="curtain">
+          <path d="M58 58 C 78 180, 70 300, 86 470 L 58 470 Z" fill="#6e2e2a"/>
+          <path d="M70 58 C 96 160, 84 280, 104 470 L 78 470 Z" fill="#8a3d36" opacity=".9"/>
+        </g>
+
+        <polygon class="glow" points="70,70 430,78 560,700 120,720" fill="url(#beam)"/>
+        <g fill="#f8e7c8">
+          <circle class="mote" cx="180" cy="420" r="2"/>
+          <circle class="mote b" cx="260" cy="480" r="1.6"/>
+          <circle class="mote c" cx="330" cy="390" r="1.4"/>
+        </g>
+
+        <rect x="24" y="560" width="672" height="22" rx="3" fill="#7a5b40"/>
+        <rect x="36" y="582" width="648" height="120" fill="#5c4330"/>
+        <rect x="36" y="582" width="648" height="10" fill="#8a6848"/>
+
+        <g>
+          <rect x="150" y="392" width="210" height="142" rx="8" fill="#121814"/>
+          <rect x="162" y="404" width="186" height="108" rx="3" fill="#0e1a22"/>
+          <g class="glow">
+            <rect x="172" y="416" width="166" height="8" rx="2" fill="#16323c"/>
+            <rect x="172" y="432" width="120" height="8" rx="2" fill="#8ac7de"/>
+            <rect x="172" y="448" width="150" height="8" rx="2" fill="#16323c"/>
+            <rect x="172" y="464" width="98" height="8" rx="2" fill="#16323c"/>
+            <rect x="172" y="480" width="140" height="8" rx="2" fill="#16323c"/>
+          </g>
+          <rect x="242" y="534" width="28" height="26" fill="#2a241c"/>
+          <rect x="214" y="556" width="84" height="8" rx="2" fill="#2a241c"/>
+        </g>
+
+        <g>
+          <rect x="48" y="508" width="92" height="58" rx="3" fill="#f3eee4"/>
+          <rect x="56" y="520" width="70" height="3" fill="#e0d3c0"/>
+          <rect x="56" y="530" width="64" height="3" fill="#e0d3c0"/>
+          <rect x="56" y="540" width="58" height="3" fill="#8ac7de"/>
+        </g>
+
+        <g>
+          <path d="M118 548 h28 v-16 h-8 v-18 h-12 v18 h-8 z" fill="#f4f1ea"/>
+          <ellipse class="steam" cx="132" cy="500" rx="5" ry="7" fill="#f7f3ea"/>
+          <ellipse class="steam b" cx="140" cy="494" rx="3.5" ry="6" fill="#f7f3ea"/>
+          <ellipse class="steam c" cx="126" cy="496" rx="3" ry="5" fill="#f7f3ea"/>
+        </g>
+
+        <g>
+          <path d="M500 760 L 486 640 C 500 590, 620 586, 650 640 L 668 760 Z" fill="#3a2e26"/>
+          <path d="M478 748
+                   C 470 640, 520 600, 566 592
+                   C 630 582, 690 620, 700 700
+                   L 708 780 L 470 780 Z" fill="#e4ddd2"/>
+          <rect x="548" y="560" width="40" height="42" rx="12" fill="#efd3bc"/>
+          <circle cx="568" cy="530" r="44" fill="#efd3bc"/>
+          <path d="M524 528
+                   C 526 468, 612 464, 614 534
+                   C 590 492, 544 490, 524 528 Z" fill="#241c16"/>
+          <ellipse cx="610" cy="540" rx="7" ry="11" fill="#e4b898"/>
+          <path d="M548 690
+                   C 500 650, 440 600, 392 568
+                   L 404 556
+                   C 460 590, 530 650, 572 700 Z" fill="#e4ddd2"/>
+          <ellipse cx="390" cy="566" rx="18" ry="11" fill="#efd3bc"/>
+        </g>
+
+        <defs>
+          <clipPath id="win">
+            <rect x="58" y="54" width="390" height="428"/>
+          </clipPath>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#1d3344"/>
+            <stop offset=".55" stop-color="#6e8ea4"/>
+            <stop offset="1" stop-color="#f0c9a0"/>
+          </linearGradient>
+          <linearGradient id="beam" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f6e2bf" stop-opacity=".22"/>
+            <stop offset="1" stop-color="#f6e2bf" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div class="carl" aria-hidden="true">
+        <svg viewBox="0 0 64 84">
+          <line x1="32" y1="8" x2="32" y2="16" stroke="#7ad7e8" stroke-width="2"/>
+          <circle cx="32" cy="6" r="3.2" fill="#7ad7e8"/>
+          <circle cx="32" cy="28" r="16" fill="#e6c48a" stroke="#7ad7e8" stroke-width="2"/>
+          <circle cx="26" cy="28" r="4" fill="#2f6fe0"/>
+          <circle cx="38" cy="28" r="4" fill="#2f6fe0"/>
+          <circle cx="27.2" cy="26.8" r="1.2" fill="#f4fbff"/>
+          <circle cx="39.2" cy="26.8" r="1.2" fill="#f4fbff"/>
+          <path d="M27 34 Q32 37 37 34" fill="none" stroke="#6b4e2e" stroke-width="1.2"/>
+          <rect x="16" y="46" width="32" height="28" rx="6" fill="#d7b07a" stroke="#7ad7e8" stroke-width="1.6"/>
+          <path d="M32 48 L36 62 L28 62 Z" fill="#8ac7de"/>
+          <rect x="38" y="54" width="7" height="6" rx="1" fill="#f3eee4" opacity=".8"/>
+        </svg>
+      </div>
+    </div>
+
+    <section class="proof" aria-label="What the product does">
+      <p class="eyebrow">Retail Investor Report</p>
+      <h1>Sunday desk.</h1>
+      <div class="stack">
+        <article class="card paper">
+          <p class="kicker">The letter</p>
+          <h2>It’s already on the table.</h2>
+          <p>One Sunday letter. Written for someone who invests from the house.</p>
+          <div class="rules" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </div>
+        </article>
+        <article class="card screen">
+          <p class="kicker">The book</p>
+          <h2>The list he keeps.</h2>
+          <div class="rows">
+            <div class="row"><b>Foundation</b><span>hold</span><span>core</span></div>
+            <div class="row on"><b>Income</b><span>yield</span><span>open</span></div>
+            <div class="row"><b>Watch</b><span>later</span><span>noted</span></div>
+          </div>
+          <p style="margin-top:auto">Every fund in one place. The row on the monitor is the row in the book.</p>
+        </article>
+        <article class="card paper">
+          <p class="kicker">Carl</p>
+          <h2>He works the room.</h2>
+          <p class="say">Ask about the fund on the screen. He answers from the book and points at the number.</p>
+        </article>
+        <article class="card screen">
+          <p class="kicker">The other half</p>
+          <h2>The page, larger.</h2>
+          <div class="rows">
+            <div class="row"><b>On screen</b><span></span><span>this side</span></div>
+            <div class="row on"><b>Same fund</b><span></span><span>same line</span></div>
+            <div class="row"><b>Plain words</b><span></span><span>written out</span></div>
+          </div>
+          <p style="margin-top:auto">This half rotates. The room keeps moving on its own.</p>
+        </article>
+      </div>
+      <div class="ticks" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    </section>
+  </main>
+</body>
+</html>
