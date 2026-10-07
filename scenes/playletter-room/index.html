@@ -23,8 +23,6 @@
 
   /* The room is authored at 2000 x 1116; JS scales and pans it to fit. */
   #view { position: fixed; inset: 0; overflow: hidden; }
-  #bleed { position: absolute; inset: -60px; width: calc(100% + 120px); height: calc(100% + 120px); object-fit: cover; filter: blur(40px) saturate(.9); opacity: .9; }
-  #view.wide #stage { -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
   #stage { position: absolute; left: 0; top: 0; width: 2000px; height: 1116px; transform-origin: 0 0; will-change: transform; }
   #stage > * { position: absolute; }
   .plate { left: 0; top: 0; width: 2000px; height: 1116px; transition: opacity 1.2s ease; }
@@ -45,22 +43,29 @@
   #brand span { display: block; margin-top: 26px; font: 400 40px/1 Jost, sans-serif; letter-spacing: .32em; padding-left: .32em; color: #4A4A45; }
 
   #wave { left: 0; top: 0; width: 2000px; height: 1116px; pointer-events: none; }
+  #view { background: #E9E4DC; }
 
   /* app screens on the glass panels (mapped with matrix3d) */
-  .screen { left: 0; top: 0; width: 540px; height: 1200px; transform-origin: 0 0; overflow: hidden; background: #0D1117; border-radius: 28px; opacity: .93; }
-  .screen img { display: block; width: 540px; }
-  .screen .scroll { position: absolute; left: 0; width: 540px; will-change: transform; }
+  /* floating phones: a dark bezel around the real app screen, hovering over the floor */
+  .fphone { width: 208px; height: 450px; padding: 9px; border-radius: 38px; background: linear-gradient(145deg, #2a2d33, #0e1014 55%, #23262b);
+    box-shadow: 0 0 0 1.5px rgba(255,255,255,.18) inset, 0 30px 60px -20px rgba(30,24,18,.45); will-change: transform; transform-origin: 50% 50%; }
+  .fphone .screen { position: relative; width: 190px; height: 432px; border-radius: 30px; }
+  .fphone .screen img, .fphone .screen .scroll { width: 190px; }
+  .fshadow { width: 200px; height: 34px; border-radius: 50%; background: radial-gradient(closest-side, rgba(60,44,30,.42), rgba(60,44,30,0)); will-change: transform, opacity; }
+  .screen { overflow: hidden; background: #0D1117; }
+  .screen img { display: block; }
+  .screen .scroll { position: absolute; left: 0; will-change: transform; }
   .screen .head, .screen .nav { position: absolute; left: 0; z-index: 2; }
   .screen .head { top: 0; } .screen .nav { bottom: 0; }
-  .screen::after { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: 28px;
+  .screen::after { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: inherit;
     background: linear-gradient(115deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 38%, rgba(255,255,255,0) 70%, rgba(255,255,255,.08) 100%); }
-  .progress { position: absolute; left: 61px; top: 600px; height: 7px; width: 0; background: var(--mint); border-radius: 4px; z-index: 2; }
+  .progress { position: absolute; left: 21px; top: 214px; height: 3px; width: 0; background: var(--mint); border-radius: 2px; z-index: 2; }
 
   /* the man: the body and three cut pieces that move */
   .piece { will-change: transform; }
   .piece > img { position: absolute; left: 0; top: 0; }
-  #handScreen { overflow: hidden; border-radius: 6px; background: #0D1117; }
-  #handScreen img { width: 100%; display: block; will-change: transform; }
+  #handScreen { left: 0; top: 0; width: 120px; height: 280px; overflow: hidden; border-radius: 12px; background: #0D1117; transform-origin: 0 0; }
+  #handScreen img { width: 120px; display: block; will-change: transform; }
 
   #shade { left: 0; top: 0; width: 2000px; height: 1116px; mix-blend-mode: multiply; pointer-events: none; }
   #glow  { left: 0; top: 0; width: 2000px; height: 1116px; mix-blend-mode: screen; pointer-events: none; }
@@ -100,7 +105,6 @@
 </head>
 <body>
 <div id="view" aria-hidden="true">
-  <img id="bleed" src="img/plate-a.webp" alt="">
   <div id="stage">
     <img class="plate" data-wall="a" src="img/plate-a.webp" alt="">
     <img class="plate" data-wall="b" src="img/plate-b.webp" alt="">
@@ -110,13 +114,7 @@
     <div class="wall" data-wall="c" id="frameArt"><img src="img/mark.webp" alt=""></div>
     <div class="wall" data-wall="ab" id="brand"><img src="img/mark.webp" alt=""><span>PLAYLETTER</span></div>
 
-    <div class="screen" id="scrFeed">
-      <img class="head" src="img/scr-feed-head.webp" alt="">
-      <div class="scroll"><img src="img/scr-feed.webp" alt=""><img src="img/scr-feed.webp" alt=""></div>
-      <img class="nav" src="img/scr-feed-nav.webp" alt="">
-    </div>
-    <div class="screen" id="scrPlayer"><img src="img/scr-player.webp" alt=""><div class="progress"></div></div>
-    <div class="screen" id="scrQueue"><div class="scroll"><img src="img/scr-queue.webp" alt=""></div></div>
+    <div class="fshadow" data-i="0"></div><div class="fshadow" data-i="1"></div><div class="fshadow" data-i="2"></div>
 
     <img id="body" class="piece" src="img/man-body.webp" alt="">
     <div id="head" class="piece"><img src="img/man-head.webp" alt=""></div>
@@ -129,6 +127,13 @@
     <img id="arm" src="img/couch-arm.webp" alt="">
 
     <canvas id="shade" width="1000" height="558"></canvas>
+    <div class="fphone" data-i="0"><div class="screen" id="scrFeed">
+      <img class="head" src="img/scr-feed-head.webp" alt="">
+      <div class="scroll"><img src="img/scr-feed.webp" alt=""><img src="img/scr-feed.webp" alt=""></div>
+      <img class="nav" src="img/scr-feed-nav.webp" alt="">
+    </div></div>
+    <div class="fphone" data-i="1"><div class="screen" id="scrPlayer"><img src="img/scr-player.webp" alt=""><div class="progress"></div></div></div>
+    <div class="fphone" data-i="2"><div class="screen" id="scrQueue"><div class="scroll"><img src="img/scr-queue.webp" alt=""></div></div></div>
     <canvas id="wave" width="2000" height="1116"></canvas>
     <canvas id="glow" width="1000" height="558"></canvas>
   </div>
@@ -182,30 +187,30 @@ for (const n of ["head", "hand", "foot"]) {
 { const p = layers.pieces.body; $("#body").style.transformOrigin = `${PIV.body[0] - p.x}px ${PIV.body[1] - p.y}px`; }
 
 // the phone screen in his hand: a small rotated window, under the fingers
-Object.assign($("#handScreen").style, { left: 276 - handBox.x + "px", top: 712 - handBox.y + "px", width: "42px", height: "102px", transform: "rotate(8deg)", transformOrigin: "50% 50%" });
+$("#handScreen").style.transform = quadMatrix(120, 280,
+  [[281, 710], [323, 713], [306, 809], [264, 804]].map(([x, y]) => [x - handBox.x, y - handBox.y]));
 
 // ---------- fit + pan ----------
 const view = $("#view"), stage = $("#stage");
 let fit = { s: 1, ox: 0, oy: 0, pan: 0 };
 function layout() {
   const vw = view.clientWidth, vh = view.clientHeight;
-  // cover the view, but never crop away the photo arc (top) or his foot (bottom): rows 40..1060 stay in
-  const s = Math.max(vh / H, Math.min(Math.max(vw / W, vh / H), vh / 1020));
-  const overX = W * s - vw, overY = H * s - vh;
-  view.classList.toggle("wide", overX < -1);
-  fit = { s, overX, overY, vw, vh };
+  const s = Math.max(vw / W, vh / H);
+  const rows = vh / s;                                   // how many room rows fit
+  const top = rows >= 950 ? Math.min(H - rows, Math.max(0, 530 - rows / 2)) : 1005 - rows;
+  fit = { s, overX: W * s - vw, top, vw, vh };
 }
 addEventListener("resize", layout); layout();
 function applyCamera(t) {
   let x;
-  if (fit.overX <= 1) x = -fit.overX / 2;
+  if (fit.overX <= 1) x = 0;
   else if (reduced) x = -Math.min(fit.overX, Math.max(0, 300 * fit.s - fit.vw * 0.3));
   else {
     // narrow screens: drift slowly between him, the wall, and the panels
     const k = 0.5 - 0.5 * Math.cos((t / 70000) * Math.PI * 2);
     x = -fit.overX * (0.05 + 0.9 * k);
   }
-  const y = fit.overY > 0 ? -Math.min(fit.overY, Math.max(0, 40 * fit.s)) : 0;
+  const y = -fit.top * fit.s;
   stage.style.transform = `translate(${x}px, ${y}px) scale(${fit.s})`;
 }
 
@@ -272,15 +277,26 @@ function inset(q, ix, top, bottom) {
   const pt = (u, v) => lerp2(L(v), R(v), u);
   return [pt(ix, top), pt(1 - ix, top), pt(1 - ix, bottom), pt(ix, bottom)];
 }
-const PANELS = [
-  [[1377, 401], [1546, 397], [1544, 939], [1377, 916]],
-  [[1571, 375], [1748, 372], [1748, 985], [1571, 947]],
-  [[1775, 355], [1950, 339], [1950, 1047], [1777, 1001]],
+// three phones hovering on the right, fanned towards the room
+const PHONES = [
+  { x: 1452, y: 560, r: -7, ry: 14, s: 0.86, period: 6900, amp: 9, phase: 0.0 },
+  { x: 1638, y: 500, r: 0, ry: 0, s: 1.0, period: 7700, amp: 11, phase: 1.9 },
+  { x: 1826, y: 566, r: 7, ry: -14, s: 0.86, period: 7300, amp: 9, phase: 3.7 },
 ];
-[["#scrFeed", 0], ["#scrPlayer", 1], ["#scrQueue", 2]].forEach(([sel, i]) => {
-  const q = inset(PANELS[i], 0.09, 0.07, 0.62);
-  $(sel).style.transform = quadMatrix(540, 1200, q);
-});
+const FLOOR_AT = [950, 944, 956];
+const fphones = [...document.querySelectorAll(".fphone")], fshadows = [...document.querySelectorAll(".fshadow")];
+function floatPhones(t) {
+  PHONES.forEach((p, i) => {
+    const bob = Math.sin(t / p.period * Math.PI * 2 + p.phase) * p.amp;
+    const tilt = Math.sin(t / (p.period * 1.7) + p.phase) * 1.2;
+    Object.assign(fphones[i].style, { left: p.x - 104 + "px", top: p.y - 225 + "px",
+      transform: `perspective(1400px) translateY(${bob}px) rotate(${p.r + tilt * 0.4}deg) rotateY(${p.ry + tilt}deg) scale(${p.s})` });
+    const lift = 1 - (bob + p.amp) / (p.amp * 2);      // higher phone = softer, smaller shadow
+    Object.assign(fshadows[i].style, { left: p.x - 100 + "px", top: FLOOR_AT[i] - 17 + "px",
+      transform: `scale(${(0.8 + 0.12 * lift) * p.s}, ${p.s})`, opacity: 0.55 + 0.3 * lift });
+  });
+}
+floatPhones(0);
 
 // ---------- the day ----------
 const DAY_MS_1X = 8 * 60 * 1000;
@@ -311,15 +327,16 @@ function track(keys, h) {
 }
 // multiply colour of the room, and how much the screens glow
 const AMBIENT = [
-  [4.5, 84, 92, 120, 1],
-  [6.2, 150, 158, 190, 0.7],
-  [7.4, 200, 206, 220, 0.2],
-  [10, 214, 214, 216, 0.05],
-  [14, 218, 214, 208, 0],
-  [17, 214, 202, 188, 0.05],
-  [18.4, 214, 190, 170, 0.25],
-  [19.4, 146, 136, 160, 0.6],
-  [20.6, 84, 92, 120, 1],
+  [4.5, 144, 136, 132, 1],
+  [6.0, 192, 172, 176, 0.6],
+  [7.2, 214, 210, 212, 0.2],
+  [10, 216, 214, 212, 0.05],
+  [14, 220, 214, 206, 0],
+  [16.8, 224, 206, 184, 0.05],
+  [18.0, 240, 192, 146, 0.2],
+  [18.9, 236, 160, 124, 0.4],
+  [19.8, 190, 140, 136, 0.7],
+  [21.0, 144, 136, 132, 1],
 ];
 // sun patch path, in "unfolded" room space: the wall runs down to y=880, then the floor continues below it
 // [hour, cx, cy, skewX, skewY, scaleX, scaleY, strength, warmth]
@@ -370,7 +387,12 @@ function drawLight(h) {
   }
   // multiply layer: the room's ambient colour, with the sun patch lifted back towards white
   shade.globalCompositeOperation = "source-over";
-  shade.fillStyle = `rgb(${r},${g},${b})`; shade.fillRect(0, 0, 1000, 558);
+  const lg = shade.createLinearGradient(1000, 0, 0, 0);
+  const far = (v, cool) => Math.round(v * 0.86 + cool);
+  lg.addColorStop(0, `rgb(${Math.min(255, r + 14)},${Math.min(255, g + 10)},${Math.min(255, b + 6)})`);
+  lg.addColorStop(0.55, `rgb(${r},${g},${b})`);
+  lg.addColorStop(1, `rgb(${far(r, 0)},${far(g, 4)},${far(b, 14)})`);
+  shade.fillStyle = lg; shade.fillRect(0, 0, 1000, 558);
   if (sun && sun[6] > 0.01) {
     const strength = sun[6], warm = sun[7];
     const tmp = patchTint(255, 250 - warm * 8, 242 - warm * 30, strength);
@@ -391,9 +413,9 @@ function drawLight(h) {
       gr.addColorStop(0, `rgba(${col},${a})`); gr.addColorStop(1, `rgba(${col},0)`);
       glow.fillStyle = gr; glow.fillRect(0, 0, 1000, 558);
     };
-    blob(298, 762, 150, "190,225,255", 0.55 * screenGlow);        // phone on his face
-    blob(610, 722, 260, "205,225,255", 0.45 * screenGlow);        // laptop
-    for (const p of PANELS) blob((p[0][0] + p[1][0]) / 2, 560, 300, "150,215,185", 0.30 * screenGlow);
+    blob(292, 760, 110, "235,236,225", 0.42 * screenGlow);        // phone on his face
+    blob(610, 722, 240, "240,232,215", 0.38 * screenGlow);        // laptop
+    for (const p of PHONES) blob(p.x, p.y, 380, "150,215,185", 0.30 * screenGlow);
     blob(1000, 520, 380, "120,200,160", 0.22 * screenGlow * (wall === "c" ? 1.3 : 1));
   }
 }
@@ -417,27 +439,18 @@ function drawWave(t, beat) {
     return Math.max(0, phrase) * (0.35 + 0.65 * syll);
   };
   wave.lineCap = "round";
-  if (wall === "c") {
-    // the room's heartbeat, centre wall
-    const x0 = 520, x1 = 1330, y = 600, step = 14;
+  const bars = (x0, x1, y, step, width, maxA, alpha, mirror) => {
     for (let x = x0; x <= x1; x += step) {
-      const edge = Math.sin(((x - x0) / (x1 - x0)) * Math.PI);
-      const a = (18 + 150 * talk(x) * edge + 60 * beat * Math.exp(-((x - 925) ** 2) / 26000)) * edge;
-      wave.strokeStyle = `rgba(95,176,137,${0.55 + 0.4 * edge})`; wave.lineWidth = 7;
+      const u = (x - x0) / (x1 - x0);
+      const edge = Math.sin(u * Math.PI);
+      const k = mirror ? 1000 - Math.abs(x - 1000) : x;    // mirror the voice so both sides match
+      const a = (maxA * 0.08 + maxA * talk(k) * edge + maxA * 0.35 * beat * edge) * edge;
+      wave.strokeStyle = `rgba(95,176,137,${alpha * (0.55 + 0.45 * edge)})`; wave.lineWidth = width;
       wave.beginPath(); wave.moveTo(x, y - a / 2); wave.lineTo(x, y + a / 2); wave.stroke();
     }
-  } else {
-    // from the mark out to the first panel, like the original painting
-    const y = 506;
-    wave.strokeStyle = "rgba(95,176,137,.55)"; wave.lineWidth = 3; wave.setLineDash([2, 9]);
-    wave.beginPath(); wave.moveTo(1186, y); wave.lineTo(1232, y); wave.stroke(); wave.setLineDash([]);
-    for (let x = 1240; x <= 1350; x += 7) {
-      const edge = Math.sin(((x - 1236) / 118) * Math.PI);
-      const a = (6 + 70 * talk(x) * edge) * edge;
-      wave.strokeStyle = "rgba(95,176,137,.9)"; wave.lineWidth = 3.2;
-      wave.beginPath(); wave.moveTo(x, y - a / 2); wave.lineTo(x, y + a / 2); wave.stroke();
-    }
-  }
+  };
+  if (wall === "c") bars(670, 1330, 560, 13, 7, 170, 0.95, true);
+  else { bars(640, 800, 512, 9, 4, 80, 0.9, true); bars(1200, 1360, 512, 9, 4, 80, 0.9, true); }
 }
 
 // ---------- the man ----------
@@ -460,26 +473,27 @@ function man(t) {
   headEl.style.transform = `translateY(${lift}px) rotate(${look + nod}deg)`;
   // a thumb flick every few seconds: the hand bobs, the feed jumps and settles
   if (t - flick.at > flick.next) {
-    flick = { at: t, next: 2600 + Math.random() * 3800, from: flick.to, to: flick.to + 22 + Math.random() * 26 };
+    flick = { at: t, next: 2600 + Math.random() * 3800, from: flick.to, to: flick.to + 60 + Math.random() * 70 };
   }
   const k = Math.min(1, (t - flick.at) / 520), ease = 1 - Math.pow(1 - k, 3);
   const bob = k < 1 ? Math.sin(k * Math.PI) : 0;
   handEl.style.transform = `translateY(${lift}px) rotate(${-1.1 * bob}deg)`;
   const pos = flick.from + (flick.to - flick.from) * ease;
-  handImg.style.transform = `translateY(${-(pos % 110)}px)`;
+  handImg.style.transform = `translateY(${-(pos % 300)}px)`;
   return tap;
 }
 
 // ---------- the panels ----------
 const feed = $("#scrFeed .scroll"), queue = $("#scrQueue .scroll"), prog = $("#scrPlayer .progress");
-const FEED_H = 2952;
+const FEED_H = 1039;
 let feedY = 0, feedTarget = 0, feedNext = 0;
 function panels(t, dt) {
-  if (t > feedNext) { feedTarget += 260 + Math.random() * 320; feedNext = t + 3200 + Math.random() * 3000; }
+  if (t > feedNext) { feedTarget += 90 + Math.random() * 110; feedNext = t + 3200 + Math.random() * 3000; }
   feedY += (feedTarget - feedY) * Math.min(1, dt / 420);
-  feed.style.transform = `translateY(${-(feedY % FEED_H) + 84}px)`;
-  queue.style.transform = `translateY(${-140 * (0.5 - 0.5 * Math.cos(t / 9000))}px)`;
-  prog.style.width = `${(0.12 + 0.86 * ((t / 90000) % 1)) * 418}px`;
+  feed.style.transform = `translateY(${-(feedY % FEED_H) + 30}px)`;
+  queue.style.transform = `translateY(${-50 * (0.5 - 0.5 * Math.cos(t / 9000))}px)`;
+  prog.style.width = `${(0.12 + 0.86 * ((t / 90000) % 1)) * 148}px`;
+  floatPhones(t);
 }
 
 // ---------- clock ----------
