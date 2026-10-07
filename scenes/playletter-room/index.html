@@ -90,7 +90,24 @@
   .ps-vlist { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
   .ps-vlist span { font: 600 9px/1 Inter; padding: 8px 0; text-align: center; border-radius: 8px; border: 1px solid var(--line); color: var(--mute); transition: all .4s ease; }
   .ps-vlist span.on { background: var(--mint); border-color: var(--mint); color: #fff; }
-  /* the phone in his hand: the app's paper screen, the mark, one line lighting up */
+  /* the phone in his hand: a small twin of the floating screen he is on */
+  .hs-view { position: absolute; inset: 0; opacity: 0; transition: opacity .35s ease; }
+  .hs-view.on { opacity: 1; }
+  .hs-h { height: 14px; width: 60%; margin: 22px 14px 14px; border-radius: 4px; background: var(--fg); opacity: .8; }
+  .hs-libwrap { position: absolute; top: 56px; left: 0; right: 0; bottom: 0; overflow: hidden; }
+  .hs-lib { position: absolute; left: 0; right: 0; transition: transform .5s cubic-bezier(.3,.7,.2,1); }
+  .hs-row { display: flex; gap: 8px; align-items: center; padding: 6px 12px; }
+  .hs-row img { width: 30px; height: 34px; border-radius: 4px; object-fit: cover; }
+  .hs-row span { flex: 1; height: 8px; border-radius: 4px; background: rgba(26,26,24,.18); }
+  .hs-row b { width: 14px; height: 14px; border-radius: 50%; background: var(--mint); }
+  .night .hs-row span { background: rgba(255,255,255,.2); }
+  .hs-ring { width: 72px; height: 72px; margin: 40px auto 20px; border-radius: 50%; border: 4px solid var(--mint); display: grid; place-items: center; }
+  .hs-ring span { font: italic 400 36px/1 Fraunces, serif; color: var(--mint); }
+  .hs-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0 14px; }
+  .hs-pills i { height: 16px; border-radius: 5px; background: rgba(26,26,24,.12); transition: background .4s ease; }
+  .hs-pills i.on { background: var(--mint); }
+  .night .hs-pills i { background: rgba(255,255,255,.14); }
+  .night .hs-pills i.on { background: var(--mint); }
   .hs-mark { display: block; width: 46px; margin: 34px auto 26px; }
   .hs-lines { padding: 0 16px; }
   .hs-lines i { display: block; height: 9px; border-radius: 5px; background: rgba(26,26,24,.14); margin-bottom: 11px; transition: background .4s ease; }
@@ -163,9 +180,12 @@
     <div id="hand" class="piece">
       <img src="img/man-hand.webp" alt="">
       <div id="handScreen" class="ps" style="position:absolute">
-        <img class="hs-mark" src="img/mark.webp" alt="">
-        <div class="hs-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="hs-bar"><i></i></div>
+        <div class="hs-view" data-v="0"><div class="hs-h"></div><div class="hs-libwrap"><div class="hs-lib" id="hsLib"></div></div></div>
+        <div class="hs-view" data-v="1"><img class="hs-mark" src="img/mark.webp" alt="">
+          <div class="hs-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="hs-bar"><i></i></div></div>
+        <div class="hs-view" data-v="2"><div class="hs-ring"><span id="hsInitial">A</span></div>
+          <div class="hs-pills" id="hsPills"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
       </div>
       <img id="fingers" src="img/man-fingers.webp" alt="">
     </div>
@@ -296,18 +316,21 @@ function inset(q, ix, top, bottom) {
 }
 // three phones hovering on the right, fanned towards the room
 const PHONES = [
-  { x: 1452, y: 625, r: -7, ry: 14, s: 0.86, period: 6900, amp: 9, phase: 0.0 },
-  { x: 1638, y: 572, r: 0, ry: 0, s: 1.0, period: 7700, amp: 11, phase: 1.9 },
-  { x: 1826, y: 632, r: 7, ry: -14, s: 0.86, period: 7300, amp: 9, phase: 3.7 },
+  { x: 1452, y: 625, r: -7, ry: 14, s: 0.86, period: 11800, amp: 3.5, phase: 0.0 },
+  { x: 1638, y: 572, r: 0, ry: 0, s: 1.0, period: 13300, amp: 4, phase: 1.9 },
+  { x: 1826, y: 632, r: 7, ry: -14, s: 0.86, period: 12500, amp: 3.5, phase: 3.7 },
 ];
 const FLOOR_AT = [950, 944, 956];
+const touchedAt = [];
 const fphones = [...document.querySelectorAll(".fphone")], fshadows = [...document.querySelectorAll(".fshadow")];
 function floatPhones(t) {
   PHONES.forEach((p, i) => {
     const bob = Math.sin(t / p.period * Math.PI * 2 + p.phase) * p.amp;
-    const tilt = Math.sin(t / (p.period * 1.7) + p.phase) * 1.2;
+    const tilt = Math.sin(t / (p.period * 1.7) + p.phase) * 0.5;
+    const touch = Math.max(0, 1 - (t - (touchedAt[i] || -1e9)) / 900);   // eases back after he taps its twin
     Object.assign(fphones[i].style, { left: p.x - 104 + "px", top: p.y - 225 + "px",
-      transform: `perspective(1400px) translateY(${bob}px) rotate(${p.r + tilt * 0.4}deg) rotateY(${p.ry + tilt}deg) scale(${p.s})` });
+      transform: `perspective(1400px) translateY(${bob - 10 * touch}px) rotate(${p.r + tilt * 0.4}deg) rotateY(${p.ry + tilt}deg) scale(${p.s * (1 + 0.045 * touch)})`,
+      boxShadow: `0 0 0 1.5px rgba(255,255,255,.18) inset, 0 30px 60px -20px rgba(30,24,18,.45), 0 0 ${40 * touch}px ${6 * touch}px rgba(95,176,137,${0.55 * touch})` });
     const lift = 1 - (bob + p.amp) / (p.amp * 2);      // higher phone = softer, smaller shadow
     Object.assign(fshadows[i].style, { left: p.x - 100 + "px", top: FLOOR_AT[i] - 17 + "px",
       transform: `scale(${(0.8 + 0.12 * lift) * p.s}, ${p.s})`, opacity: 0.55 + 0.3 * lift });
@@ -358,28 +381,33 @@ const AMBIENT = [
 // sun patch path, in "unfolded" room space: the wall runs down to y=880, then the floor continues below it
 // [hour, cx, cy, skewX, skewY, scaleX, scaleY, strength, warmth]
 const SUN = [
-  [6.6, 1540, 260, -6, -16, 0.95, 0.85, 0, 0.2],
-  [7.4, 1500, 300, -6, -16, 0.95, 0.9, 0.55, 0.25],
-  [9.6, 1300, 560, -4, -12, 1, 1.0, 0.85, 0.1],
-  [11.6, 1180, 900, 0, -8, 1, 1.15, 0.9, 0],
-  [13.6, 1060, 1200, 10, -4, 1.05, 1.35, 0.9, 0.1],
-  [15.6, 820, 1330, 22, 0, 1.15, 1.6, 0.88, 0.35],
-  [17.0, 560, 1300, 30, 4, 1.25, 1.9, 0.82, 0.7],
-  [18.2, 330, 1210, 36, 6, 1.3, 2.1, 0.62, 1],
-  [19.0, 220, 1160, 38, 7, 1.3, 2.2, 0, 1],
-  [24 + 6.5, 1540, 260, -6, -16, 0.95, 0.85, 0, 0.2],
+  [6.6, 1720, 1250, 26, -6, 0.9, 1.4, 0, 0.2],
+  [7.4, 1660, 1260, 24, -6, 0.9, 1.4, 0.55, 0.25],
+  [9.0, 1380, 1290, 18, -6, 0.95, 1.4, 0.85, 0.1],
+  [10.8, 1100, 1210, 10, -6, 0.95, 1.3, 0.9, 0],
+  [12.2, 1010, 940, 0, -8, 0.95, 1.05, 0.9, 0],
+  [13.8, 990, 640, 0, -10, 0.92, 0.95, 0.9, 0.05],
+  [15.3, 880, 470, 0, -12, 0.92, 0.92, 0.88, 0.25],
+  [16.7, 680, 290, 0, -14, 0.92, 0.9, 0.82, 0.6],
+  [17.9, 440, 140, 0, -16, 0.92, 0.9, 0.7, 0.9],
+  [18.8, 250, 40, 0, -18, 0.92, 0.9, 0.45, 1],
+  [19.2, 200, 10, 0, -18, 0.92, 0.9, 0, 1],
 ];
 function sunAt(h) {
-  if (h < 6.6 || h > 19.0) return null;
-  return track(SUN.slice(0, 9), h);
+  if (h < 6.6 || h > 19.2) return null;
+  for (let i = 0; i < SUN.length - 1; i++) {
+    const a = SUN[i], b = SUN[i + 1];
+    if (h >= a[0] && h <= b[0]) { const t = smooth((h - a[0]) / (b[0] - a[0])); return a.slice(1).map((v, j) => v + (b[j + 1] - v) * t); }
+  }
+  return null;
 }
 // [hours after 20:30, cx, cy, skewX, skewY, scaleX, scaleY, strength]
 const MOON = [
-  [0, 1420, 1240, 14, -4, 0.9, 1.3, 0],
-  [1.4, 1330, 1230, 12, -4, 0.9, 1.3, 0.6],
-  [5.0, 1060, 1210, 6, -6, 0.9, 1.25, 0.6],
-  [7.6, 820, 1160, 0, -8, 0.9, 1.2, 0.5],
-  [8.6, 760, 1140, 0, -8, 0.9, 1.2, 0],
+  [0, 1560, 1250, 22, -6, 0.9, 1.3, 0],
+  [1.4, 1480, 1250, 20, -6, 0.9, 1.3, 0.6],
+  [5.0, 1240, 1230, 14, -6, 0.9, 1.3, 0.6],
+  [7.6, 1040, 1200, 10, -6, 0.9, 1.25, 0.5],
+  [8.6, 980, 1190, 10, -6, 0.9, 1.25, 0],
 ];
 function moonAt(h) {
   const m = (h - 20.5 + 24) % 24;
@@ -445,7 +473,7 @@ function drawLight(h) {
     glow.drawImage(tmp, 0, 0, 1000, FLOOR_Y / 2, 0, 0, 1000, FLOOR_Y / 2);
     glow.drawImage(tmp, 0, FLOOR_Y / 2, 1000, unfold.height - FLOOR_Y / 2, 0, FLOOR_Y / 2, 1000, (H - FLOOR_Y) / 2);
   }
-  const beam = sunP ? Math.max(0, Math.min(1, (h - 16.2) / 1.2)) * Math.max(0, Math.min(1, (19.0 - h) / 0.6)) * sunP[6] : 0;
+  const beam = sunP ? Math.max(0, Math.min(1, (h - 16.2) / 1.2)) * Math.max(0, Math.min(1, (19.2 - h) / 0.6)) * sunP[6] : 0;
   if (beam > 0.01) {
     const [cx, cy, , , sx, sy] = sunP;
     const toScreen = (y) => (y <= FLOOR_Y ? y : FLOOR_Y + (y - FLOOR_Y) * FLOOR_K);
@@ -528,7 +556,8 @@ function man(t) {
   headEl.style.transform = `translateY(${lift}px) rotate(${look + nod}deg)`;
   // a thumb flick every few seconds: the hand bobs, the feed jumps and settles
   if (t - flick.at > flick.next) {
-    flick = { at: t, next: 2600 + Math.random() * 3800, from: flick.to, to: flick.to + 60 + Math.random() * 70 };
+    flick = { at: t, next: 4200 + Math.random() * 3000, from: flick.to, to: flick.to + 60 + Math.random() * 70 };
+    if (t > 1500) touchScreen(t);
   }
   const k = Math.min(1, (t - flick.at) / 520), ease = 1 - Math.pow(1 - k, 3);
   const bob = k < 1 ? Math.sin(k * Math.PI) : 0;
@@ -549,6 +578,20 @@ const vSpans = [...document.querySelectorAll("#vList span")];
 $("#vWave").innerHTML = "<i></i>".repeat(22);
 const vBars = [...document.querySelectorAll("#vWave i")];
 let vIdx = -1, vNext = 0;
+
+// his phone mirrors one floating screen at a time; a tap moves both
+const hsViews = [...document.querySelectorAll(".hs-view")];
+const hsLib = $("#hsLib"), hsPills = [...document.querySelectorAll("#hsPills i")];
+hsLib.innerHTML = [...LIB, ...LIB].map(([, , c]) => `<div class="hs-row"><img src="img/cover-${c}.webp" alt=""><span></span><b></b></div>`).join("");
+let hsCur = 1, hsLibStep = 0;
+hsViews.forEach((v, i) => v.classList.toggle("on", i === hsCur));
+function touchScreen(t) {
+  hsCur = (hsCur + 1) % 3;
+  hsViews.forEach((v, i) => v.classList.toggle("on", i === hsCur));
+  touchedAt[hsCur] = t;
+  if (hsCur === 0) { libTarget += 59; libNext = t + 2400; hsLibStep = (hsLibStep + 1) % LIB.length; hsLib.style.transform = `translateY(${-46 * hsLibStep}px)`; }
+  if (hsCur === 2) vNext = 0;                                     // he picks the next voice
+}
 
 // karaoke: words light up one at a time, in step with the waveform on the wall
 const PASSAGE = ("Pour the coffee. Leave the inbox where it is. The letters you meant to read are already playing, " +
@@ -593,6 +636,7 @@ function screens(t, dt) {
     vIdx = (vIdx + 1) % VOICES.length; vNext = t + 3400;
     vSpans.forEach((sp, i) => sp.classList.toggle("on", i === vIdx));
     $("#vName").textContent = VOICES[vIdx]; $("#vInitial").textContent = VOICES[vIdx][0];
+    $("#hsInitial").textContent = VOICES[vIdx][0]; hsPills.forEach((pl, i) => pl.classList.toggle("on", i === vIdx));
   }
   vBars.forEach((b, i) => { b.style.height = `${4 + 14 * Math.abs(Math.sin(t / 170 + i * 0.7) * Math.sin(t / 430 + i * 0.3))}px`; });
   floatPhones(t);
