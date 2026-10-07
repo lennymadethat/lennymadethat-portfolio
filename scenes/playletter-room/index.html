@@ -26,18 +26,7 @@
   #stage { position: absolute; left: 0; top: 0; width: 2000px; height: 1116px; transform-origin: 0 0; will-change: transform; }
   #stage > * { position: absolute; }
   .plate { left: 0; top: 0; width: 2000px; height: 1116px; transition: opacity 1.2s ease; }
-  .wall { transition: opacity 1.2s ease; }
-  [data-wall]:not(.on) { opacity: 0; pointer-events: none; }
-
-  /* version B: covers rotating inside the painted frames */
-  .cover { overflow: hidden; border-radius: 2px; box-shadow: inset 0 0 6px rgba(0,0,0,.18); }
-  .cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 2.4s ease; }
-
-  /* version C: the mark hung in the centre frame */
-  #frameArt { left: 912px; top: 73px; width: 176px; height: 200px; background: var(--paper); display: grid; place-items: center; box-shadow: inset 0 0 8px rgba(0,0,0,.08); }
-  #frameArt img { width: 74%; }
-
-  /* versions A and B: the painted mark on the wall with live wordmark */
+  /* the painted mark on the wall, with a live wordmark */
   #brand { left: 834px; top: 368px; width: 332px; text-align: center; }
   #brand img { width: 332px; display: block; }
   #brand span { display: block; margin-top: 26px; font: 400 40px/1 Jost, sans-serif; letter-spacing: .32em; padding-left: .32em; color: #4A4A45; }
@@ -106,13 +95,9 @@
 <body>
 <div id="view" aria-hidden="true">
   <div id="stage">
-    <img class="plate" data-wall="a" src="img/plate-a.webp" alt="">
-    <img class="plate" data-wall="b" src="img/plate-b.webp" alt="">
-    <img class="plate" data-wall="c" src="img/plate-c.webp" alt="">
+    <img class="plate" src="img/plate-a.webp" alt="">
 
-    <div class="wall" data-wall="b" id="covers"></div>
-    <div class="wall" data-wall="c" id="frameArt"><img src="img/mark.webp" alt=""></div>
-    <div class="wall" data-wall="ab" id="brand"><img src="img/mark.webp" alt=""><span>PLAYLETTER</span></div>
+    <div id="brand"><img src="img/mark.webp" alt=""><span>PLAYLETTER</span></div>
 
     <div class="fshadow" data-i="0"></div><div class="fshadow" data-i="1"></div><div class="fshadow" data-i="2"></div>
 
@@ -155,11 +140,6 @@
     <button type="button" data-speed="2" aria-pressed="false">2×</button>
     <button type="button" data-speed="3" aria-pressed="false">3×</button>
     <button type="button" data-speed="4" aria-pressed="false">4×</button>
-  </div>
-  <div class="pill" role="group" aria-label="Wall art" id="wallPick">
-    <button type="button" data-v="a" aria-pressed="true" title="Photo arc">A</button>
-    <button type="button" data-v="b" aria-pressed="false" title="Rotating covers">B</button>
-    <button type="button" data-v="c" aria-pressed="false" title="Logo print, heartbeat centre">C</button>
   </div>
 </div>
 
@@ -206,55 +186,13 @@ function applyCamera(t) {
   if (fit.overX <= 1) x = 0;
   else if (reduced) x = -Math.min(fit.overX, Math.max(0, 300 * fit.s - fit.vw * 0.3));
   else {
-    // narrow screens: drift slowly between him, the wall, and the panels
+    // narrow screens: drift slowly between him, the wall, and the phones
     const k = 0.5 - 0.5 * Math.cos((t / 70000) * Math.PI * 2);
     x = -fit.overX * (0.05 + 0.9 * k);
   }
   const y = -fit.top * fit.s;
   stage.style.transform = `translate(${x}px, ${y}px) scale(${fit.s})`;
 }
-
-// ---------- wall versions ----------
-let wall = ["a", "b", "c"].includes(qs.get("wall")) ? qs.get("wall") : (store.get("plroom.wall") || "a");
-function setWall(v) {
-  wall = v; store.set("plroom.wall", v);
-  document.querySelectorAll("[data-wall]").forEach((el) => el.classList.toggle("on", el.dataset.wall.includes(v)));
-  document.querySelectorAll("#wallPick button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === v)));
-}
-document.querySelectorAll("#wallPick button").forEach((b) => b.addEventListener("click", () => setWall(b.dataset.v)));
-setWall(wall);
-
-// version B: five covers in the painted frames, swapping one at a time
-const FRAMES = [
-  { cx: 636, cy: 232.5, w: 167, h: 187, r: -21.4 },
-  { cx: 818, cy: 206.7, w: 174, h: 199, r: -11.6 },
-  { cx: 1000, cy: 173, w: 176, h: 200, r: 0 },
-  { cx: 1180, cy: 206.9, w: 174, h: 199, r: 11.6 },
-  { cx: 1363, cy: 232.7, w: 167, h: 187, r: 21.4 },
-];
-const POOL = ["print-1", "print-2", "print-3", "print-4", "print-5"].map((n) => `img/${n}.webp`).concat(
-  ["pile-of-sealed-paper-envelopes", "summer-stamp-hero", "two-fountain-pens-crossed", "second-inbox-issue-one",
-   "summer-it-got-weird-hero", "summer-magnifying-glass", "vintage-brass-rubber-stamp"].map((n) => `img/covers/${n}.webp`));
-const covers = $("#covers");
-const showing = [0, 1, 2, 3, 4];
-const coverEls = FRAMES.map((f, i) => {
-  const d = document.createElement("div");
-  d.className = "cover";
-  Object.assign(d.style, { position: "absolute", left: f.cx - f.w / 2 + "px", top: f.cy - f.h / 2 + "px", width: f.w + "px", height: f.h + "px", transform: `rotate(${f.r}deg)` });
-  const a = new Image(); a.src = POOL[i]; a.alt = ""; const b = new Image(); b.alt = ""; b.style.opacity = 0;
-  d.append(a, b); covers.append(d); return { d, a, b, front: a };
-});
-let nextPool = 5, nextFrame = 0;
-function swapCover() {
-  if (wall !== "b" || reduced) return;
-  const c = coverEls[nextFrame], back = c.front === c.a ? c.b : c.a;
-  back.src = POOL[nextPool]; showing[nextFrame] = nextPool;
-  back.decode?.().catch(() => {}).finally(() => { back.style.opacity = 1; c.front.style.opacity = 0; c.front = back; });
-  nextPool = (nextPool + 1) % POOL.length;
-  while (showing.includes(nextPool)) nextPool = (nextPool + 1) % POOL.length;
-  nextFrame = (nextFrame + 2) % 5;
-}
-setInterval(swapCover, 6500);
 
 // ---------- app screens on the glass ----------
 // Solve the 2D projective map from a rectangle to a quad, as a CSS matrix3d.
@@ -279,9 +217,9 @@ function inset(q, ix, top, bottom) {
 }
 // three phones hovering on the right, fanned towards the room
 const PHONES = [
-  { x: 1452, y: 560, r: -7, ry: 14, s: 0.86, period: 6900, amp: 9, phase: 0.0 },
-  { x: 1638, y: 500, r: 0, ry: 0, s: 1.0, period: 7700, amp: 11, phase: 1.9 },
-  { x: 1826, y: 566, r: 7, ry: -14, s: 0.86, period: 7300, amp: 9, phase: 3.7 },
+  { x: 1452, y: 625, r: -7, ry: 14, s: 0.86, period: 6900, amp: 9, phase: 0.0 },
+  { x: 1638, y: 572, r: 0, ry: 0, s: 1.0, period: 7700, amp: 11, phase: 1.9 },
+  { x: 1826, y: 632, r: 7, ry: -14, s: 0.86, period: 7300, amp: 9, phase: 3.7 },
 ];
 const FLOOR_AT = [950, 944, 956];
 const fphones = [...document.querySelectorAll(".fphone")], fshadows = [...document.querySelectorAll(".fshadow")];
@@ -359,13 +297,14 @@ function sunAt(h) {
 const FLOOR_Y = 880, FLOOR_K = 0.32;                  // floor is foreshortened to 32% of its unfolded depth
 const UNFOLD_H = FLOOR_Y + (H - FLOOR_Y) / FLOOR_K;
 
-// the window's light, drawn once: four panes behind a cross mullion
-const pane = document.createElement("canvas"); pane.width = 300; pane.height = 380;
+// the window's light, drawn once: six panes, two across and three down, like the painted window
+const PANE_W = 440, PANE_H = 700;
+const pane = document.createElement("canvas"); pane.width = PANE_W; pane.height = PANE_H;
 {
-  const c = pane.getContext("2d"); c.filter = "blur(5px)"; c.fillStyle = "#fff";
-  const pw = 118, ph = 158, g = 16, ox = 24, oy = 22;
-  for (const [i, j] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
-    c.beginPath(); c.roundRect(ox + i * (pw + g), oy + j * (ph + g), pw, ph, 4); c.fill();
+  const c = pane.getContext("2d"); c.filter = "blur(7px)"; c.fillStyle = "#fff";
+  const pw = 180, ph = 196, g = 22, ox = (PANE_W - (2 * pw + g)) / 2, oy = (PANE_H - (3 * ph + 2 * g)) / 2;
+  for (let i = 0; i < 2; i++) for (let j = 0; j < 3; j++) {
+    c.beginPath(); c.roundRect(ox + i * (pw + g), oy + j * (ph + g), pw, ph, 5); c.fill();
   }
 }
 const unfold = document.createElement("canvas"); unfold.width = 1000; unfold.height = Math.ceil(UNFOLD_H / 2);
@@ -383,7 +322,7 @@ function drawLight(h) {
     uc.translate(cx, cy);
     uc.transform(1, Math.tan(ky * Math.PI / 180), Math.tan(kx * Math.PI / 180), 1, 0, 0);
     uc.scale(sx, sy);
-    uc.drawImage(pane, -150, -190);
+    uc.drawImage(pane, -PANE_W / 2, -PANE_H / 2);
   }
   // multiply layer: the room's ambient colour, with the sun patch lifted back towards white
   shade.globalCompositeOperation = "source-over";
@@ -416,7 +355,7 @@ function drawLight(h) {
     blob(292, 760, 110, "235,236,225", 0.42 * screenGlow);        // phone on his face
     blob(610, 722, 240, "240,232,215", 0.38 * screenGlow);        // laptop
     for (const p of PHONES) blob(p.x, p.y, 380, "150,215,185", 0.30 * screenGlow);
-    blob(1000, 520, 380, "120,200,160", 0.22 * screenGlow * (wall === "c" ? 1.3 : 1));
+    blob(1000, 520, 380, "120,200,160", 0.22 * screenGlow);
   }
 }
 const tintCanvas = document.createElement("canvas"); tintCanvas.width = unfold.width; tintCanvas.height = unfold.height;
@@ -449,8 +388,7 @@ function drawWave(t, beat) {
       wave.beginPath(); wave.moveTo(x, y - a / 2); wave.lineTo(x, y + a / 2); wave.stroke();
     }
   };
-  if (wall === "c") bars(670, 1330, 560, 13, 7, 170, 0.95, true);
-  else { bars(640, 800, 512, 9, 4, 80, 0.9, true); bars(1200, 1360, 512, 9, 4, 80, 0.9, true); }
+  bars(640, 800, 512, 9, 4, 80, 0.9, true); bars(1200, 1360, 512, 9, 4, 80, 0.9, true);
 }
 
 // ---------- the man ----------
