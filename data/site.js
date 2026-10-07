@@ -19,6 +19,8 @@ export const products = [
     name: "PlayLetter",
     hook: "Your newsletters, out loud.",
     logo: "/img/products/playletter-512.png",
+    // The ambient room (scenes/playletter-room) replaces the film on the swipe; the films stay for fallback.
+    scene: "/scenes/playletter-room/?embed=1",
     film: true,
     // v5 = the karaoke loop: Lily's words lighting up on the real word clock, 12 s, seamless,
     // reads with the sound off (the carousel autoplays muted). Unmute and she speaks.

@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PlayLetter Room</title>
+<meta name="description" content="An ambient PlayLetter room: a day passes while he listens.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400&family=Inter:wght@400;500;600&family=Jost:wght@400&display=swap">
+<style>
+  :root {
+    --paper: #F7F4EE;
+    --ink: #1A1A18;
+    --mint: #5FB089;
+    --mint-deep: #2F7A57;
+    --glass: rgba(255, 255, 255, 0.62);
+    --glass-line: rgba(26, 26, 24, 0.10);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #E9E4DC; color: var(--ink); }
+  body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  /* The room is authored at 2000 x 1116; JS scales and pans it to fit. */
+  #view { position: fixed; inset: 0; overflow: hidden; }
+  #stage { position: absolute; left: 0; top: 0; width: 2000px; height: 1116px; transform-origin: 0 0; will-change: transform; }
+  #stage > * { position: absolute; }
+  .plate { left: 0; top: 0; width: 2000px; height: 1116px; transition: opacity 1.2s ease; }
+  .wall { transition: opacity 1.2s ease; }
+  [data-wall]:not(.on) { opacity: 0; pointer-events: none; }
+
+  /* version B: covers rotating inside the painted frames */
+  .cover { overflow: hidden; border-radius: 2px; box-shadow: inset 0 0 6px rgba(0,0,0,.18); }
+  .cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 2.4s ease; }
+
+  /* version C: the mark hung in the centre frame */
+  #frameArt { left: 912px; top: 73px; width: 176px; height: 200px; background: var(--paper); display: grid; place-items: center; box-shadow: inset 0 0 8px rgba(0,0,0,.08); }
+  #frameArt img { width: 74%; }
+
+  /* versions A and B: the painted mark on the wall with live wordmark */
+  #brand { left: 834px; top: 368px; width: 332px; text-align: center; }
+  #brand img { width: 332px; display: block; }
+  #brand span { display: block; margin-top: 26px; font: 400 40px/1 Jost, sans-serif; letter-spacing: .32em; padding-left: .32em; color: #4A4A45; }
+
+  #wave { left: 0; top: 0; width: 2000px; height: 1116px; pointer-events: none; }
+
+  /* app screens on the glass panels (mapped with matrix3d) */
+  .screen { left: 0; top: 0; width: 540px; height: 1200px; transform-origin: 0 0; overflow: hidden; background: #0D1117; border-radius: 28px; opacity: .93; }
+  .screen img { display: block; width: 540px; }
+  .screen .scroll { position: absolute; left: 0; width: 540px; will-change: transform; }
+  .screen .head, .screen .nav { position: absolute; left: 0; z-index: 2; }
+  .screen .head { top: 0; } .screen .nav { bottom: 0; }
+  .screen::after { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: 28px;
+    background: linear-gradient(115deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 38%, rgba(255,255,255,0) 70%, rgba(255,255,255,.08) 100%); }
+  .progress { position: absolute; left: 61px; top: 600px; height: 7px; width: 0; background: var(--mint); border-radius: 4px; z-index: 2; }
+
+  /* the man: the body and three cut pieces that move */
+  .piece { will-change: transform; }
+  .piece > img { position: absolute; left: 0; top: 0; }
+  #handScreen { overflow: hidden; border-radius: 6px; background: #0D1117; }
+  #handScreen img { width: 100%; display: block; will-change: transform; }
+
+  #shade { left: 0; top: 0; width: 2000px; height: 1116px; mix-blend-mode: multiply; pointer-events: none; }
+  #glow  { left: 0; top: 0; width: 2000px; height: 1116px; mix-blend-mode: screen; pointer-events: none; }
+
+  /* ---- overlay UI ---- */
+  .ui { position: fixed; z-index: 10; }
+  #copy { left: clamp(16px, 4vw, 56px); top: 34vh; max-width: 380px; }
+  #copy h1 { margin: 0 0 6px; font: italic 400 clamp(34px, 4.2vw, 56px)/1.02 Fraunces, Georgia, serif; letter-spacing: -.01em; color: var(--ink); }
+  #copy h1 em { font-style: italic; color: var(--mint-deep); }
+  #copy p { margin: 0 0 18px; font-size: clamp(15px, 1.2vw, 17px); color: #3A3A36; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; font: 600 15px/1 Inter, sans-serif; text-decoration: none; transition: transform .2s ease, background .2s ease; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:focus-visible { outline: 2px solid var(--mint-deep); outline-offset: 3px; }
+  .btn--primary { background: var(--ink); color: var(--paper); }
+  .btn--ghost { background: var(--glass); color: var(--ink); border: 1px solid var(--glass-line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+  #controls { top: clamp(12px, 3vh, 28px); right: clamp(12px, 3vw, 28px); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .pill { display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .pill button { min-width: 36px; height: 30px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; color: #3A3A36; font: 500 13px/1 Inter, sans-serif; cursor: pointer; }
+  .pill button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+  .pill button:focus-visible { outline: 2px solid var(--mint-deep); outline-offset: 1px; }
+  #clock { padding: 0 12px; height: 38px; display: flex; align-items: center; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-line); font: 500 13px/1 Inter, sans-serif; font-variant-numeric: tabular-nums; color: #3A3A36; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+  /* inside the portfolio swipe the site header sits over the top 76px */
+  .embed #view { top: 68px; }
+  .embed #controls { top: 84px; }
+  .embed #copy { left: clamp(16px, 7vw, 104px); }
+  @media (max-width: 640px) {
+    .embed #copy { left: 0; padding-top: 128px; }
+    #copy { right: 0; left: 0; top: 0; bottom: auto; max-width: none; padding: 78px 16px 40px;
+      background: linear-gradient(to bottom, rgba(247,244,238,.92) 60%, rgba(247,244,238,0)); }
+    #controls { left: 16px; right: 16px; justify-content: space-between; }
+    #clock { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="view" aria-hidden="true">
+  <div id="stage">
+    <img class="plate" data-wall="a" src="img/plate-a.webp" alt="">
+    <img class="plate" data-wall="b" src="img/plate-b.webp" alt="">
+    <img class="plate" data-wall="c" src="img/plate-c.webp" alt="">
+
+    <div class="wall" data-wall="b" id="covers"></div>
+    <div class="wall" data-wall="c" id="frameArt"><img src="img/mark.webp" alt=""></div>
+    <div class="wall" data-wall="ab" id="brand"><img src="img/mark.webp" alt=""><span>PLAYLETTER</span></div>
+
+    <div class="screen" id="scrFeed">
+      <img class="head" src="img/scr-feed-head.webp" alt="">
+      <div class="scroll"><img src="img/scr-feed.webp" alt=""><img src="img/scr-feed.webp" alt=""></div>
+      <img class="nav" src="img/scr-feed-nav.webp" alt="">
+    </div>
+    <div class="screen" id="scrPlayer"><img src="img/scr-player.webp" alt=""><div class="progress"></div></div>
+    <div class="screen" id="scrQueue"><div class="scroll"><img src="img/scr-queue.webp" alt=""></div></div>
+
+    <img id="body" class="piece" src="img/man-body.webp" alt="">
+    <div id="head" class="piece"><img src="img/man-head.webp" alt=""></div>
+    <div id="hand" class="piece">
+      <img src="img/man-hand.webp" alt="">
+      <div id="handScreen" style="position:absolute"><img src="img/scr-feed-head.webp" alt="" style="position:relative;z-index:2"><img id="handFeed" src="img/scr-feed.webp" alt=""></div>
+      <img id="fingers" src="img/man-fingers.webp" alt="">
+    </div>
+    <div id="foot" class="piece"><img src="img/man-foot.webp" alt=""></div>
+    <img id="arm" src="img/couch-arm.webp" alt="">
+
+    <canvas id="shade" width="1000" height="558"></canvas>
+    <canvas id="wave" width="2000" height="1116"></canvas>
+    <canvas id="glow" width="1000" height="558"></canvas>
+  </div>
+</div>
+
+<section id="copy" class="ui" aria-label="PlayLetter">
+  <h1>Just <em>listen.</em></h1>
+  <p>Your newsletters, out loud.</p>
+  <div class="ctas">
+    <a class="btn btn--primary" href="https://playletter.com" target="_top">Open PlayLetter</a>
+    <a class="btn btn--ghost" href="/products/playletter" target="_top">How it works</a>
+  </div>
+</section>
+
+<div id="controls" class="ui">
+  <div id="clock" aria-live="off">—</div>
+  <div class="pill" role="group" aria-label="Speed of the day" id="speed">
+    <button type="button" data-speed="1" aria-pressed="true">1×</button>
+    <button type="button" data-speed="2" aria-pressed="false">2×</button>
+    <button type="button" data-speed="3" aria-pressed="false">3×</button>
+    <button type="button" data-speed="4" aria-pressed="false">4×</button>
+  </div>
+  <div class="pill" role="group" aria-label="Wall art" id="wallPick">
+    <button type="button" data-v="a" aria-pressed="true" title="Photo arc">A</button>
+    <button type="button" data-v="b" aria-pressed="false" title="Rotating covers">B</button>
+    <button type="button" data-v="c" aria-pressed="false" title="Logo print, heartbeat centre">C</button>
+  </div>
+</div>
+
+<script type="module">
+const W = 2000, H = 1116;
+const $ = (s) => document.querySelector(s);
+const qs = new URLSearchParams(location.search);
+if (qs.has("embed")) document.documentElement.classList.add("embed");
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+                set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+
+const layers = await fetch("img/layers.json").then((r) => r.json());
+const place = (el, p) => Object.assign(el.style, { left: p.x + "px", top: p.y + "px", width: p.w + "px", height: p.h + "px" });
+place($("#body"), layers.pieces.body);
+for (const n of ["head", "hand", "foot", "arm"]) place($("#" + n), layers.pieces[n]);
+const handBox = layers.pieces.hand, fing = layers.pieces.fingers;
+Object.assign($("#fingers").style, { left: fing.x - handBox.x + "px", top: fing.y - handBox.y + "px" });
+
+// pivots in room coordinates
+const PIV = { foot: [474, 948], head: [176, 815], hand: [392, 985], body: [250, 1049] };
+for (const n of ["head", "hand", "foot"]) {
+  const p = layers.pieces[n]; $("#" + n).style.transformOrigin = `${PIV[n][0] - p.x}px ${PIV[n][1] - p.y}px`;
+}
+{ const p = layers.pieces.body; $("#body").style.transformOrigin = `${PIV.body[0] - p.x}px ${PIV.body[1] - p.y}px`; }
+
+// the phone screen in his hand: a small rotated window, under the fingers
+Object.assign($("#handScreen").style, { left: 276 - handBox.x + "px", top: 712 - handBox.y + "px", width: "42px", height: "102px", transform: "rotate(8deg)", transformOrigin: "50% 50%" });
+
+// ---------- fit + pan ----------
+const view = $("#view"), stage = $("#stage");
+let fit = { s: 1, ox: 0, oy: 0, pan: 0 };
+function layout() {
+  const vw = view.clientWidth, vh = view.clientHeight;
+  const s = Math.max(vw / W, vh / H);           // cover
+  const overX = W * s - vw, overY = H * s - vh;
+  fit = { s, overX, overY, vw, vh };
+}
+addEventListener("resize", layout); layout();
+function applyCamera(t) {
+  let x;
+  if (fit.overX <= 1) x = 0;
+  else if (reduced) x = -Math.min(fit.overX, Math.max(0, 300 * fit.s - fit.vw * 0.3));
+  else {
+    // narrow screens: drift slowly between him, the wall, and the panels
+    const k = 0.5 - 0.5 * Math.cos((t / 70000) * Math.PI * 2);
+    x = -fit.overX * (0.05 + 0.9 * k);
+  }
+  const y = -fit.overY * 0.12;
+  stage.style.transform = `translate(${x}px, ${y}px) scale(${fit.s})`;
+}
+
+// ---------- wall versions ----------
+let wall = ["a", "b", "c"].includes(qs.get("wall")) ? qs.get("wall") : (store.get("plroom.wall") || "a");
+function setWall(v) {
+  wall = v; store.set("plroom.wall", v);
+  document.querySelectorAll("[data-wall]").forEach((el) => el.classList.toggle("on", el.dataset.wall.includes(v)));
+  document.querySelectorAll("#wallPick button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === v)));
+}
+document.querySelectorAll("#wallPick button").forEach((b) => b.addEventListener("click", () => setWall(b.dataset.v)));
+setWall(wall);
+
+// version B: five covers in the painted frames, swapping one at a time
+const FRAMES = [
+  { cx: 636, cy: 232.5, w: 167, h: 187, r: -21.4 },
+  { cx: 818, cy: 206.7, w: 174, h: 199, r: -11.6 },
+  { cx: 1000, cy: 173, w: 176, h: 200, r: 0 },
+  { cx: 1180, cy: 206.9, w: 174, h: 199, r: 11.6 },
+  { cx: 1363, cy: 232.7, w: 167, h: 187, r: 21.4 },
+];
+const POOL = ["print-1", "print-2", "print-3", "print-4", "print-5"].map((n) => `img/${n}.webp`).concat(
+  ["pile-of-sealed-paper-envelopes", "summer-stamp-hero", "two-fountain-pens-crossed", "second-inbox-issue-one",
+   "summer-it-got-weird-hero", "summer-magnifying-glass", "vintage-brass-rubber-stamp"].map((n) => `img/covers/${n}.webp`));
+const covers = $("#covers");
+const showing = [0, 1, 2, 3, 4];
+const coverEls = FRAMES.map((f, i) => {
+  const d = document.createElement("div");
+  d.className = "cover";
+  Object.assign(d.style, { position: "absolute", left: f.cx - f.w / 2 + "px", top: f.cy - f.h / 2 + "px", width: f.w + "px", height: f.h + "px", transform: `rotate(${f.r}deg)` });
+  const a = new Image(); a.src = POOL[i]; a.alt = ""; const b = new Image(); b.alt = ""; b.style.opacity = 0;
+  d.append(a, b); covers.append(d); return { d, a, b, front: a };
+});
+let nextPool = 5, nextFrame = 0;
+function swapCover() {
+  if (wall !== "b" || reduced) return;
+  const c = coverEls[nextFrame], back = c.front === c.a ? c.b : c.a;
+  back.src = POOL[nextPool]; showing[nextFrame] = nextPool;
+  back.decode?.().catch(() => {}).finally(() => { back.style.opacity = 1; c.front.style.opacity = 0; c.front = back; });
+  nextPool = (nextPool + 1) % POOL.length;
+  while (showing.includes(nextPool)) nextPool = (nextPool + 1) % POOL.length;
+  nextFrame = (nextFrame + 2) % 5;
+}
+setInterval(swapCover, 6500);
+
+// ---------- app screens on the glass ----------
+// Solve the 2D projective map from a rectangle to a quad, as a CSS matrix3d.
+function quadMatrix(w, h, q) {
+  const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = q; // TL, TR, BR, BL
+  const dx1 = x1 - x2, dx2 = x3 - x2, dy1 = y1 - y2, dy2 = y3 - y2;
+  const sx = x0 - x1 + x2 - x3, sy = y0 - y1 + y2 - y3;
+  const den = dx1 * dy2 - dx2 * dy1;
+  const g = (sx * dy2 - dx2 * sy) / den, hh = (dx1 * sy - sx * dy1) / den;
+  const a = x1 - x0 + g * x1, b = x3 - x0 + hh * x3, c = x0;
+  const d = y1 - y0 + g * y1, e = y3 - y0 + hh * y3, f = y0;
+  // scale from the element's pixel box to the unit square
+  const m = [a / w, d / w, 0, g / w, b / h, e / h, 0, hh / h, 0, 0, 1, 0, c, f, 0, 1];
+  return `matrix3d(${m.join(",")})`;
+}
+const lerp2 = (p, q, t) => [p[0] + (q[0] - p[0]) * t, p[1] + (q[1] - p[1]) * t];
+function inset(q, ix, top, bottom) {
+  // q = TL TR BR BL of a glass panel; return the screen area inside it
+  const L = (t) => lerp2(q[0], q[3], t), R = (t) => lerp2(q[1], q[2], t);
+  const pt = (u, v) => lerp2(L(v), R(v), u);
+  return [pt(ix, top), pt(1 - ix, top), pt(1 - ix, bottom), pt(ix, bottom)];
+}
+const PANELS = [
+  [[1377, 401], [1546, 397], [1544, 939], [1377, 916]],
+  [[1571, 375], [1748, 372], [1748, 985], [1571, 947]],
+  [[1775, 355], [1950, 339], [1950, 1047], [1777, 1001]],
+];
+[["#scrFeed", 0], ["#scrPlayer", 1], ["#scrQueue", 2]].forEach(([sel, i]) => {
+  const q = inset(PANELS[i], 0.09, 0.07, 0.62);
+  $(sel).style.transform = quadMatrix(540, 1200, q);
+});
+
+// ---------- the day ----------
+const DAY_MS_1X = 8 * 60 * 1000;
+let speed = Number(qs.get("speed")) || Number(store.get("plroom.speed")) || 1;
+function setSpeed(n) {
+  speed = n; store.set("plroom.speed", String(n));
+  document.querySelectorAll("#speed button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.speed) === n)));
+}
+document.querySelectorAll("#speed button").forEach((b) => b.addEventListener("click", () => setSpeed(Number(b.dataset.speed))));
+setSpeed(speed);
+let hour = qs.has("hour") ? Number(qs.get("hour")) : 8.2;   // where the day starts
+if (reduced && !qs.has("hour")) hour = 15.5;
+
+const smooth = (t) => t * t * (3 - 2 * t);
+function track(keys, h) {
+  // keys: [[hour, ...values]], wraps over 24h
+  const n = keys.length;
+  for (let i = 0; i < n; i++) {
+    const a = keys[i], b = keys[(i + 1) % n];
+    const ha = a[0], hb = b[0] + (i + 1 === n ? 24 : 0);
+    let x = h; if (x < ha) x += 24;
+    if (x >= ha && x <= hb) {
+      const t = smooth((x - ha) / (hb - ha));
+      return a.slice(1).map((v, j) => v + (b[j + 1] - v) * t);
+    }
+  }
+  return keys[0].slice(1);
+}
+// multiply colour of the room, and how much the screens glow
+const AMBIENT = [
+  [4.5, 84, 92, 120, 1],
+  [6.2, 150, 158, 190, 0.7],
+  [7.4, 200, 206, 220, 0.2],
+  [10, 214, 214, 216, 0.05],
+  [14, 218, 214, 208, 0],
+  [17, 214, 202, 188, 0.05],
+  [18.4, 214, 190, 170, 0.25],
+  [19.4, 146, 136, 160, 0.6],
+  [20.6, 84, 92, 120, 1],
+];
+// sun patch path, in "unfolded" room space: the wall runs down to y=880, then the floor continues below it
+// [hour, cx, cy, skewX, skewY, scaleX, scaleY, strength, warmth]
+const SUN = [
+  [6.6, 1540, 260, -6, -16, 0.95, 0.85, 0, 0.2],
+  [7.4, 1500, 300, -6, -16, 0.95, 0.9, 0.55, 0.25],
+  [9.6, 1300, 560, -4, -12, 1, 1.0, 0.85, 0.1],
+  [11.6, 1180, 900, 0, -8, 1, 1.15, 0.9, 0],
+  [13.6, 1060, 1200, 10, -4, 1.05, 1.35, 0.9, 0.1],
+  [15.6, 820, 1330, 22, 0, 1.15, 1.6, 0.88, 0.35],
+  [17.0, 560, 1300, 30, 4, 1.25, 1.9, 0.82, 0.7],
+  [18.2, 330, 1210, 36, 6, 1.3, 2.1, 0.62, 1],
+  [19.0, 220, 1160, 38, 7, 1.3, 2.2, 0, 1],
+  [24 + 6.5, 1540, 260, -6, -16, 0.95, 0.85, 0, 0.2],
+];
+function sunAt(h) {
+  if (h < 6.6 || h > 19.0) return null;
+  return track(SUN.slice(0, 9), h);
+}
+const FLOOR_Y = 880, FLOOR_K = 0.32;                  // floor is foreshortened to 32% of its unfolded depth
+const UNFOLD_H = FLOOR_Y + (H - FLOOR_Y) / FLOOR_K;
+
+// the window's light, drawn once: four panes behind a cross mullion
+const pane = document.createElement("canvas"); pane.width = 300; pane.height = 380;
+{
+  const c = pane.getContext("2d"); c.filter = "blur(5px)"; c.fillStyle = "#fff";
+  const pw = 118, ph = 158, g = 16, ox = 24, oy = 22;
+  for (const [i, j] of [[0, 0], [1, 0], [0, 1], [1, 1]]) {
+    c.beginPath(); c.roundRect(ox + i * (pw + g), oy + j * (ph + g), pw, ph, 4); c.fill();
+  }
+}
+const unfold = document.createElement("canvas"); unfold.width = 1000; unfold.height = Math.ceil(UNFOLD_H / 2);
+const uc = unfold.getContext("2d");
+const shade = $("#shade").getContext("2d"), glow = $("#glow").getContext("2d");
+
+function drawLight(h) {
+  const [r, g, b, screenGlow] = track(AMBIENT, h);
+  const sun = sunAt(h);
+  // sun patch into the unfolded canvas
+  uc.setTransform(1, 0, 0, 1, 0, 0); uc.clearRect(0, 0, unfold.width, unfold.height);
+  if (sun && sun[6] > 0.01) {
+    const [cx, cy, kx, ky, sx, sy] = sun;
+    uc.setTransform(0.5, 0, 0, 0.5, 0, 0);
+    uc.translate(cx, cy);
+    uc.transform(1, Math.tan(ky * Math.PI / 180), Math.tan(kx * Math.PI / 180), 1, 0, 0);
+    uc.scale(sx, sy);
+    uc.drawImage(pane, -150, -190);
+  }
+  // multiply layer: the room's ambient colour, with the sun patch lifted back towards white
+  shade.globalCompositeOperation = "source-over";
+  shade.fillStyle = `rgb(${r},${g},${b})`; shade.fillRect(0, 0, 1000, 558);
+  if (sun && sun[6] > 0.01) {
+    const strength = sun[6], warm = sun[7];
+    const tmp = patchTint(255, 250 - warm * 8, 242 - warm * 30, strength);
+    shade.drawImage(tmp, 0, 0, 1000, FLOOR_Y / 2, 0, 0, 1000, FLOOR_Y / 2);
+    shade.drawImage(tmp, 0, FLOOR_Y / 2, 1000, unfold.height - FLOOR_Y / 2, 0, FLOOR_Y / 2, 1000, (H - FLOOR_Y) / 2);
+  }
+  // screen layer: warm bloom in the patch, and the screens glowing as the light goes
+  glow.clearRect(0, 0, 1000, 558);
+  if (sun && sun[6] > 0.01) {
+    const warm = sun[7], strength = sun[6];
+    const tmp = patchTint(255, 226, 180, (0.16 + warm * 0.22) * strength);
+    glow.drawImage(tmp, 0, 0, 1000, FLOOR_Y / 2, 0, 0, 1000, FLOOR_Y / 2);
+    glow.drawImage(tmp, 0, FLOOR_Y / 2, 1000, unfold.height - FLOOR_Y / 2, 0, FLOOR_Y / 2, 1000, (H - FLOOR_Y) / 2);
+  }
+  if (screenGlow > 0.01) {
+    const blob = (x, y, rad, col, a) => {
+      const gr = glow.createRadialGradient(x / 2, y / 2, 0, x / 2, y / 2, rad / 2);
+      gr.addColorStop(0, `rgba(${col},${a})`); gr.addColorStop(1, `rgba(${col},0)`);
+      glow.fillStyle = gr; glow.fillRect(0, 0, 1000, 558);
+    };
+    blob(298, 762, 150, "190,225,255", 0.55 * screenGlow);        // phone on his face
+    blob(610, 722, 260, "205,225,255", 0.45 * screenGlow);        // laptop
+    for (const p of PANELS) blob((p[0][0] + p[1][0]) / 2, 560, 300, "150,215,185", 0.30 * screenGlow);
+    blob(1000, 520, 380, "120,200,160", 0.22 * screenGlow * (wall === "c" ? 1.3 : 1));
+  }
+}
+const tintCanvas = document.createElement("canvas"); tintCanvas.width = unfold.width; tintCanvas.height = unfold.height;
+const tc = tintCanvas.getContext("2d");
+function patchTint(r, g, b, a) {
+  tc.globalCompositeOperation = "source-over"; tc.clearRect(0, 0, tintCanvas.width, tintCanvas.height);
+  tc.globalAlpha = Math.min(1, a); tc.drawImage(unfold, 0, 0); tc.globalAlpha = 1;
+  tc.globalCompositeOperation = "source-in"; tc.fillStyle = `rgb(${r},${g},${b})`; tc.fillRect(0, 0, tintCanvas.width, tintCanvas.height);
+  return tintCanvas;
+}
+
+// ---------- the waveform ----------
+const wave = $("#wave").getContext("2d");
+function drawWave(t, beat) {
+  wave.clearRect(0, 0, W, H);
+  const talk = (x) => {
+    // a voice: syllables riding on phrases, with breaths between them
+    const phrase = 0.55 + 0.45 * Math.sin(t / 2300 + x * 0.004) * Math.sin(t / 5100);
+    const syll = 0.5 + 0.5 * Math.sin(t / 140 + x * 0.09) * Math.sin(t / 370 - x * 0.05);
+    return Math.max(0, phrase) * (0.35 + 0.65 * syll);
+  };
+  wave.lineCap = "round";
+  if (wall === "c") {
+    // the room's heartbeat, centre wall
+    const x0 = 520, x1 = 1330, y = 600, step = 14;
+    for (let x = x0; x <= x1; x += step) {
+      const edge = Math.sin(((x - x0) / (x1 - x0)) * Math.PI);
+      const a = (18 + 150 * talk(x) * edge + 60 * beat * Math.exp(-((x - 925) ** 2) / 26000)) * edge;
+      wave.strokeStyle = `rgba(95,176,137,${0.55 + 0.4 * edge})`; wave.lineWidth = 7;
+      wave.beginPath(); wave.moveTo(x, y - a / 2); wave.lineTo(x, y + a / 2); wave.stroke();
+    }
+  } else {
+    // from the mark out to the first panel, like the original painting
+    const y = 506;
+    wave.strokeStyle = "rgba(95,176,137,.55)"; wave.lineWidth = 3; wave.setLineDash([2, 9]);
+    wave.beginPath(); wave.moveTo(1186, y); wave.lineTo(1232, y); wave.stroke(); wave.setLineDash([]);
+    for (let x = 1240; x <= 1350; x += 7) {
+      const edge = Math.sin(((x - 1236) / 118) * Math.PI);
+      const a = (6 + 70 * talk(x) * edge) * edge;
+      wave.strokeStyle = "rgba(95,176,137,.9)"; wave.lineWidth = 3.2;
+      wave.beginPath(); wave.moveTo(x, y - a / 2); wave.lineTo(x, y + a / 2); wave.stroke();
+    }
+  }
+}
+
+// ---------- the man ----------
+const BPM = 74, beatMs = 60000 / BPM;
+const footEl = $("#foot"), headEl = $("#head"), handEl = $("#hand"), bodyEl = $("#body");
+const handImg = $("#handFeed");
+let flick = { at: 0, next: 2500, scroll: 0, from: 0, to: 0 };
+function man(t) {
+  const beatPos = t / beatMs, inBeat = beatPos % 1;
+  const bar = Math.floor(beatPos / 4);
+  const grooving = (bar % 12) < 8;                    // taps for 8 bars, rests for 4
+  // toes lift just before the beat and land on it
+  const tap = grooving ? Math.pow(Math.max(0, Math.sin(Math.PI * Math.min(1, (inBeat + 0.18) / 0.62))), 1.6) : 0;
+  footEl.style.transform = `rotate(${-6.5 * tap}deg)`;
+  const breath = Math.sin(t / 4500 * Math.PI * 2) * 0.5 + 0.5;
+  bodyEl.style.transform = `scaleY(${1 + 0.004 * breath})`;
+  const lift = -0.9 * breath;
+  const look = Math.sin(t / 31000) * Math.sin(t / 13000) * 1.4;
+  const nod = grooving ? 0.6 * tap : 0;
+  headEl.style.transform = `translateY(${lift}px) rotate(${look + nod}deg)`;
+  // a thumb flick every few seconds: the hand bobs, the feed jumps and settles
+  if (t - flick.at > flick.next) {
+    flick = { at: t, next: 2600 + Math.random() * 3800, from: flick.to, to: flick.to + 22 + Math.random() * 26 };
+  }
+  const k = Math.min(1, (t - flick.at) / 520), ease = 1 - Math.pow(1 - k, 3);
+  const bob = k < 1 ? Math.sin(k * Math.PI) : 0;
+  handEl.style.transform = `translateY(${lift}px) rotate(${-1.1 * bob}deg)`;
+  const pos = flick.from + (flick.to - flick.from) * ease;
+  handImg.style.transform = `translateY(${-(pos % 110)}px)`;
+  return tap;
+}
+
+// ---------- the panels ----------
+const feed = $("#scrFeed .scroll"), queue = $("#scrQueue .scroll"), prog = $("#scrPlayer .progress");
+const FEED_H = 2952;
+let feedY = 0, feedTarget = 0, feedNext = 0;
+function panels(t, dt) {
+  if (t > feedNext) { feedTarget += 260 + Math.random() * 320; feedNext = t + 3200 + Math.random() * 3000; }
+  feedY += (feedTarget - feedY) * Math.min(1, dt / 420);
+  feed.style.transform = `translateY(${-(feedY % FEED_H) + 84}px)`;
+  queue.style.transform = `translateY(${-140 * (0.5 - 0.5 * Math.cos(t / 9000))}px)`;
+  prog.style.width = `${(0.12 + 0.86 * ((t / 90000) % 1)) * 418}px`;
+}
+
+// ---------- clock ----------
+const clock = $("#clock");
+const fmt = (h) => { const hh = Math.floor(h) % 24, mm = Math.floor((h % 1) * 60); return `${((hh + 11) % 12) + 1}:${String(mm).padStart(2, "0")} ${hh < 12 ? "am" : "pm"}`; };
+
+// ---------- loop ----------
+let last = performance.now(), running = true, lastLight = -1;
+function frame(now) {
+  if (!running) return;
+  const dt = Math.min(100, now - last); last = now;
+  if (!reduced) hour = (hour + (dt * speed * 24) / DAY_MS_1X) % 24;
+  applyCamera(now);
+  const tap = reduced ? 0 : man(now);
+  if (!reduced) panels(now, dt);
+  drawWave(reduced ? 3000 : now, tap);
+  if (Math.abs(hour - lastLight) > 0.0015 || lastLight < 0) { drawLight(hour); lastLight = hour; }
+  clock.textContent = fmt(hour);
+  if (!reduced) requestAnimationFrame(frame);
+}
+function start() { if (running && !reduced) return; running = true; last = performance.now(); requestAnimationFrame(frame); }
+function stop() { running = false; }
+document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+// the portfolio carousel tells the scene when it is on screen
+addEventListener("message", (e) => {
+  if (e.origin !== location.origin) return;
+  if (e.data === "scene:pause") stop();
+  if (e.data === "scene:play") start();
+});
+running = false; start();
+if (reduced) { running = true; frame(performance.now()); }
+</script>
+</body>
+</html>

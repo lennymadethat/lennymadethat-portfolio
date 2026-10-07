@@ -1,6 +1,6 @@
 // lennymadethat.com — SKELETON (F0). Renders data/site.js into the five sections and runs the
 // mechanics: nav, product swipe, pinned agent select, scroll-scrubbed Second Brain, downloads.
-import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20260929b";
+import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20261007a";
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (tag, attrs = {}, html = "") => {
@@ -37,10 +37,12 @@ const sectionObs = new IntersectionObserver((entries) => {
   const sourceFor = (p) => mobileFilm.matches && p.videoMobile ? p.videoMobile : p.video;
   const posterFor = (p) => mobileFilm.matches && p.posterMobile ? p.posterMobile : p.poster;
   products.forEach((p, i) => {
-    const media = p.video
+    const media = p.scene
+      ? `<iframe class="sk-scene" title="${esc(p.name)}: an ambient room" data-src="${esc(p.scene)}" allow="autoplay"></iframe>`
+      : p.video
       ? `<video${posterFor(p) ? ` poster="${esc(posterFor(p))}"` : ""} aria-label="${esc(p.name)} product film" controls muted loop playsinline preload="none"></video>`
       : `<div class="sk-placeholder"><p>FILM SLOT<br>${esc(p.name)}</p></div>`;
-    const slide = el("article", { class: `sk-slide${p.film ? " sk-slide--film" : ""}`, "aria-roledescription": "slide", "aria-label": `${i + 1} of ${products.length}: ${p.name}` },
+    const slide = el("article", { class: `sk-slide${p.scene ? " sk-slide--scene" : p.film ? " sk-slide--film" : ""}`, "aria-roledescription": "slide", "aria-label": `${i + 1} of ${products.length}: ${p.name}` },
       `<div class="sk-slide__media">${media}</div>
        ${p.todo ? todo(p.todo, p.video ? "stand-in footage" : "film") : ""}
        <div class="sk-slide__copy">
@@ -70,12 +72,20 @@ const sectionObs = new IntersectionObserver((entries) => {
   $("#platforms .sk-arrow--prev").addEventListener("click", () => go(cur - 1));
   $("#platforms .sk-arrow--next").addEventListener("click", () => go(cur + 1));
   track.addEventListener("keydown", (e) => {
-    if (e.target.closest("video, a, button")) return;
+    if (e.target.closest("video, iframe, a, button")) return;
     if (e.key === "ArrowRight") { e.preventDefault(); go(cur + 1); }
     if (e.key === "ArrowLeft") { e.preventDefault(); go(cur - 1); }
   });
   let onScreen = false;
   const playVisible = () => slides.forEach((s, j) => {
+    const f = s.querySelector("iframe.sk-scene");
+    if (f) {
+      // the ambient room loads the first time its slide shows, and sleeps while off screen
+      const active = onScreen && j === cur && !document.hidden;
+      if (active && !f.src) f.src = f.dataset.src;
+      f.contentWindow?.postMessage(active ? "scene:play" : "scene:pause", location.origin);
+      return;
+    }
     const v = s.querySelector("video");
     if (!v) return;
     const active = onScreen && j === cur && !document.hidden;
