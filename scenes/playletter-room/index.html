@@ -23,6 +23,8 @@
 
   /* The room is authored at 2000 x 1116; JS scales and pans it to fit. */
   #view { position: fixed; inset: 0; overflow: hidden; }
+  #bleed { position: absolute; inset: -60px; width: calc(100% + 120px); height: calc(100% + 120px); object-fit: cover; filter: blur(40px) saturate(.9); opacity: .9; }
+  #view.wide #stage { -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
   #stage { position: absolute; left: 0; top: 0; width: 2000px; height: 1116px; transform-origin: 0 0; will-change: transform; }
   #stage > * { position: absolute; }
   .plate { left: 0; top: 0; width: 2000px; height: 1116px; transition: opacity 1.2s ease; }
@@ -98,6 +100,7 @@
 </head>
 <body>
 <div id="view" aria-hidden="true">
+  <img id="bleed" src="img/plate-a.webp" alt="">
   <div id="stage">
     <img class="plate" data-wall="a" src="img/plate-a.webp" alt="">
     <img class="plate" data-wall="b" src="img/plate-b.webp" alt="">
@@ -186,21 +189,23 @@ const view = $("#view"), stage = $("#stage");
 let fit = { s: 1, ox: 0, oy: 0, pan: 0 };
 function layout() {
   const vw = view.clientWidth, vh = view.clientHeight;
-  const s = Math.max(vw / W, vh / H);           // cover
+  // cover the view, but never crop away the photo arc (top) or his foot (bottom): rows 40..1060 stay in
+  const s = Math.max(vh / H, Math.min(Math.max(vw / W, vh / H), vh / 1020));
   const overX = W * s - vw, overY = H * s - vh;
+  view.classList.toggle("wide", overX < -1);
   fit = { s, overX, overY, vw, vh };
 }
 addEventListener("resize", layout); layout();
 function applyCamera(t) {
   let x;
-  if (fit.overX <= 1) x = 0;
+  if (fit.overX <= 1) x = -fit.overX / 2;
   else if (reduced) x = -Math.min(fit.overX, Math.max(0, 300 * fit.s - fit.vw * 0.3));
   else {
     // narrow screens: drift slowly between him, the wall, and the panels
     const k = 0.5 - 0.5 * Math.cos((t / 70000) * Math.PI * 2);
     x = -fit.overX * (0.05 + 0.9 * k);
   }
-  const y = -fit.overY * 0.12;
+  const y = fit.overY > 0 ? -Math.min(fit.overY, Math.max(0, 40 * fit.s)) : 0;
   stage.style.transform = `translate(${x}px, ${y}px) scale(${fit.s})`;
 }
 
