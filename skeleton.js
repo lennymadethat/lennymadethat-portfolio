@@ -106,63 +106,7 @@ const sectionObs = new IntersectionObserver((entries) => {
   });
 }
 
-// ---------- 2. agent select (pinned; scroll moves through the roster) ----------
-{
-  const section = $("#agents");
-  section.style.setProperty("--sk-agents", String(agents.length + 0.5));
-  const left = $(".sk-panel--left"), right = $(".sk-panel--right"), char = $(".sk-fighter__char"), skills = $(".sk-skills");
-  const dots = $(".sk-agent-dots"), grid = $(".sk-grid"), gridBtn = $(".sk-agents__gridbtn");
-  let cur = -1;
-  const statsHtml = (stats) => stats.map((s) => {
-    const pending = s.value == null;
-    return `<div class="sk-stat"><div class="sk-stat__row"><span>${esc(s.label)}</span><span>${pending ? "A3" : esc(s.value)}</span></div>
-      <div class="sk-stat__bar${pending ? " sk-stat__bar--pending" : ""}"><i style="width:${pending ? 0 : Math.min(100, Number(s.pct ?? 60))}%"></i></div></div>`;
-  }).join("");
-  const render = (i) => {
-    if (i === cur) return;
-    cur = i;
-    const a = agents[i];
-    left.innerHTML = `<p class="sk-panel__title">Agent ${String(i + 1).padStart(2, "0")} / ${String(agents.length).padStart(2, "0")}</p>
-      <h3 class="sk-agent__name">${esc(a.name)}</h3><p class="sk-agent__title">${esc(a.title)}</p>
-      <p class="sk-agent__line">${esc(a.line)}</p>${statsHtml(a.stats)}${linkBtn(a.button)}`;
-    right.innerHTML = `<p class="sk-panel__title">Equipment</p><ul class="sk-equip">${a.equipment.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
-      <p style="margin-top:14px">${todo(a.todo, "character film")}</p>`;
-    char.classList.remove("is-swap"); void char.offsetWidth; char.classList.add("is-swap");
-    char.innerHTML = a.idle
-      ? `<video src="${esc(a.idle)}" muted loop playsinline autoplay></video>`
-      : `<img src="${esc(a.art)}" alt="${esc(a.name)}" />`;
-    skills.innerHTML = a.skills.map((s) => `<span>${esc(s)}</span>`).join("");
-    [...dots.children].forEach((d, j) => d.setAttribute("aria-selected", j === i ? "true" : "false"));
-  };
-  const range = () => { const top = section.offsetTop; return { top, len: section.offsetHeight - innerHeight }; };
-  const jump = (i) => {
-    const { top, len } = range();
-    const p = (Math.max(0, Math.min(agents.length - 1, i)) + 0.5) / agents.length;
-    scrollTo({ top: top + p * len, behavior: reduced ? "auto" : "smooth" });
-  };
-  agents.forEach((a, i) => {
-    const d = el("button", { type: "button", role: "tab", "aria-label": a.name });
-    d.addEventListener("click", () => jump(i));
-    dots.append(d);
-    const g = el("button", { type: "button" }, `<img src="${esc(a.art)}" alt="" /><span>${esc(a.name)}</span>`);
-    g.addEventListener("click", () => { toggleGrid(false); jump(i); });
-    grid.append(g);
-  });
-  const onScroll = () => {
-    const { top, len } = range();
-    const p = Math.max(0, Math.min(0.9999, (scrollY - top) / len));
-    render(Math.floor(p * agents.length));
-  };
-  addEventListener("scroll", () => requestAnimationFrame(onScroll), { passive: true });
-  addEventListener("resize", onScroll);
-  $(".sk-agent-prev").addEventListener("click", () => jump(cur - 1));
-  $(".sk-agent-next").addEventListener("click", () => jump(cur + 1));
-  $(".sk-skip").addEventListener("click", () => $("#crews").scrollIntoView({ behavior: reduced ? "auto" : "smooth" }));
-  const toggleGrid = (on) => { grid.hidden = !on; gridBtn.setAttribute("aria-pressed", String(on)); gridBtn.textContent = on ? "Close grid" : "Grid view"; };
-  gridBtn.addEventListener("click", () => toggleGrid(grid.hidden));
-  addEventListener("keydown", (e) => { if (e.key === "Escape" && !grid.hidden) toggleGrid(false); });
-  render(0);
-}
+// ---------- 2. agent select: lives in agents/agent-select.js ----------
 
 // ---------- 2b. crews ----------
 $(".sk-crews__row").innerHTML = crews.map((c) =>

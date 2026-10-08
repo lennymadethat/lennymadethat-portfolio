@@ -22,6 +22,8 @@ window.addEventListener("load", function () {
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=20260926a" />
   <link rel="stylesheet" href="skeleton.css?v=20260929a" />
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="agents/agent-select.css?v=20261007a" />
 </head>
 <body>
   <!-- SKELETON (F0, 2026-09-26). Grey wireframe: structure and mechanics only. Colours and type are
@@ -60,32 +62,49 @@ window.addEventListener("load", function () {
       <div class="sk-dots" role="tablist" aria-label="Choose a product"></div>
     </section>
 
-    <!-- 2. AGENT SELECT — pinned: scrolling moves through the roster -->
-    <section id="agents" class="sk-section sk-agents" aria-labelledby="agents-heading">
-      <div class="sk-agents__stage">
-        <header class="sk-agents__head">
-          <h2 id="agents-heading" class="sk-h2">Choose your agent</h2>
-          <p class="sk-agents__sub">Agents you can download or use right now.</p>
-          <button class="sk-btn sk-btn--ghost sk-agents__gridbtn" type="button" aria-pressed="false">Grid view</button>
-        </header>
-        <div class="sk-agents__arena">
-          <aside class="sk-panel sk-panel--left" aria-live="polite"></aside>
-          <div class="sk-fighter">
-            <div class="sk-fighter__platform" aria-hidden="true"></div>
-            <div class="sk-fighter__char"></div>
-          </div>
-          <aside class="sk-panel sk-panel--right"></aside>
+    <!-- 2. AGENT SELECT — pinned: scrolling moves through the roster (agents/agent-select.js) -->
+    <section id="agents" class="sk-section" aria-labelledby="as-name">
+      <div class="as-pin">
+        <div class="as-stage" id="as-stage">
+          <div class="as-bg"></div>
+          <canvas id="as-live" aria-hidden="true"></canvas>
+          <canvas id="as-live2" aria-hidden="true"></canvas>
+          <div class="as-shadow" id="as-shadow" hidden></div>
+          <img class="as-hero" id="as-hero" alt="" hidden>
+          <img class="as-hero as-off" id="as-hero2" alt="" hidden>
         </div>
-        <footer class="sk-agents__foot">
-          <div class="sk-skills"></div>
-          <div class="sk-agents__nav">
-            <button class="sk-arrow sk-arrow--inline sk-agent-prev" type="button" aria-label="Previous agent">‹</button>
-            <div class="sk-dots sk-agent-dots" role="tablist" aria-label="Choose an agent"></div>
-            <button class="sk-arrow sk-arrow--inline sk-agent-next" type="button" aria-label="Next agent">›</button>
-            <button class="sk-skip" type="button">Skip ↓</button>
-          </div>
-        </footer>
-        <div class="sk-grid" hidden></div>
+        <div class="as-hud">
+          <header class="as-card as-id" id="as-id">
+            <p class="as-eyebrow"><span>Choose your agent</span><span id="as-num">01 / 05</span></p>
+            <p class="as-cls" id="as-cls"></p>
+            <h2 class="as-name" id="as-name">Agents</h2>
+            <div class="as-row"><span class="as-lvl" id="as-lvl"></span><span class="as-status" id="as-status"><i></i><span></span></span></div>
+          </header>
+          <section class="as-card as-statcard" id="as-stats-card" aria-label="Stats">
+            <p class="as-label">Stats</p>
+            <ul class="as-stats" id="as-stats"></ul>
+          </section>
+          <section class="as-card as-load" aria-label="Loadout">
+            <p class="as-label">Loadout</p>
+            <ul id="as-load"></ul>
+          </section>
+          <section class="as-card as-side" id="as-side" aria-live="polite">
+            <p class="as-special" id="as-special"></p>
+            <div class="as-sw">
+              <p><span class="as-k as-ks">Strength</span><span id="as-strength"></span></p>
+              <p><span class="as-k as-kw">Weakness</span><span id="as-weakness"></span></p>
+            </div>
+            <a class="as-btn" id="as-btn" href="#" target="_blank" rel="noopener" hidden></a>
+          </section>
+          <div class="as-ring" id="as-ring"></div>
+          <nav class="as-nav" aria-label="Agents">
+            <button class="as-arrow" id="as-prev" type="button" aria-label="Previous agent">‹</button>
+            <div class="as-dots" id="as-dots" role="tablist" aria-label="Choose an agent"></div>
+            <button class="as-arrow" id="as-next" type="button" aria-label="Next agent">›</button>
+            <button class="as-skip" id="as-skip" type="button">Skip ↓</button>
+          </nav>
+          <p class="as-note">Stats are game ratings · counters are real, Oct 2026</p>
+        </div>
       </div>
     </section>
 
@@ -130,6 +149,7 @@ window.addEventListener("load", function () {
   </main>
 
   <script type="module" src="hero.js"></script>
-  <script type="module" src="skeleton.js?v=20260929b"></script>
+  <script type="module" src="skeleton.js?v=20261007m"></script>
+  <script type="module" src="agents/agent-select.js?v=20261007a"></script>
 </body>
 </html>
