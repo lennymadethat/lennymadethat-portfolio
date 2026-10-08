@@ -12,7 +12,7 @@ const AGENTS = [
     ring: [["24", "Market tools"], ["3s", "Fastest answer"], ["5", "Free asks a day"]],
     button: { label: "Talk to CARL", href: "https://retailinvestorreport.com" } },
   { key: "sales", name: "Agent Sell Stuff", cls: "The Marketplace Agent", lvl: ["29", "listings posted"], status: "glitching", hue: "80deg", tint: "#c27cff",
-    img: "sellstuff.webp", img2: "sellstuff-laser.webp", live: "stream", mouth: [.24, .5], kinds: "sell",
+    img: "sellstuff.webp", img2: "sellstuff-phone.webp", live: "stream", mouth: [.24, .5], kinds: "sell",
     stats: [["Hustle", 86], ["Price Eye", 58], ["Stealth", 80], ["Market Reach", 22]],
     loadout: ["Telegram intake bot", "Photo-reading price brain", "Drives a real Chrome browser", "Kill switch + checkpoint halt"],
     special: "TRENCH-COAT DROP: snap a photo, tap Approve, it's live on Facebook Marketplace.",
