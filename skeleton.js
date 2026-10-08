@@ -66,9 +66,20 @@ const sectionObs = new IntersectionObserver((entries) => {
     if (i === cur) return;
     cur = i;
     [...dots.children].forEach((d, j) => d.setAttribute("aria-selected", j === i ? "true" : "false"));
+    fitSection();
     playVisible();
   };
   track.addEventListener("scroll", () => requestAnimationFrame(sync), { passive: true });
+  // A scene can ask for more height on a phone (the RIR desk is taller than a screen; scrolling through it
+  // makes Carl strike each monitor). The swipe grows while that slide is showing, and is a screen tall otherwise.
+  const section = $("#platforms"), sceneHeights = {};
+  const fitSection = () => { const h = mobileFilm.matches && sceneHeights[cur]; section.style.height = h ? `max(100svh, ${h}px)` : ""; };
+  addEventListener("message", (e) => {
+    if (e.origin !== location.origin || !e.data || e.data.scene !== "height") return;
+    const i = slides.findIndex((s) => s.querySelector("iframe.sk-scene")?.contentWindow === e.source);
+    if (i < 0) return;
+    sceneHeights[i] = e.data.h; fitSection();
+  });
   $("#platforms .sk-arrow--prev").addEventListener("click", () => go(cur - 1));
   $("#platforms .sk-arrow--next").addEventListener("click", () => go(cur + 1));
   track.addEventListener("keydown", (e) => {
@@ -102,6 +113,7 @@ const sectionObs = new IntersectionObserver((entries) => {
   new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; playVisible(); }, { threshold: 0.4 }).observe($("#platforms"));
   document.addEventListener("visibilitychange", playVisible);
   mobileFilm.addEventListener("change", () => {
+    fitSection();
     slides.forEach((s, j) => {
       const v = s.querySelector("video");
       if (v) v.poster = posterFor(products[j]) || "";

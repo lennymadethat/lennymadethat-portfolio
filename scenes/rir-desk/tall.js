@@ -42,16 +42,26 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   };
   const SPARK = dot(64, "rgba(235,248,255,1)"), STAR = dot(16, "rgba(235,245,255,1)");
 
-  // ---------- camera: the whole width, framed from the top (the words live in the sky) ----------
-  let dpr = 1, cw = 1, ch = 1, s = 1, X = 0, Y = 0;
+  // ---------- camera ----------
+  // Inside the portfolio swipe the desk is shown whole, at the phone's width, and the page scrolls through it:
+  // the scene tells the swipe how tall it needs to be (Lenny 10-07: "as you scroll, Carl hits the screens").
+  // Standalone it covers the screen, framed from the top (the words live in the sky).
+  const scrolling = document.documentElement.classList.contains("embed") && window.parent !== window;
+  let dpr = 1, cw = 1, ch = 1, s = 1, X = 0, Y = 0, asked = 0;
   function layout() {
     dpr = Math.min(2, window.devicePixelRatio || 1);
     cw = view.clientWidth; ch = view.clientHeight;
     cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
-    s = Math.max(cw / W, ch / H);
-    X = (cw - W * s) / 2;
-    Y = Math.min(0, Math.max(ch - H * s, -(L.focusY || 0) * s));
-    placeCallouts();
+    if (scrolling) {
+      s = cw / W; X = 0; Y = 0;
+      const need = Math.ceil(view.getBoundingClientRect().top + H * s);
+      if (need !== asked) { asked = need; window.parent.postMessage({ scene: "height", h: need }, location.origin); }
+    } else {
+      s = Math.max(cw / W, ch / H);
+      X = (cw - W * s) / 2;
+      Y = Math.min(0, Math.max(ch - H * s, -(L.focusY || 0) * s));
+    }
+    placeCallouts(); placeSentinels();
   }
 
   // ---------- callouts: a lower third on the struck screen ----------
@@ -79,24 +89,54 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     c.el.classList.add("on"); c.until = t + 3400;
   }
   addEventListener("resize", layout);
-  layout();
 
   // ---------- strikes ----------
-  const strikes = L.placed.map((p, i) => ({ ...p, img: bolts[i] }));
-  let live = [], nextStrike = 1300, turn = 0, count = 0;
+  // four kinds of strike: each bolt Gemini painted, and the same bolt mirrored through Carl (lands on the other side)
+  const strikes = L.placed.flatMap((p, i) => [
+    { ...p, img: bolts[i], flip: false },
+    { ...p, img: bolts[i], flip: true, hit: [2 * O.x - p.hit[0], p.hit[1]] },
+  ]);
+  const byScreen = {};
+  for (const st of strikes) (byScreen[st.screen] ||= []).push(st);
+  const pickN = {};
+  let live = [], nextStrike = 1600, turn = 0, count = 0;
+  function fire(st, t) { live.push({ st, t0: t, swapped: false }); }
   function schedule(t) {
     count++;
-    const both = count % 5 === 0;
-    const pick = [strikes[turn % strikes.length]]; turn++;
-    if (both) { pick.push(strikes[turn % strikes.length]); turn++; }
-    for (const st of pick) live.push({ st, t0: t, swapped: false });
-    nextStrike = t + rand(3200, 4600);
+    const order = [0, 2, 1, 3];                         // top, bottom, top mirrored, bottom mirrored
+    fire(strikes[order[turn++ % order.length]], t);
+    if (count % 5 === 0) fire(strikes[order[turn++ % order.length]], t);
+    nextStrike = t + rand(4200, 6200);
   }
+  // scrolling a screen through the middle of the phone makes Carl strike it
+  let lastHit = {};
+  function strikeScreen(k) {
+    const t = performance.now();
+    if (t - (lastHit[k] || -1e9) < 1400) return;
+    lastHit[k] = t;
+    const list = byScreen[k]; pickN[k] = (pickN[k] || 0) + 1;
+    fire(list[pickN[k] % list.length], t);
+    nextStrike = Math.max(nextStrike, t + 3000);
+  }
+  const sentinels = {};
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) strikeScreen(e.target.dataset.k); }),
+    { rootMargin: "-36% 0px -36% 0px" });
+  for (const k of keys) {
+    const d = document.createElement("div");
+    d.dataset.k = k; d.style.cssText = "position:absolute;left:0;right:0;height:2px;pointer-events:none";
+    view.appendChild(d); sentinels[k] = d; io.observe(d);
+  }
+  function placeSentinels() {
+    for (const [k, d] of Object.entries(sentinels)) { const b = L.warped[k]; d.style.top = Y + (b.y + b.h / 2) * s + "px"; }
+  }
+  placeSentinels();
   const CHARGE = 600, TRAVEL = 160, HOLD = 700, FADE = 420;
   function advance(k, t) {
     const sc = screens[k]; sc.prev = sc.cur; sc.cur = (sc.cur + 1) % sc.imgs.length; sc.fadeAt = t;
     return sc.names[sc.cur];
   }
+
+  layout();
 
   // ---------- stars from the painting ----------
   const lights = (L.lights || []).map(([x, y, v]) => ({ x, y, v, f: rand(0.4, 1.6), ph: rand(0, 6.28), city: y > (L.cityY || 1e9) }));
@@ -182,7 +222,9 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     for (const st of strikes) {
       const o = st8.get(st); if (!o || o.level <= 0) continue;
       const reachY = O.y + (st.hit[1] - O.y + 80) * o.reach;
-      ctx.save(); ctx.beginPath(); ctx.rect(st.x - 20, st.y, st.w + 40, reachY - st.y); ctx.clip();
+      ctx.save();
+      if (st.flip) { ctx.translate(2 * O.x, 0); ctx.scale(-1, 1); }
+      ctx.beginPath(); ctx.rect(st.x - 20, st.y, st.w + 40, reachY - st.y); ctx.clip();
       ctx.globalAlpha = o.level; ctx.drawImage(st.img, st.x, st.y, st.w, st.h);
       ctx.restore();
       if (o.hit > 0) { const r = 150 * (0.8 + o.hit * 0.4); ctx.globalAlpha = o.hit; ctx.drawImage(SPARK, st.hit[0] - r, st.hit[1] - r, r * 2, r * 2); }
