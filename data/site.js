@@ -10,7 +10,9 @@ export const products = [
     name: "Retail Investor Report",
     hook: "A full income-investing platform, shipped.",
     logo: "/img/products/rir-mark.svg",
-    video: null, poster: null, todo: "V2",
+    // The ambient desk (scenes/rir-desk): Carl rises out of the centre screen and strikes the real product onto the glass.
+    scene: "/scenes/rir-desk/?embed=1",
+    video: null, poster: null, todo: null,
     visit: { label: "Visit Retail Investor Report", href: "https://retailinvestorreport.com" },
     explainer: null,
   },

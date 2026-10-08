@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RIR Desk</title>
+<meta name="description" content="An ambient Retail Investor Report desk: Carl rises out of the centre screen and strikes the real product onto the glass.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,600;0,700;1,600;1,700&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --blue: #8AC7DE;        /* RIR light blue */
+    --deep: #1E293B;        /* RIR darkest blue */
+    --night: #070B12;
+    --ink: #E8EEF4;
+    --mute: #9AA8B8;
+    --glass: rgba(30, 41, 59, 0.55);
+    --glass-line: rgba(138, 199, 222, 0.22);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--night); color: var(--ink); }
+  body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  /* The desk is authored at 1360 x 752 (the painting); JS scales and pans it to fit. */
+  #view { position: fixed; inset: 0; overflow: hidden; background: var(--night); }
+  #stage { position: absolute; left: 0; top: 0; width: 1360px; height: 752px; transform-origin: 0 0; will-change: transform; }
+  #stage > * { position: absolute; }
+  .plate { left: 0; top: 0; width: 1360px; height: 752px; }
+
+  /* the real product on the glass, mapped with matrix3d onto each monitor */
+  .scr { left: 0; top: 0; width: 1100px; height: 640px; transform-origin: 0 0; overflow: hidden; background: #0b1220; }
+  .scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top;
+    opacity: 0; transition: opacity .45s ease; filter: brightness(.86) saturate(.92) contrast(1.04); }
+  .scr img.on { opacity: 1; }
+  /* glass: a cool sheen and a soft edge falloff so the shot sits inside the monitor, not on top of it */
+  .scr::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: radial-gradient(120% 120% at 50% 45%, rgba(0,0,0,0) 55%, rgba(4,8,16,.55) 100%); }
+  .scr::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+    background: linear-gradient(118deg, rgba(170,220,240,.10) 0%, rgba(170,220,240,0) 34%, rgba(170,220,240,0) 72%, rgba(170,220,240,.05) 100%); }
+  .scr .flash { position: absolute; inset: 0; z-index: 4; opacity: 0; pointer-events: none;
+    background: radial-gradient(70% 90% at var(--fx, 80%) var(--fy, 55%), rgba(200,236,250,.9), rgba(138,199,222,.35) 45%, rgba(138,199,222,0) 80%); mix-blend-mode: screen; }
+
+  /* the phone on the desk */
+  #phone { left: 0; top: 0; width: 120px; height: 246px; transform-origin: 0 0; overflow: hidden; border-radius: 14px;
+    background: linear-gradient(180deg, #101a2a, #0a111c); color: var(--ink); font-family: Inter, sans-serif; padding: 26px 12px 10px; }
+  #phone .lbl { font: 600 9px/1 Inter; letter-spacing: .14em; color: var(--blue); }
+  #phone .dot { width: 54px; height: 54px; margin: 22px auto 18px; border-radius: 50%;
+    background: radial-gradient(circle at 45% 40%, #EAF8FF, #8AC7DE 30%, #24506a 70%, #0b1220); box-shadow: 0 0 18px rgba(138,199,222,.6); }
+  #phone .q { font: 500 13px/1.35 Inter, sans-serif; color: #fff; background: rgba(138,199,222,.14); border: 1px solid rgba(138,199,222,.25);
+    border-radius: 12px 12px 12px 4px; padding: 9px 10px; min-height: 64px; }
+  #phone::after { content: ""; position: absolute; inset: 0; background: linear-gradient(125deg, rgba(255,255,255,.10), rgba(255,255,255,0) 40%); }
+
+  .light { mix-blend-mode: screen; pointer-events: none; }
+  #halo { width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(closest-side, rgba(150,210,235,.42), rgba(110,180,214,.16) 45%, rgba(110,180,214,0)); will-change: opacity, transform; }
+  #orb { will-change: transform, filter; transform-origin: 50% 50%; }
+  #orbfx { pointer-events: none; }
+  #man { transform-origin: 50% 100%; will-change: transform; }
+  .bolt { opacity: 0; will-change: opacity, transform; transform-origin: 0 0; }
+  .bolt img { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: screen; filter: brightness(2.1) saturate(1.15); }
+  .bolt img.glow { filter: brightness(2.6) blur(5px); opacity: .9; }
+  .impact { width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; opacity: 0;
+    background: radial-gradient(closest-side, rgba(235,250,255,.95), rgba(138,199,222,.45) 35%, rgba(138,199,222,0)); }
+  .spill { width: 700px; height: 520px; margin: -260px 0 0 -350px; border-radius: 50%; opacity: 0;
+    background: radial-gradient(closest-side, rgba(120,190,225,.30), rgba(120,190,225,0)); }
+  #twinkle { left: 0; top: 0; width: 1360px; height: 752px; }
+
+  /* ---- overlay UI ---- */
+  .ui { position: fixed; z-index: 10; }
+  #scrim { position: fixed; inset: 0; z-index: 5; pointer-events: none;
+    background: linear-gradient(to top, rgba(7,11,18,.88) 0%, rgba(7,11,18,.55) 22%, rgba(7,11,18,0) 42%); }
+  #copy { left: clamp(16px, 4vw, 56px); bottom: clamp(24px, 7vh, 64px); max-width: 420px; }
+  #copy .kick { font: 500 12px/1 "DM Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--blue); margin: 0 0 12px; }
+  #copy h1 { margin: 0 0 8px; font: 700 clamp(36px, 4.4vw, 60px)/1 Barlow, sans-serif; letter-spacing: -.01em; color: #fff; }
+  #copy h1 em { font-style: italic; color: var(--blue); }
+  #copy p { margin: 0 0 18px; font-size: clamp(15px, 1.2vw, 17px); color: #C9D4DF; }
+  .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; font: 600 15px/1 Inter, sans-serif; text-decoration: none; transition: transform .2s ease, background .2s ease; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+  .btn--primary { background: var(--blue); color: var(--deep); }
+  .btn--ghost { background: var(--glass); color: var(--ink); border: 1px solid var(--glass-line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+
+  #now { right: clamp(12px, 3vw, 28px); bottom: clamp(24px, 7vh, 64px); display: flex; gap: 8px; align-items: center;
+    padding: 0 14px; height: 38px; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-line);
+    font: 500 12px/1 "DM Mono", monospace; letter-spacing: .04em; color: #C9D4DF; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  #now i { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 10px var(--blue); }
+
+  /* inside the portfolio swipe the site header sits over the top 76px */
+  .embed #view { top: 68px; }
+  .embed #copy { left: clamp(16px, 7vw, 104px); }
+  @media (max-width: 640px) {
+    #scrim { background: linear-gradient(to bottom, rgba(7,11,18,.9) 0%, rgba(7,11,18,.6) 26%, rgba(7,11,18,0) 44%); }
+    #copy { left: 0; right: 0; top: 0; bottom: auto; max-width: none; padding: 78px 16px 0; }
+    .embed #copy { left: 0; padding-top: 96px; }
+    #now { left: 16px; right: auto; bottom: 20px; }
+    .embed #now { bottom: 64px; }
+  }
+</style>
+</head>
+<body>
+<div id="view" aria-hidden="true">
+  <div id="stage">
+    <img class="plate" src="img/plate.webp" alt="">
+
+    <div class="scr" id="scrL"></div>
+    <div class="scr" id="scrC"></div>
+    <div class="scr" id="scrR"></div>
+    <div id="phone">
+      <div class="lbl">ASK CARL</div>
+      <div class="dot"></div>
+      <div class="q" id="ask"></div>
+    </div>
+
+    <div id="halo" class="light"></div>
+    <img id="orb" src="img/orb.webp" alt="">
+    <canvas id="orbfx" class="light" width="300" height="300"></canvas>
+    <img id="man" src="img/man.webp" alt="">
+
+    <div class="spill light" id="spillL"></div>
+    <div class="spill light" id="spillR"></div>
+    <div class="bolt light" id="boltL"><img class="glow" src="img/bolts-l.webp" alt=""><img src="img/bolts-l.webp" alt=""></div>
+    <div class="bolt light" id="boltR"><img class="glow" src="img/bolts-r.webp" alt=""><img src="img/bolts-r.webp" alt=""></div>
+    <div class="impact light" id="hitL"></div>
+    <div class="impact light" id="hitR"></div>
+    <canvas id="twinkle" class="light" width="1360" height="752"></canvas>
+  </div>
+</div>
+<div id="scrim"></div>
+
+<section id="copy" class="ui" aria-label="Retail Investor Report">
+  <p class="kick">Retail Investor Report</p>
+  <h1>Ask <em>Carl.</em></h1>
+  <p>Every income fund. One desk.</p>
+  <div class="ctas">
+    <a class="btn btn--primary" href="https://retailinvestorreport.com" target="_top">Open Retail Investor Report</a>
+    <a class="btn btn--ghost" href="/products/retail-investor-report" target="_top">How it works</a>
+  </div>
+</section>
+
+<div id="now" class="ui" aria-live="off"><i></i><span id="nowText">Income Board</span></div>
+
+<script type="module">
+const W = 1360, H = 752;
+const $ = (s) => document.querySelector(s);
+const qs = new URLSearchParams(location.search);
+if (qs.has("embed")) document.documentElement.classList.add("embed");
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const rand = (a, b) => a + Math.random() * (b - a);
+const L = await fetch("img/layers.json").then((r) => r.json());
+
+const place = (el, p) => Object.assign(el.style, { left: p.x + "px", top: p.y + "px", width: p.w + "px", height: p.h + "px" });
+place($("#man"), L.man); place($("#orb"), L.orb); place($("#boltL"), L.boltL); place($("#boltR"), L.boltR);
+const O = L.orbCentre;
+Object.assign($("#halo").style, { left: O.x - 180 + "px", top: O.y - 180 + "px" });
+Object.assign($("#orbfx").style, { left: O.x - 150 + "px", top: O.y - 150 + "px", width: "300px", height: "300px" });
+// where the painted bolts land on each side screen
+const HIT = { L: [462, 402], R: [947, 388] };
+for (const k of ["L", "R"]) {
+  Object.assign($("#hit" + k).style, { left: HIT[k][0] + "px", top: HIT[k][1] + "px" });
+  Object.assign($("#spill" + k).style, { left: (HIT[k][0] + O.x) / 2 + "px", top: HIT[k][1] + 40 + "px" });
+}
+
+// ---------- the glass ----------
+// Solve the 2D projective map from a rectangle to a quad, as a CSS matrix3d.
+function quadMatrix(w, h, q) {
+  const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = q; // TL, TR, BR, BL
+  const dx1 = x1 - x2, dx2 = x3 - x2, dy1 = y1 - y2, dy2 = y3 - y2;
+  const sx = x0 - x1 + x2 - x3, sy = y0 - y1 + y2 - y3;
+  const den = dx1 * dy2 - dx2 * dy1;
+  const g = (sx * dy2 - dx2 * sy) / den, hh = (dx1 * sy - sx * dy1) / den;
+  const a = x1 - x0 + g * x1, b = x3 - x0 + hh * x3, c = x0;
+  const d = y1 - y0 + g * y1, e = y3 - y0 + hh * y3, f = y0;
+  const m = [a / w, d / w, 0, g / w, b / h, e / h, 0, hh / h, 0, 0, 1, 0, c, f, 0, 1];
+  return `matrix3d(${m.join(",")})`;
+}
+const SHOTS = {
+  L: [["income-board", "Income Board"], ["income-backtester", "Backtester"], ["income-factory", "Income Factory"], ["income-head-to-head", "Head to Head"], ["income-issuers", "Fund Issuers"]],
+  R: [["market-stage", "Stage Board"], ["market-dossier", "Dossier"], ["market-charts", "Live Charts"], ["market-etf", "ETF Lens"], ["market-compare", "Compare"]],
+  C: [["income-backtester", ""], ["market-charts", ""], ["income-board", ""], ["market-stage", ""]],
+};
+const scr = {}, idx = { L: 0, R: 0, C: 0 };
+for (const k of ["L", "C", "R"]) {
+  const el = $("#scr" + k);
+  el.style.transform = quadMatrix(1100, 640, L.screens[k]);
+  el.innerHTML = SHOTS[k].map(([f], i) => `<img src="img/${f}.webp" alt=""${i === 0 ? ' class="on"' : ""}>`).join("") + '<div class="flash"></div>';
+  scr[k] = { imgs: [...el.querySelectorAll("img")], flash: el.querySelector(".flash") };
+}
+$("#scrL .flash").style.setProperty("--fx", "92%"); $("#scrL .flash").style.setProperty("--fy", "58%");
+$("#scrR .flash").style.setProperty("--fx", "18%"); $("#scrR .flash").style.setProperty("--fy", "52%");
+$("#phone").style.transform = quadMatrix(120, 246, L.screens.phone);
+const nowText = $("#nowText");
+function advance(k) {
+  const s = scr[k], n = s.imgs.length;
+  s.imgs[idx[k]].classList.remove("on");
+  idx[k] = (idx[k] + 1) % n;
+  s.imgs[idx[k]].classList.add("on");
+  if (SHOTS[k][idx[k]][1]) nowText.textContent = SHOTS[k][idx[k]][1];
+}
+
+// ---------- camera: cover the viewport, keep him and the three screens ----------
+const view = $("#view"), stage = $("#stage");
+let fit = {};
+function layout() {
+  const vw = view.clientWidth, vh = view.clientHeight;
+  const s = Math.max(vw / W, vh / H);
+  const rows = vh / s;
+  const top = Math.min(H - rows, Math.max(0, 430 - rows * 0.52));   // centre on the screens and his shoulders
+  fit = { s, overX: W * s - vw, top, vw };
+}
+addEventListener("resize", layout); layout();
+function applyCamera(t) {
+  let x;
+  if (fit.overX <= 1) x = 0;
+  else if (reduced) x = -fit.overX / 2;
+  else {
+    // narrow screens: start on Carl, then drift slowly to the Market screen, across to Income, and home
+    const ease = Math.min(1, Math.max(0, (t - 6000) / 14000));       // hold on Carl, then ease into the drift
+    x = -fit.overX * (0.5 + 0.4 * ease * ease * Math.sin(((t - 6000) / 90000) * Math.PI * 2));
+  }
+  stage.style.transform = `translate(${x}px, ${-fit.top * fit.s}px) scale(${fit.s})`;
+}
+
+// ---------- Carl: breath, charge, and the particles inside the glass ----------
+const orbEl = $("#orb"), halo = $("#halo"), fx = $("#orbfx").getContext("2d");
+const motes = Array.from({ length: 34 }, () => ({ a: rand(0, Math.PI * 2), r: rand(4, 50), w: rand(0.15, 0.6) * (Math.random() < 0.5 ? -1 : 1), z: rand(0.6, 1.8), al: rand(0.15, 0.45), ph: rand(0, 6) }));
+function carl(t, charge) {
+  const breath = 0.5 - 0.5 * Math.cos((t / 4200) * Math.PI * 2);
+  const bob = Math.sin(t / 2900) * 1.6;
+  const sc = 1 + breath * 0.012 + charge * 0.03;
+  orbEl.style.transform = `translateY(${bob}px) scale(${sc})`;
+  orbEl.style.filter = `brightness(${1 + breath * 0.08 + charge * 0.45})`;
+  halo.style.opacity = (0.55 + breath * 0.25 + charge * 0.9).toFixed(3);
+  halo.style.transform = `translateY(${bob}px) scale(${1 + charge * 0.25})`;
+  fx.clearRect(0, 0, 300, 300);
+  fx.save(); fx.translate(150, 150 + bob); fx.beginPath(); fx.arc(0, 0, O.r - 6, 0, Math.PI * 2); fx.clip();
+  for (const m of motes) {
+    const a = m.a + (t / 1000) * m.w * (1 + charge * 3);
+    const x = Math.cos(a) * m.r, y = Math.sin(a) * m.r * 0.8 + Math.sin(t / 900 + m.ph) * 3;
+    fx.globalAlpha = Math.min(1, m.al * (0.7 + 0.5 * Math.sin(t / 600 + m.ph)) * (1 + charge * 1.5));
+    const g = fx.createRadialGradient(x, y, 0, x, y, m.z * 3);
+    g.addColorStop(0, "#EAF8FF"); g.addColorStop(1, "rgba(138,199,222,0)");
+    fx.fillStyle = g; fx.beginPath(); fx.arc(x, y, m.z * 3, 0, Math.PI * 2); fx.fill();
+  }
+  fx.restore();
+}
+
+// ---------- the strikes: Carl reaches into a screen and the screen changes ----------
+const bolt = { L: $("#boltL"), R: $("#boltR") }, hit = { L: $("#hitL"), R: $("#hitR") }, spill = { L: $("#spillL"), R: $("#spillR") };
+// the phone: a question typed to Carl, one per strike
+const ASKS = ["Which funds paid the most this month?", "Backtest QDTE against SPY.", "Show me the Stage Board.", "Is this yield sustainable?", "Compare MSTY and CONY."];
+const askEl = $("#ask"); let askText = "", askAt = 0, askN = 0;
+function phone(t) { const n = Math.min(askText.length, Math.floor((t - askAt) / 55)); askEl.textContent = askText.slice(0, n); }
+function newAsk(t) { askText = ASKS[askN++ % ASKS.length]; askAt = t; }
+let strikes = [], nextStrike = 2200, side = "L", count = 0;
+function schedule(t) {
+  count++; newAsk(t);
+  const both = count % 5 === 0;
+  const sides = both ? ["L", "R"] : [side];
+  side = side === "L" ? "R" : "L";
+  for (const k of sides) strikes.push({ k, t0: t, swapped: false });
+  if (count % 3 === 0) setTimeout(() => advance("C"), 900);
+  nextStrike = t + rand(4200, 6800);
+}
+const CHARGE = 650, TRAVEL = 140, HOLD = 720, FADE = 420;
+function strikeFrame(t) {
+  let charge = 0;
+  const level = { L: 0, R: 0 }, flashLv = { L: 0, R: 0 }, hitLv = { L: 0, R: 0 }, reach = { L: 1, R: 1 };
+  strikes = strikes.filter((s) => {
+    const u = t - s.t0;
+    if (u < CHARGE) { charge = Math.max(charge, u / CHARGE); return true; }
+    const v = u - CHARGE;
+    if (v < TRAVEL + HOLD) {
+      charge = Math.max(charge, 1 - v / (TRAVEL + HOLD) * 0.6);
+      reach[s.k] = Math.min(1, v / TRAVEL);
+      // crackle: fast flicker while the bolt holds
+      level[s.k] = Math.max(level[s.k], (Math.random() < 0.18 ? rand(0.35, 0.6) : rand(0.85, 1)));
+      if (v >= TRAVEL) {
+        const w = (v - TRAVEL) / HOLD;
+        flashLv[s.k] = Math.max(flashLv[s.k], Math.max(0, 1 - w * 1.6) * 0.75);
+        hitLv[s.k] = Math.max(hitLv[s.k], (1 - w) * rand(0.75, 1));
+        if (!s.swapped) { s.swapped = true; advance(s.k); }
+      }
+      return true;
+    }
+    const f = (v - TRAVEL - HOLD) / FADE;
+    if (f < 1) { level[s.k] = Math.max(level[s.k], (1 - f) * 0.7); return true; }
+    return false;
+  });
+  for (const k of ["L", "R"]) {
+    const el = bolt[k];
+    el.style.opacity = level[k].toFixed(3);
+    if (level[k] > 0) {
+      // the bolt grows out of Carl: a mask that runs from the orb toward the screen
+      const p = Math.round(reach[k] * 115);
+      const dir = k === "L" ? "to left" : "to right";
+      const m = `linear-gradient(${dir}, #000 ${p - 12}%, transparent ${p}%)`;
+      el.style.webkitMaskImage = m; el.style.maskImage = m;
+      el.style.transform = `translate(${rand(-0.8, 0.8)}px, ${rand(-0.8, 0.8)}px)`;
+    }
+    scr[k].flash.style.opacity = flashLv[k].toFixed(3);
+    hit[k].style.opacity = hitLv[k].toFixed(3);
+    spill[k].style.opacity = (Math.max(hitLv[k] * 0.9, level[k] * 0.35)).toFixed(3);
+  }
+  return charge;
+}
+
+// ---------- stars and city lights from the painting, twinkling ----------
+const tw = $("#twinkle").getContext("2d");
+const lights = L.lights.map(([x, y, v]) => ({ x, y, v, f: rand(0.4, 1.6), ph: rand(0, 6.28), city: y > 400 }));
+function twinkle(t) {
+  tw.clearRect(0, 0, W, H);
+  for (const p of lights) {
+    const s = 0.5 + 0.5 * Math.sin((t / 1000) * p.f + p.ph);
+    const a = (p.city ? 0.22 : 0.4) * Math.pow(s, 3) * (p.v / 255);
+    if (a < 0.01) continue;
+    const r = p.city ? 5 : 2.4;
+    const g = tw.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+    g.addColorStop(0, `rgba(235,245,255,${a})`); g.addColorStop(1, "rgba(235,245,255,0)");
+    tw.fillStyle = g; tw.fillRect(p.x - r, p.y - r, r * 2, r * 2);
+  }
+}
+
+// ---------- him: he breathes, that is all ----------
+const manEl = $("#man");
+function man(t) { manEl.style.transform = `scaleY(${1 + 0.0035 * Math.sin((t / 4200) * Math.PI * 2)})`; }
+
+// ---------- loop ----------
+let running = false;
+function frame(now) {
+  if (!running) return;
+  applyCamera(now);
+  if (now > nextStrike) schedule(now);
+  const charge = strikeFrame(now);
+  carl(now, charge);
+  twinkle(now);
+  man(now); phone(now);
+  requestAnimationFrame(frame);
+}
+function start() { if (running || reduced) return; running = true; requestAnimationFrame(frame); }
+function stop() { running = false; }
+document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+// the portfolio carousel tells the scene when it is on screen
+addEventListener("message", (e) => {
+  if (e.origin !== location.origin) return;
+  if (e.data === "scene:pause") stop();
+  if (e.data === "scene:play") start();
+});
+if (reduced) { applyCamera(0); carl(0, 0); askEl.textContent = ASKS[0]; } else start();
+</script>
+</body>
+</html>
