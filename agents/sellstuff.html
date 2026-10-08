@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Sell Stuff — Lenny Made That</title>
+  <meta name="description" content="Take a picture. Message it to him on Telegram. Agent Sell Stuff writes the listing, prices it and posts it to Facebook Marketplace. Free to download." />
+  <link rel="canonical" href="https://lennymadethat.com/agents/sellstuff" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Lenny Made That" />
+  <meta property="og:title" content="Agent Sell Stuff" />
+  <meta property="og:description" content="Take a picture. Message it to him on Telegram. He writes the listing, prices it and posts it to Facebook Marketplace." />
+  <meta property="og:url" content="https://lennymadethat.com/agents/sellstuff" />
+  <meta property="og:image" content="https://lennymadethat.com/img/agents/sellstuff/explainer-1.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://lennymadethat.com/img/agents/sellstuff/explainer-1.webp" />
+  <meta name="theme-color" content="#07060d" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314181B'/%3E%3Crect x='7' y='20' width='18' height='4' fill='%23C27CFF'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    /* One agent's page: his stage at the top, then the story in white infographic panels. */
+    :root {
+      --void: #07060d; --panel: #110f1c; --edge: rgba(200,170,255,.18); --ink: #f1edf8; --soft: #cfc7de; --dim: #a59cb8;
+      --tint: #c27cff; --gold: #ffd45e;
+      --display: "Oxanium", system-ui, sans-serif; --body: "Barlow", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--void); color: var(--ink); font: 400 18px/1.6 var(--body); }
+    a { color: var(--tint); }
+    .wrap { width: min(1120px, 100%); margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); }
+    .top { position: sticky; top: 0; z-index: 10; background: rgba(7,6,13,.82); backdrop-filter: blur(12px); border-bottom: 1px solid var(--edge); }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; }
+    .brand { font: 800 15px/1 var(--display); letter-spacing: .14em; color: var(--ink); text-decoration: none; }
+    .back { font: 600 13px/1 var(--mono); letter-spacing: .08em; color: var(--soft); text-decoration: none; }
+    .back:hover { color: var(--tint); }
+
+    .hero { position: relative; overflow: hidden; isolation: isolate; }
+    .hero::before { content: ""; position: absolute; inset: 0; z-index: -2; background: url(/img/agents/select/stage-wide.webp) center 70%/cover no-repeat; filter: hue-rotate(80deg); }
+    .hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(7,6,13,.92) 0%, rgba(7,6,13,.55) 48%, rgba(7,6,13,.1) 100%), linear-gradient(0deg, var(--void), transparent 30%); }
+    .hero .wrap { display: grid; grid-template-columns: 1.2fr .8fr; align-items: center; gap: 24px; padding-block: clamp(40px, 7vw, 90px) 0; }
+    .eyebrow { font: 600 13px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--tint); margin: 0 0 12px; }
+    h1 { font: 800 clamp(44px, 7vw, 88px)/.95 var(--display); text-transform: uppercase; margin: 0 0 18px; text-wrap: balance; }
+    .lede { font-size: clamp(19px, 2vw, 23px); line-height: 1.45; color: var(--soft); max-width: 34ch; margin: 0 0 26px; }
+    .lede b { color: var(--ink); }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: clamp(40px, 6vw, 80px); }
+    .btn { display: inline-flex; align-items: center; gap: 8px; font: 700 15px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; padding: 14px 20px; border-radius: 6px; }
+    .btn--main { background: var(--tint); color: #12081f; }
+    .btn--ghost { border: 1px solid var(--edge); color: var(--ink); }
+    .btn:hover, .btn:focus-visible { filter: brightness(1.12); outline: 2px solid var(--ink); outline-offset: 2px; }
+    .hero img { width: auto; max-width: 100%; max-height: min(72vh, 620px); justify-self: center; display: block; margin-top: 24px; filter: drop-shadow(0 0 30px rgba(194,124,255,.35)); }
+
+    .counters { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 28px 0 0; padding: 0; list-style: none; }
+    .counters li { background: var(--panel); border: 1px solid var(--edge); border-radius: 8px; padding: 16px; text-align: center; }
+    .counters b { display: block; font: 800 clamp(28px, 4vw, 40px)/1 var(--display); }
+    .counters span { font: 500 12px/1.3 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+    .counters small { display: block; margin-top: 10px; font: 500 12px/1.4 var(--mono); color: var(--dim); grid-column: 1 / -1; }
+
+    section.chapter { padding-block: clamp(48px, 8vw, 96px) 0; }
+    .chapter h2 { font: 800 clamp(28px, 4vw, 44px)/1.05 var(--display); text-transform: uppercase; margin: 0 0 12px; text-wrap: balance; }
+    .chapter p.intro { color: var(--soft); max-width: 62ch; margin: 0 0 24px; }
+    figure { margin: 0; }
+    .plate { background: #fff; border-radius: 12px; padding: clamp(6px, 1vw, 12px); box-shadow: 0 20px 60px rgba(0,0,0,.45); overflow-x: auto; }
+    .plate img { display: block; width: 100%; min-width: 640px; height: auto; border-radius: 8px; }
+    figcaption { font: 500 13px/1.4 var(--mono); color: var(--dim); margin-top: 10px; }
+
+    .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+    .steps li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; background: var(--panel); border: 1px solid var(--edge); border-radius: 8px; padding: 16px; }
+    .steps li::before { content: counter(s); width: 40px; height: 40px; border-radius: 50%; background: var(--tint); color: #12081f; display: grid; place-items: center; font: 800 18px/1 var(--display); }
+    .steps b { display: block; font: 700 18px/1.3 var(--display); }
+    .steps span { color: var(--soft); }
+    .note { margin-top: 18px; padding: 14px 16px; border-left: 3px solid var(--gold); background: rgba(255,212,94,.06); color: var(--soft); font-size: 16px; }
+    footer { padding-block: 64px 48px; color: var(--dim); font: 500 13px/1.5 var(--mono); }
+
+    @media (max-width: 760px) {
+      .hero .wrap { grid-template-columns: 1fr; }
+      .hero img { max-height: 34vh; order: -1; margin-top: 0; }
+      .hero .wrap { padding-top: 20px; gap: 8px; }
+      h1 { font-size: 40px; }
+      .lede { margin-bottom: 18px; }
+      .cta { margin-bottom: 32px; }
+      .hero::after { background: linear-gradient(0deg, var(--void) 10%, rgba(7,6,13,.6) 60%, rgba(7,6,13,.3)); }
+      .plate img { min-width: 720px; }
+      figcaption::after { content: " · swipe the picture to read it all"; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top"><div class="wrap">
+    <a class="brand" href="/">LENNY MADE THAT</a>
+    <a class="back" href="/#agents">← All agents</a>
+  </div></header>
+
+  <main>
+    <section class="hero" aria-labelledby="title"><div class="wrap">
+      <div>
+        <p class="eyebrow">The Marketplace Agent</p>
+        <h1 id="title">Agent Sell Stuff</h1>
+        <p class="lede"><b>Take a picture. Message it to him on Telegram.</b> He writes the listing, prices it and posts it to Facebook Marketplace. You tap once.</p>
+        <div class="cta">
+          <a class="btn btn--main" href="https://github.com/lennymadethat/sellstuff" target="_blank" rel="noopener">Download on GitHub →</a>
+          <a class="btn btn--ghost" href="#how">See how he works</a>
+        </div>
+      </div>
+      <img src="/img/agents/select/sellstuff.webp" alt="Agent Sell Stuff, a brass robot in a fedora holding open a trench coat lined with price tags" width="560" height="973">
+    </div></section>
+
+    <div class="wrap">
+      <ul class="counters" aria-label="His record">
+        <li><b>29</b><span>Listings posted</span></li>
+        <li><b>35</b><span>Price edits</span></li>
+        <li><b>15</b><span>Taken down</span></li>
+        <small>Real figures from his own log, August to October 2026.</small>
+      </ul>
+
+      <section class="chapter" id="how">
+        <h2>Snap. Send. Sold.</h2>
+        <p class="intro">That is the whole job. You take a photo of the thing you want gone and send it to his Telegram chat. Nothing posts until you tap Approve.</p>
+        <figure><div class="plate"><img src="/img/agents/sellstuff/explainer-1.webp" alt="Four steps: snap a photo, send it on Telegram, tap Approve, live on Facebook Marketplace" width="1376" height="768" loading="lazy"></div>
+          <figcaption>The four steps, from your camera roll to a live listing.</figcaption></figure>
+      </section>
+
+      <section class="chapter">
+        <h2>One photo in. A full listing out.</h2>
+        <p class="intro">He reads the picture and writes everything a buyer needs: the title, the description, the condition, the category, an asking price and the lowest price he would take, with his reasons. When real sold prices exist, he prices from those.</p>
+        <figure><div class="plate"><img src="/img/agents/sellstuff/explainer-2.webp" alt="A single photo becomes six listing parts: title, description, condition, category, asking price, floor price and why" width="1376" height="768" loading="lazy"></div>
+          <figcaption>Six parts written from one photo.</figcaption></figure>
+      </section>
+
+      <section class="chapter">
+        <h2>Run the whole stall from your phone</h2>
+        <p class="intro">Every item arrives as a card in Telegram. Reply to it and he acts: type <code>45</code> to set the price, <code>45/20</code> for price and floor, <code>why</code> to hear his reasoning, <code>status</code> to see what is live.</p>
+        <figure><div class="plate"><img src="/img/agents/sellstuff/explainer-3.webp" alt="Telegram commands: 45, 45/20, why, status, retry, category" width="1376" height="768" loading="lazy"></div>
+          <figcaption>Short replies, no app to open.</figcaption></figure>
+      </section>
+
+      <section class="chapter">
+        <h2>He posts. He never goes rogue.</h2>
+        <p class="intro">Posting runs in a real Chrome browser on your own computer, logged into your own Facebook account. He posts, edits prices and takes listings down. He never opens buyer messages.</p>
+        <figure><div class="plate"><img src="/img/agents/sellstuff/explainer-4.webp" alt="Safety rails: 5 posts a day, one at a time, 3 strikes parks it, stops at any checkpoint, one kill switch, never reads buyer messages" width="1376" height="768" loading="lazy"></div>
+          <figcaption>The rails are in the code, not a promise.</figcaption></figure>
+      </section>
+
+      <section class="chapter" id="setup">
+        <h2>Get your own</h2>
+        <p class="intro">The full agent is free on GitHub: the Telegram brain and the Facebook poster. Setup takes about an hour if you have used Cloudflare before.</p>
+        <ol class="steps">
+          <li><div><b>Make a Telegram bot</b><span>Talk to BotFather, get a token. That chat becomes his inbox.</span></div></li>
+          <li><div><b>Deploy his brain to Cloudflare</b><span>A free Worker with a small database and photo storage. Add your Anthropic API key.</span></div></li>
+          <li><div><b>Install the poster on your computer</b><span>Log Chrome into Facebook once. He drives that browser to post, edit and remove.</span></div></li>
+          <li><div><b>Send him a photo</b><span>Tap Approve on the card he sends back. That is it.</span></div></li>
+        </ol>
+        <p class="note">Automating Facebook Marketplace may break Facebook's terms. Run it on your own account, at your own risk. The safety rails keep him slow and careful on purpose.</p>
+        <div class="cta" style="margin-top:24px"><a class="btn btn--main" href="https://github.com/lennymadethat/sellstuff" target="_blank" rel="noopener">Download on GitHub →</a><a class="btn btn--ghost" href="/#agents">Meet the other agents</a></div>
+      </section>
+    </div>
+  </main>
+  <footer><div class="wrap">Lenny Made That · Agent Sell Stuff</div></footer>
+</body>
+</html>

@@ -77,6 +77,8 @@
 .as-ks { color: var(--as-good); } .as-kw { color: var(--as-warn); }
 .as-btn { justify-self: start; display: inline-block; font: 700 14px/1 var(--as-display); letter-spacing: .08em; text-transform: uppercase; color: var(--as-void);
   background: var(--as-tint); padding: 11px 16px; border-radius: 4px; text-decoration: none; }
+.as-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.as-btn--ghost { background: transparent; color: var(--as-ink); border: 1px solid var(--as-edge); }
 .as-btn:hover, .as-btn:focus-visible { filter: brightness(1.12); outline: 2px solid var(--as-ink); outline-offset: 2px; }
 
 .as-ring { position: absolute; left: 50%; bottom: 74px; transform: translateX(-50%); display: flex; gap: 12px; }
@@ -132,6 +134,7 @@
   .as-special { font-size: 15px !important; }
   .as-special .as-k { font-size: 9.5px; margin-bottom: 3px; }
   .as-btn { padding: 10px 12px; font-size: 12px; }
+  .as-btns { flex-direction: column; gap: 6px; }
   .as-nav { bottom: 10px; gap: 6px; }
   .as-arrow { width: 40px; height: 40px; }
   .as-skip { display: none; }
