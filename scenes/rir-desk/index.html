@@ -72,7 +72,8 @@
   /* the tape: every income fund is somebody's paycheck */
   #tape { position: fixed; left: 0; right: 0; top: 0; height: 30px; z-index: 9; overflow: hidden; display: flex; align-items: center;
     background: rgba(7,11,18,.78); border-bottom: 1px solid rgba(138,199,222,.14);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
+  }
+  #tape .runwrap { -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 95%, transparent); }
   #tape .run { display: flex; white-space: nowrap; animation: tape 70s linear infinite; will-change: transform; }
   #tape span { font: 500 11.5px/1 "DM Mono", monospace; color: var(--mute); padding: 0 16px; letter-spacing: .02em; }
   #tape span b { color: #fff; font-weight: 500; }
@@ -91,10 +92,10 @@
   .btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
   .btn--primary { background: var(--blue); color: var(--deep); }
   .btn--ghost { background: var(--glass); color: var(--ink); border: 1px solid var(--glass-line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-  /* on the wide desk the wordmark hangs in the night sky above Carl */
-  #brand { left: 50%; top: 46px; width: min(340px, 30vw); transform: translateX(-50%); opacity: .92; filter: drop-shadow(0 2px 14px rgba(0,0,0,.7)); pointer-events: none; }
-  .embed #brand { top: 112px; }
-  .broad #copy .logo, .narrow #brand { display: none; }
+  /* on wide screens the wordmark rides at the head of the tape; on phones it tops the copy */
+  #tape .tlogo { flex: none; height: 15px; width: auto; margin: 0 18px 0 22px; position: relative; z-index: 2; }
+  #tape .runwrap { flex: 1; overflow: hidden; }
+  .broad #copy .logo, .narrow #tape .tlogo { display: none; }
 
   /* the receipts: three numbers from the platform */
   #stats { right: clamp(12px, 3vw, 40px); bottom: clamp(20px, 5vh, 56px); display: flex; gap: 10px; }
@@ -139,7 +140,7 @@
 </style>
 </head>
 <body>
-<div id="tape" aria-hidden="true"><div class="run" id="tapeRun"></div></div>
+<div id="tape" aria-hidden="true"><img class="tlogo" src="img/logo.webp" alt=""><div class="runwrap"><div class="run" id="tapeRun"></div></div></div>
 <div id="view" aria-hidden="true">
   <div id="stage">
     <img class="plate" id="plate" alt="">
@@ -168,7 +169,6 @@
     <a class="btn btn--ghost" href="/products/retail-investor-report" target="_top">How it works</a>
   </div>
 </section>
-<img id="brand" class="ui" src="img/logo.webp" alt="">
 
 <div id="stats" class="ui" aria-label="The platform in numbers">
   <div class="stat"><b data-to="450" data-fmt="{}+">0</b><span>income ETFs, live</span></div>
@@ -251,13 +251,16 @@ function advance(k) {
 }
 
 // ---------- Carl, raised clear of the beanie ----------
-const RAISE = L.raise ?? 40;
-const O = { x: L.orbCentre.x, y: L.orbCentre.y - RAISE, r: L.orbCentre.r };
+// Carl floats free of the monitors: raised and scaled about his own centre
+const RAISE = L.raise ?? 40, SC = L.orbScale ?? 1;
+const O = { x: L.orbCentre.x, y: L.orbCentre.y - RAISE, r: L.orbCentre.r * SC };
 const orbEl = $("#orb"); orbEl.src = DIR + "orb.webp";
-Object.assign(orbEl.style, { left: L.orb.x + "px", top: L.orb.y - RAISE + "px", width: L.orb.w + "px", height: L.orb.h + "px" });
+Object.assign(orbEl.style, { left: O.x - (L.orbCentre.x - L.orb.x) * SC + "px", top: O.y - (L.orbCentre.y - L.orb.y) * SC + "px",
+  width: L.orb.w * SC + "px", height: L.orb.h * SC + "px" });
 const manEl = $("#man"); manEl.src = DIR + "man.webp";
 Object.assign(manEl.style, { left: L.man.x + "px", top: L.man.y + "px", width: L.man.w + "px", height: L.man.h + "px" });
-const halo = $("#halo"); Object.assign(halo.style, { left: O.x - 190 + "px", top: O.y - 190 + "px" });
+const halo = $("#halo"); const HR = 190 * (O.r / 64);
+Object.assign(halo.style, { left: O.x - HR + "px", top: O.y - HR + "px", width: HR * 2 + "px", height: HR * 2 + "px" });
 Object.assign($("#orbfx").style, { left: O.x - 150 + "px", top: O.y - 150 + "px", width: "300px", height: "300px" });
 
 // ---------- strikes: a bolt sprite is placed by where it leaves Carl and where it lands ----------
@@ -358,7 +361,7 @@ function applyCamera(dt) {
 
 // ---------- Carl: breath, charge, and the motes inside the glass ----------
 const fx = $("#orbfx").getContext("2d");
-const motes = Array.from({ length: 34 }, () => ({ a: rand(0, Math.PI * 2), r: rand(4, 50), w: rand(0.15, 0.6) * (Math.random() < 0.5 ? -1 : 1), z: rand(0.6, 1.8), al: rand(0.15, 0.45), ph: rand(0, 6) }));
+const motes = Array.from({ length: 34 }, () => ({ a: rand(0, Math.PI * 2), r: rand(4, O.r * 0.78), w: rand(0.15, 0.6) * (Math.random() < 0.5 ? -1 : 1), z: rand(0.6, 1.8), al: rand(0.15, 0.45), ph: rand(0, 6) }));
 function carl(t, charge) {
   const breath = 0.5 - 0.5 * Math.cos((t / 4200) * Math.PI * 2);
   const bob = Math.sin(t / 2900) * 2.2;
