@@ -241,17 +241,7 @@ $(".sk-crews__row").innerHTML = crews.map((c) =>
   imgs.forEach((im) => im.addEventListener("load", () => { if (last < 0) draw(); }));
 }
 
-// ---------- 4. downloads ----------
-$(".sk-accordion").innerHTML = downloads.map((d) => `
-  <details class="sk-dl">
-    <summary><span class="sk-dl__name">${esc(d.name)}</span><span class="sk-dl__line">${esc(d.line)}</span></summary>
-    <div class="sk-dl__body">
-      ${d.img ? `<img src="${esc(d.img)}" alt="How ${esc(d.name)} works" loading="lazy" />` : `<div class="sk-placeholder-inline"><div class="sk-placeholder"><p>EXPLAINER ART</p></div></div>`}
-      <div><p>${esc(d.desc)}</p>
-        <div class="sk-slide__ctas">${linkBtn({ label: "Get the code", href: d.code, todo: d.todo })}${d.setup ? linkBtn({ label: "Paste-prompt setup", href: d.setup }, "sk-btn sk-btn--ghost") : ""}</div>
-      </div>
-    </div>
-  </details>`).join("");
+// ---------- 4. downloads: the wall lives in downloads/wall.js ----------
 
 // ---------- 5. contact ----------
 $(".sk-contact__links").innerHTML = `<a class="sk-btn" href="mailto:${esc(contact.email)}">${esc(contact.email)}</a>`

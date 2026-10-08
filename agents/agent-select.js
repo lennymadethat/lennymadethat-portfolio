@@ -221,7 +221,7 @@ addEventListener("scroll", () => requestAnimationFrame(onScroll), { passive: tru
 addEventListener("resize", onScroll);
 $("as-prev").addEventListener("click", () => jump(cur - 1));
 $("as-next").addEventListener("click", () => jump(cur + 1));
-$("as-skip").addEventListener("click", () => $("crews").scrollIntoView({ behavior: reduced ? "auto" : "smooth" }));
+$("as-skip").addEventListener("click", () => $("downloads").scrollIntoView({ behavior: reduced ? "auto" : "smooth" }));
 addEventListener("keydown", (e) => {
   const r = section.getBoundingClientRect();
   if (r.top > 10 || r.bottom < innerHeight - 10) return;
