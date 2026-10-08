@@ -1,0 +1,46 @@
+/* The download wall — ten tiles, one screen. Desktop 5 x 2, tablet 4 + wrap, phone 3-across minis. */
+.dlw {
+  --dlw-panel: #0f1220; --dlw-edge: rgba(170,200,255,.16); --dlw-ink: #eef3fb; --dlw-soft: #c5d0df; --dlw-dim: #93a2b8;
+  --dlw-display: "Oxanium", "Anton", system-ui, sans-serif; --dlw-body: "Barlow", "Public Sans", system-ui, sans-serif; --dlw-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, monospace;
+  display: grid; gap: 12px; grid-template-columns: repeat(5, minmax(0, 1fr)); color: var(--dlw-ink); font-family: var(--dlw-body);
+}
+.dlw * { box-sizing: border-box; }
+.dlw-tile { --t: #56c2ff; display: grid; grid-template-rows: auto 1fr; background: linear-gradient(180deg, rgba(255,255,255,.035), transparent 60%), var(--dlw-panel);
+  border: 1px solid var(--dlw-edge); border-radius: 14px; overflow: hidden; transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+.dlw-tile:hover, .dlw-tile:focus-within { transform: translateY(-2px); border-color: color-mix(in srgb, var(--t) 60%, transparent); box-shadow: 0 12px 34px rgba(0,0,0,.4), 0 0 26px color-mix(in srgb, var(--t) 18%, transparent); }
+.dlw-face { position: relative; height: clamp(110px, 21vh, 200px); display: grid; place-items: center; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 92%, color-mix(in srgb, var(--t) 45%, transparent) 0%, transparent 65%), linear-gradient(180deg, #0b0d19, #141833); }
+.dlw-char { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 100%; width: auto; max-width: none; filter: drop-shadow(0 0 12px color-mix(in srgb, var(--t) 40%, transparent)); }
+.dlw-logo { height: 58%; width: auto; max-width: 70%; object-fit: contain; border-radius: 18px; filter: drop-shadow(0 8px 18px rgba(0,0,0,.5)); }
+.dlw-kind { position: absolute; top: 10px; left: 10px; font: 600 10px/1 var(--dlw-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--dlw-ink);
+  background: rgba(7,8,15,.72); border: 1px solid color-mix(in srgb, var(--t) 45%, transparent); padding: 4px 7px; border-radius: 999px; }
+.dlw-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.dlw-body h3 { font: 800 clamp(15px, 1.2vw, 19px)/1.1 var(--dlw-display); text-transform: uppercase; margin: 0; color: var(--dlw-ink); }
+.dlw-line { font: 500 14px/1.35 var(--dlw-body); color: var(--dlw-soft); margin: 0; }
+.dlw-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 10px; }
+.dlw-btn { display: inline-flex; align-items: center; gap: 6px; font: 700 11.5px/1 var(--dlw-display); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; padding: 9px 10px; border-radius: 6px; }
+.dlw-btn svg { width: 13px; height: 13px; }
+.dlw-btn--main { background: var(--t); color: #08101c; }
+.dlw-btn--ghost { border: 1px solid var(--dlw-edge); color: var(--dlw-ink); }
+.dlw-btn--soon { border: 1px dashed color-mix(in srgb, var(--t) 70%, transparent); color: var(--t); }
+.dlw-tile--soon .dlw-logo { filter: grayscale(.2) drop-shadow(0 0 16px color-mix(in srgb, var(--t) 50%, transparent)); }
+a.dlw-btn:hover, a.dlw-btn:focus-visible { filter: brightness(1.12); outline: 2px solid var(--dlw-ink); outline-offset: 2px; }
+@media (max-width: 1100px) { .dlw { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .dlw { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 640px) {
+  .dlw { gap: 8px; }
+  .dlw-face { height: 24vw; }
+  .dlw-kind, .dlw-line, .dlw-btn--ghost { display: none; }
+  .dlw-body { padding: 7px 7px 9px; text-align: center; gap: 2px; }
+  .dlw-body h3 { font-size: 12px; line-height: 1.15; min-height: 2.3em; display: grid; place-items: center; }
+  .dlw-acts { justify-content: center; padding-top: 5px; }
+  .dlw-btn--main, .dlw-btn--soon { width: 100%; justify-content: center; padding: 8px 3px; font-size: 10px; }
+  /* the tenth tile spans the row as a wide strip */
+  .dlw-tile:last-child { grid-column: 1 / -1; grid-template-rows: none; grid-template-columns: 24vw 1fr; }
+  .dlw-tile:last-child .dlw-body { text-align: left; justify-content: center; }
+  .dlw-tile:last-child .dlw-body h3 { min-height: 0; display: block; font-size: 14px; }
+  .dlw-tile:last-child .dlw-line { display: block; font-size: 12.5px; }
+  .dlw-tile:last-child .dlw-acts { justify-content: flex-start; }
+  .dlw-tile:last-child .dlw-btn--main { width: auto; padding: 8px 14px; }
+}
+@media (min-width: 641px) and (max-height: 780px) { .dlw-face { height: 16vh; } .dlw-body { padding: 9px 12px 11px; } .dlw-acts { padding-top: 6px; } }

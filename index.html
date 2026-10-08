@@ -24,6 +24,7 @@ window.addEventListener("load", function () {
   <link rel="stylesheet" href="skeleton.css?v=20260929a" />
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="agents/agent-select.css?v=20261007c" />
+  <link rel="stylesheet" href="downloads/wall.css?v=20261008a" />
 </head>
 <body>
   <!-- SKELETON (F0, 2026-09-26). Grey wireframe: structure and mechanics only. Colours and type are
@@ -37,7 +38,7 @@ window.addEventListener("load", function () {
       <a href="#platforms">Platforms</a>
       <a href="#agents">Agents</a>
       <a href="#second-brain">Second Brain</a>
-      <a href="/downloads">Downloads</a>
+      <a href="#downloads">Downloads</a>
       <a href="#contact">Contact</a>
     </div>
   </nav>
@@ -111,6 +112,17 @@ window.addEventListener("load", function () {
       </div>
     </section>
 
+    <!-- 2a. DOWNLOADS — the whole wall on one screen, right after the agents (downloads/wall.js) -->
+    <section id="downloads" class="sk-section dl-home" aria-labelledby="dl-heading">
+      <div class="dl-home__in">
+        <header class="dl-home__head">
+          <h2 id="dl-heading">Take them home</h2>
+          <p>Every agent and tool I give away. Free on GitHub, each with a setup guide any coding agent can follow. <a href="/downloads">Open the downloads page →</a></p>
+        </header>
+        <div id="dl-wall"></div>
+      </div>
+    </section>
+
     <!-- 2b. THE CREWS — agents inside the platforms -->
     <section id="crews" class="sk-section sk-crews" aria-labelledby="crews-heading">
       <div class="sk-container">
@@ -133,16 +145,6 @@ window.addEventListener("load", function () {
       </div>
     </section>
 
-    <!-- 4. DOWNLOADS -->
-    <section id="downloads" class="sk-section sk-downloads" aria-labelledby="dl-heading">
-      <div class="sk-container">
-        <h2 id="dl-heading" class="sk-h2">Downloads</h2>
-        <p class="sk-lead">Real repositories: the code, a README, and a paste-prompt that walks any coding agent through setup.</p>
-        <p><a class="sk-btn" href="/downloads">See every download at once →</a></p>
-        <div class="sk-accordion"></div>
-      </div>
-    </section>
-
     <!-- 5. CONTACT / FOLLOW -->
     <section id="contact" class="sk-section sk-contact" aria-labelledby="contact-heading">
       <div class="sk-container">
@@ -153,7 +155,8 @@ window.addEventListener("load", function () {
   </main>
 
   <script type="module" src="hero.js"></script>
-  <script type="module" src="skeleton.js?v=20261008m"></script>
-  <script type="module" src="agents/agent-select.js?v=20261007d"></script>
+  <script type="module" src="skeleton.js?v=20261008n"></script>
+  <script type="module">import { renderWall } from "/downloads/wall.js?v=20261008a"; renderWall(document.getElementById("dl-wall"));</script>
+  <script type="module" src="agents/agent-select.js?v=20261008a"></script>
 </body>
 </html>
