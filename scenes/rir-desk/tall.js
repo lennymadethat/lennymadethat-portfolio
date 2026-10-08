@@ -257,7 +257,7 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   addEventListener("message", (e) => {
     if (e.origin !== location.origin) return;
     if (e.data === "scene:pause") stop();
-    if (e.data === "scene:play") start();
+    if (e.data === "scene:play") { asked = 0; layout(); start(); }   // re-send the height each time the slide shows
   });
   addEventListener("resize", () => { if (!running) draw(performance.now()); });
   draw(0);
