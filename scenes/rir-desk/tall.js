@@ -39,7 +39,7 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   if (L.carlVideo) {
     carlVid = Object.assign(document.createElement("video"), { muted: true, loop: true, playsInline: true, autoplay: true, preload: "auto" });
     carlVid.setAttribute("muted", ""); carlVid.setAttribute("playsinline", "");
-    carlVid.src = DIR + L.carlVideo.src;
+    carlVid.src = "img/" + L.carlVideo.src;
     carlVid.addEventListener("playing", () => (carlReady = true));
     carlVid.play().catch(() => {});
     const SZ = 512;

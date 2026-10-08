@@ -55,6 +55,8 @@
   .light { mix-blend-mode: screen; pointer-events: none; }
   #halo { width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(closest-side, rgba(150,210,235,.42), rgba(110,180,214,.16) 45%, rgba(110,180,214,0)); will-change: opacity, transform; }
   #orb { will-change: transform, filter; transform-origin: 50% 50%; }
+  .carlvid { opacity: 0; transition: opacity .6s ease; transform-origin: 50% 50%; pointer-events: none; object-fit: cover;
+    -webkit-mask-image: radial-gradient(circle closest-side, #000 70%, transparent 100%); mask-image: radial-gradient(circle closest-side, #000 70%, transparent 100%); }
   #man { transform-origin: 50% 100%; will-change: transform; }
   .bolt { left: 0; top: 0; opacity: 0; will-change: opacity; transform-origin: 0 0; }
   .bolt img { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: screen; filter: brightness(2.1) saturate(1.15); }
@@ -322,6 +324,15 @@ const O = { x: L.orbCentre.x, y: L.orbCentre.y - RAISE, r: L.orbCentre.r * SC };
 const orbEl = $("#orb"); orbEl.src = DIR + "orb.webp";
 Object.assign(orbEl.style, { left: O.x - (L.orbCentre.x - L.orb.x) * SC + "px", top: O.y - (L.orbCentre.y - L.orb.y) * SC + "px",
   width: L.orb.w * SC + "px", height: L.orb.h * SC + "px" });
+// Carl alive: the looping Veo clip of his sphere (8.4 s, seamless), masked round so its sky melts into ours.
+// The clip frames him at 235/720 of its width, so it is drawn 720/235 times his radius across.
+const CARL_K = 720 / 235;
+const carlVid = Object.assign(document.createElement("video"), { muted: true, loop: true, playsInline: true, autoplay: true, preload: "auto", src: "img/carl-loop.mp4" });
+carlVid.setAttribute("muted", ""); carlVid.setAttribute("playsinline", ""); carlVid.className = "carlvid";
+Object.assign(carlVid.style, { left: O.x - O.r * CARL_K / 2 + "px", top: O.y - O.r * CARL_K / 2 + "px", width: O.r * CARL_K + "px", height: O.r * CARL_K + "px" });
+orbEl.after(carlVid);
+carlVid.addEventListener("playing", () => { orbEl.style.visibility = "hidden"; $("#orbfx").style.visibility = "hidden"; carlVid.style.opacity = 1; });
+carlVid.play().catch(() => {});
 const manEl = $("#man"); manEl.src = DIR + "man.webp";
 Object.assign(manEl.style, { left: L.man.x + "px", top: L.man.y + "px", width: L.man.w + "px", height: L.man.h + "px" });
 const halo = $("#halo"); const HR = 190 * (O.r / 64);
@@ -452,6 +463,8 @@ function carl(t, charge) {
   const bob = Math.sin(t / 2900) * 2.2;
   orbEl.style.transform = `translateY(${bob}px) scale(${1 + breath * 0.012 + charge * 0.03})`;
   orbEl.style.filter = `brightness(${1 + breath * 0.08 + charge * 0.45})`;
+  carlVid.style.transform = `translateY(${bob}px) scale(${1 + charge * 0.03})`;
+  carlVid.style.filter = charge > 0.02 ? `brightness(${1 + charge * 0.5})` : "";
   halo.style.opacity = (0.55 + breath * 0.25 + charge * 0.9).toFixed(3);
   halo.style.transform = `translateY(${bob}px) scale(${1 + charge * 0.25})`;
   if (haloImg) haloImg.style.opacity = (0.75 + breath * 0.2 + charge * 0.5).toFixed(3);
@@ -578,8 +591,8 @@ function frame(now) {
   phone(now);
   requestAnimationFrame(frame);
 }
-function start() { if (running || reduced) return; running = true; last = 0; countUp(); requestAnimationFrame(frame); }
-function stop() { running = false; }
+function start() { if (running || reduced) return; running = true; last = 0; countUp(); carlVid.play().catch(() => {}); requestAnimationFrame(frame); }
+function stop() { running = false; carlVid.pause(); }
 document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
 // the portfolio carousel tells the scene when it is on screen
 addEventListener("message", (e) => {
