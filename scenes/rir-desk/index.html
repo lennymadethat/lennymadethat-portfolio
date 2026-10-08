@@ -316,13 +316,16 @@ function showCallout(k, shot, t) {
   c.el.classList.add("on"); c.until = t + 3600;
 }
 // a callout sits over the top-middle of its screen, kept inside the viewport
+const copyEl = $("#copy"), narrow = root.classList.contains("narrow");
 function placeCallouts() {
   const vr = view.getBoundingClientRect();
   for (const [k, c] of Object.entries(callouts)) {
     const q = scr[k].quad, a = (L.callouts && L.callouts[k]) || [(q[0][0] + q[1][0]) / 2, Math.min(q[0][1], q[1][1]) - 12];
     const half = c.el.offsetWidth / 2 || 135;
     const x = Math.min(innerWidth - half - 10, Math.max(half + 10, vr.left + cam.x + a[0] * cam.s));
-    const y = Math.max(vr.top + c.el.offsetHeight + 8, vr.top + cam.y + a[1] * cam.s);
+    // never over the copy: on a phone the copy sits above the screens
+    const floor = narrow ? copyEl.getBoundingClientRect().bottom + 10 : vr.top + 8;
+    const y = Math.max(floor + c.el.offsetHeight, vr.top + cam.y + a[1] * cam.s);
     c.el.style.left = x + "px"; c.el.style.top = y + "px";
   }
 }
@@ -393,7 +396,7 @@ function schedule(t) {
   // the camera goes where the bolt goes
   focusTarget = pick.length > 1 ? O.x : pick[0].hit[0];
   pushAt = pick.length > 1 ? [O.x, O.y] : pick[0].hit;
-  if (count % 3 === 0 && scr.C) setTimeout(() => advance("C"), 900);
+  if (count % 3 === 0 && scr.C && L.centreTick !== false) setTimeout(() => advance("C"), 900);
   nextStrike = t + (desk.tall ? rand(3200, 4600) : rand(4200, 6800));
 }
 const CHARGE = 650, TRAVEL = 140, HOLD = 720, FADE = 420;
