@@ -150,7 +150,11 @@
   #copy { left: clamp(16px, 4vw, 56px); top: 34vh; max-width: 380px; }
   #copy h1 { margin: 0 0 6px; font: italic 400 clamp(34px, 4.2vw, 56px)/1.02 Fraunces, Georgia, serif; letter-spacing: -.01em; color: var(--ink); }
   #copy h1 em { font-style: italic; color: var(--mint-deep); }
-  #copy p { margin: 0 0 18px; font-size: clamp(15px, 1.2vw, 17px); color: #3A3A36; }
+  #copy p { margin: 0 0 18px; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.45; color: #3A3A36; }
+  .lockup { display: none; align-items: center; justify-content: center; gap: 7px; margin-bottom: 8px; }
+  .lockup img { width: 22px; }
+  .lockup span { font: 400 13px/1 Jost, sans-serif; letter-spacing: .26em; color: #3A3A36; }
+  .lockup b { font-weight: 400; color: var(--mint-deep); }
   .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
   .btn { display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; font: 600 15px/1 Inter, sans-serif; text-decoration: none; transition: transform .2s ease, background .2s ease; }
   .btn:hover { transform: translateY(-1px); }
@@ -166,10 +170,14 @@
   #clock { padding: 0 12px; height: 38px; display: flex; align-items: center; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-line); font: 500 13px/1 Inter, sans-serif; font-variant-numeric: tabular-nums; color: #3A3A36; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
   /* inside the portfolio swipe the site header sits over the top 76px */
-  .embed #view { top: 68px; }
   .embed #controls { top: 84px; }
   .tall #brand, .tall .fshadow { display: none; }
-  html.tall #copy { left: 0; right: 0; max-width: none; padding: 0 16px; background: none; text-align: center; }
+  html.tall #copy { left: 0; right: 0; max-width: none; padding: 0 18px; background: none; text-align: center; }
+  html.tall .lockup { display: flex; }
+  html.tall #copy h1 { font-size: 31px; margin-bottom: 4px; }
+  html.tall #copy p { font-size: 13px; line-height: 1.4; margin: 0 auto 12px; max-width: 330px; }
+  html.tall .btn { height: 40px; padding: 0 18px; font-size: 14px; }
+  html.tall #controls { top: auto; bottom: 14px; left: auto; right: 12px; }
   html.tall .ctas { justify-content: center; }
   .embed #copy { left: clamp(16px, 7vw, 104px); }
   @media (max-width: 640px) {
@@ -239,8 +247,9 @@
 </div>
 
 <section id="copy" class="ui" aria-label="PlayLetter">
+  <div class="lockup"><img src="img/mark.webp" alt=""><span>PLAY<b>LETTER</b></span></div>
   <h1>Just <em>listen.</em></h1>
-  <p>Your newsletters, out loud.</p>
+  <p>PlayLetter reads your newsletters aloud in a voice you choose, every word lighting up as it plays.</p>
   <div class="ctas">
     <a class="btn btn--primary" href="https://playletter.com" target="_top">Open PlayLetter</a>
     <a class="btn btn--ghost" href="/products/playletter" target="_top">How it works</a>
@@ -259,9 +268,9 @@ const L = TALL ? {
   piv: { foot: [776, 2468], head: [230, 2240], hand: [630, 2512], body: [330, 2620] },
   handQuad: [[457, 2068], [522, 2073], [500, 2228], [428, 2222]],
   phones: [
-    { x: 400, y: 1530, r: -6, ry: 12, s: 1.5, period: 11800, amp: 5, phase: 0.0 },
-    { x: 768, y: 1480, r: 0, ry: 0, s: 1.72, period: 13300, amp: 6, phase: 1.9 },
-    { x: 1136, y: 1536, r: 6, ry: -12, s: 1.5, period: 12500, amp: 5, phase: 3.7 },
+    { x: 404, y: 1540, r: -6, ry: 12, s: 1.45, period: 11800, amp: 5, phase: 0.0 },
+    { x: 768, y: 1500, r: 0, ry: 0, s: 1.62, period: 13300, amp: 6, phase: 1.9 },
+    { x: 1132, y: 1546, r: 6, ry: -12, s: 1.45, period: 12500, amp: 5, phase: 3.7 },
   ],
   shadows: false,
   floorY: 1870, floorK: 0.4,
@@ -289,7 +298,7 @@ const L = TALL ? {
   glows: { mark: [768, 820, 420], window: null },
   laptopQuad: [[864, 1998], [1112, 2006], [1096, 2180], [838, 2174]],
   brand: null,
-  wave: [[440, 1096, 1010, 12, 7, 90]],
+  wave: [],
 } : {
   W: 2000, H: 1116, prefix: "", layers: "img/layers.json", plate: "img/plate-a.webp", arm: "img/couch-arm.webp",
   piv: { foot: [474, 948], head: [176, 815], hand: [392, 985], body: [250, 1049] },
@@ -347,26 +356,38 @@ const view = $("#view"), stage = $("#stage");
 let fit = { s: 1, ox: 0, oy: 0, pan: 0 };
 function layout() {
   const vw = view.clientWidth, vh = view.clientHeight;
-  const s = Math.max(vw / W, vh / H);
-  const rows = vh / s;                                   // how many room rows fit
-  const top = TALL ? Math.max(0, (H - rows) * 0.4) : rows >= 950 ? Math.min(H - rows, Math.max(0, 530 - rows / 2)) : 1005 - rows;
-  fit = { s, overX: W * s - vw, top, vw, vh };
-  // on phones the words sit on the empty wall between the prints and the floating phones
-  if (TALL) document.getElementById("copy").style.top = Math.round(view.offsetTop + (520 - top) * s) + "px";
+  // inside the portfolio its header covers the top 68px once it slides in; the room simply runs up behind it
+  const pad = qs.has("embed") ? 68 : 0, avail = vh - pad;
+  let s, y;
+  if (TALL) {
+    // phones: fit the width so every print shows; trim only plain wall above the prints if it is too tall
+    // fit the width so every print shows; on taller phones grow until the room fills the height,
+    // never past the point where the print arc (x 100..1440) would be cut
+    s = Math.max(vw / W, Math.min(avail / H, vw / 1380));
+    const hs = H * s;
+    y = hs <= avail ? vh - hs : pad - Math.min(110 * s, hs - avail);
+  } else {
+    s = Math.max(vw / W, avail / H);
+    const rows = avail / s;                              // how many room rows fit below the header
+    const top = rows >= 950 ? Math.min(H - rows, Math.max(0, 530 - rows / 2)) : 1005 - rows;
+    y = pad - top * s;
+  }
+  fit = { s, overX: W * s - vw, y, vw, vh };
+  // on phones the brand and words sit on the empty wall between the prints and the floating phones
+  if (TALL) document.getElementById("copy").style.top = Math.round(y + 530 * s) + "px";
 }
 addEventListener("resize", layout); layout();
 function applyCamera(t) {
   let x;
-  if (fit.overX <= 1) x = 0;
-  else if (TALL) x = -fit.overX / 2;
+  if (TALL) x = -Math.max(0, fit.overX) / 2;
+  else if (fit.overX <= 1) x = 0;
   else if (reduced) x = -Math.min(fit.overX, Math.max(0, 300 * fit.s - fit.vw * 0.3));
   else {
     // narrow screens: drift slowly between him, the wall, and the phones
     const k = 0.5 - 0.5 * Math.cos((t / 70000) * Math.PI * 2);
     x = -fit.overX * (0.05 + 0.9 * k);
   }
-  const y = -fit.top * fit.s;
-  stage.style.transform = `translate(${x}px, ${y}px) scale(${fit.s})`;
+  stage.style.transform = `translate(${x}px, ${fit.y}px) scale(${fit.s})`;
 }
 
 // ---------- app screens on the glass ----------
@@ -412,8 +433,8 @@ function floatPhones(t) {
 floatPhones(0);
 
 // ---------- the day ----------
-// one day passes every two minutes (what the 4x setting was)
-const DAY_MS = 2 * 60 * 1000;
+// the light crosses the room fast: a whole day in 45 seconds (he and the phones keep real time)
+const DAY_MS = 45 * 1000;
 let hour = qs.has("hour") ? Number(qs.get("hour")) : 8.2;   // where the day starts
 if (reduced && !qs.has("hour")) hour = 15.5;
 
@@ -503,6 +524,18 @@ const pane = document.createElement("canvas"); pane.width = PANE_W; pane.height 
 const unfold = document.createElement("canvas"); unfold.width = W / 2; unfold.height = Math.ceil(UNFOLD_H / 2);
 const uc = unfold.getContext("2d");
 const shade = $("#shade").getContext("2d"), glow = $("#glow").getContext("2d");
+// the wall colour along the top of the painting, used to fill anything above it
+let WALL = null;
+{
+  const im = $("#plate"), probe = () => {
+    const c = document.createElement("canvas"); c.width = 40; c.height = 4;
+    const x = c.getContext("2d"); x.drawImage(im, 0, 0, im.naturalWidth, 24, 0, 0, 40, 4);
+    const d = x.getImageData(0, 0, 40, 4).data; const sum = [0, 0, 0];
+    for (let i = 0; i < d.length; i += 4) { sum[0] += d[i]; sum[1] += d[i + 1]; sum[2] += d[i + 2]; }
+    WALL = sum.map((v) => v / (d.length / 4)); try { lastLight = -1; } catch {}
+  };
+  im.complete && im.naturalWidth ? probe() : im.addEventListener("load", probe, { once: true });
+}
 
 function drawLight(h) {
   const [r, g, b, screenGlow] = track(AMBIENT, h);
@@ -511,6 +544,7 @@ function drawLight(h) {
   const sun = sunP || (moon ? [...moon, 0] : null);
   const isMoon = !sunP && !!moon;
   stage.classList.toggle("night", screenGlow > 0.55);
+  if (WALL) view.style.backgroundColor = `rgb(${WALL.map((v, i) => Math.round(v * [r, g, b][i] / 255)).join(",")})`;
   nightGlow = screenGlow;
   uc.setTransform(1, 0, 0, 1, 0, 0); uc.clearRect(0, 0, unfold.width, unfold.height);
   if (sun && sun[6] > 0.01) {
