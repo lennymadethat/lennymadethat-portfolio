@@ -18,7 +18,9 @@ const AGENTS = [
     special: "TRENCH-COAT DROP: snap a photo, tap Approve, it's live on Facebook Marketplace.",
     strength: "Writes the title, story, price and floor from a few photos. Posts, edits and pulls listings himself, 5 a day, never touching buyer DMs.",
     weakness: "Facebook only so far, and he can mark a listing gone when it's still up.",
-    ring: [["29", "Posted"], ["35", "Edited"], ["15", "Pulled"]] },
+    ring: [["29", "Posted"], ["35", "Edited"], ["15", "Pulled"]],
+    button: { label: "Download on GitHub", href: "https://github.com/lennymadethat/sellstuff" },
+    more: { label: "How he works", href: "/agents/sellstuff" } },
   { key: "harvester", name: "Harry the Harvester", cls: "The YouTube Agent", lvl: ["96", "harvests"], status: "online", hue: "-15deg", tint: "#3fe6d2",
     img: "harry.webp", img2: "harry2.webp", live: "stream", mouth: [.07, .53], mouth2: [.05, .53], kinds: "video",
     stats: [["Range", 88], ["Speed", 82], ["Aim", 61], ["Memory", 44]],
@@ -162,7 +164,7 @@ function render(i) {
   if (i === cur) return;
   cur = i;
   const a = AGENTS[i];
-  document.documentElement.style.setProperty("--as-tint", a.tint);
+  section.style.setProperty("--as-tint", a.tint);
   stage.style.setProperty("--as-hue", a.hue);
   $("as-num").textContent = `${String(i + 1).padStart(2, "0")} / ${String(AGENTS.length).padStart(2, "0")}`;
   $("as-cls").textContent = a.cls;
@@ -179,6 +181,9 @@ function render(i) {
   const btn = $("as-btn");
   btn.hidden = !a.button;
   if (a.button) { btn.href = a.button.href; btn.textContent = a.button.label + " →"; }
+  const more = $("as-more");
+  more.hidden = !a.more;
+  if (a.more) { more.href = a.more.href; more.textContent = a.more.label; }
   // poses
   clearInterval(poseT); window._poseOn = false;
   hero.hidden = $("as-shadow").hidden = !a.img;

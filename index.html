@@ -23,7 +23,7 @@ window.addEventListener("load", function () {
   <link rel="stylesheet" href="styles.css?v=20260926a" />
   <link rel="stylesheet" href="skeleton.css?v=20260929a" />
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="agents/agent-select.css?v=20261007a" />
+  <link rel="stylesheet" href="agents/agent-select.css?v=20261007c" />
 </head>
 <body>
   <!-- SKELETON (F0, 2026-09-26). Grey wireframe: structure and mechanics only. Colours and type are
@@ -94,7 +94,10 @@ window.addEventListener("load", function () {
               <p><span class="as-k as-ks">Strength</span><span id="as-strength"></span></p>
               <p><span class="as-k as-kw">Weakness</span><span id="as-weakness"></span></p>
             </div>
-            <a class="as-btn" id="as-btn" href="#" target="_blank" rel="noopener" hidden></a>
+            <div class="as-btns">
+              <a class="as-btn" id="as-btn" href="#" target="_blank" rel="noopener" hidden></a>
+              <a class="as-btn as-btn--ghost" id="as-more" href="#" hidden></a>
+            </div>
           </section>
           <div class="as-ring" id="as-ring"></div>
           <nav class="as-nav" aria-label="Agents">
@@ -150,6 +153,6 @@ window.addEventListener("load", function () {
 
   <script type="module" src="hero.js"></script>
   <script type="module" src="skeleton.js?v=20261007m"></script>
-  <script type="module" src="agents/agent-select.js?v=20261007b"></script>
+  <script type="module" src="agents/agent-select.js?v=20261007c"></script>
 </body>
 </html>
