@@ -61,25 +61,26 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   const SPARK = dot(64, "rgba(235,248,255,1)"), STAR = dot(16, "rgba(235,245,255,1)");
 
   // ---------- camera ----------
-  // Inside the portfolio swipe the homepage pins this slide and the page scroll drives it (Lenny 10-08): the desk
-  // is drawn at the phone's width with its top edge under the 68px site header (the freeze), and the scroll pans
-  // it down to him. The scene tells the swipe how far that pan is ({scene:"pan", px}).
+  // Inside the portfolio swipe the homepage pins this slide and the page scroll drives it (Lenny 10-08): the desk is
+  // drawn whole at the phone's width, its top edge under the site header. The scene tells the homepage how tall that
+  // is ({scene:"height", h}); the homepage makes the frame that tall and slides it up on the GPU as you scroll.
   // Standalone it covers the screen, framed from the top (the words live in the sky).
   const embedded = document.documentElement.classList.contains("embed") && window.parent !== window;
-  const TOP = embedded ? 68 : 0;
+  // the site header's real height (thinner on phones since 10-08); the desk's top edge sits right under it
+  let TOP = 0;
+  try { TOP = embedded ? (window.parent.document.querySelector(".sk-nav")?.offsetHeight || 68) : 0; } catch { TOP = embedded ? 68 : 0; }
   const copyEl = document.getElementById("copy");
-  let dpr = 1, cw = 1, ch = 1, s = 1, X = 0, Y = 0, asked = -1, pan = 0, span = 0, driven = false;
-  function placeCopy() { if (embedded && copyEl) copyEl.style.transform = `translateY(${Math.round(Y - TOP)}px)`; }
+  if (embedded && copyEl) copyEl.style.top = TOP + 6 + "px";
+  let dpr = 1, cw = 1, ch = 1, s = 1, X = 0, Y = 0, asked = -1, driven = false;
   function layout() {
     dpr = Math.min(2, window.devicePixelRatio || 1);
     cw = view.clientWidth; ch = view.clientHeight;
     cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
     if (embedded) {
-      s = cw / W; X = 0;
-      span = Math.max(0, Math.round(H * s - (ch - TOP)));
-      if (span !== asked) { asked = span; window.parent.postMessage({ scene: "pan", px: span }, location.origin); }
-      Y = TOP - pan * span;
-      placeCopy();
+      // the whole desk at the phone's width; the homepage makes this frame that tall and slides it
+      s = cw / W; X = 0; Y = TOP;
+      const need = Math.ceil(TOP + H * s);
+      if (need !== asked) { asked = need; window.parent.postMessage({ scene: "height", h: need }, location.origin); }
     } else {
       s = Math.max(cw / W, ch / H);
       X = (cw - W * s) / 2;
@@ -292,7 +293,7 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   let running = false, lastDraw = 0;
   function frame(now) {
     if (!running) return;
-    if (now - lastDraw >= 32) {
+    if (now - lastDraw >= (live.length ? 0 : 32)) {
       lastDraw = now;
       if (!driven && now > nextStrike) schedule(now);
       draw(now);
@@ -305,20 +306,17 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   addEventListener("message", (e) => {
     if (e.origin !== location.origin) return;
     if (e.data === "scene:pause") stop();
-    if (e.data === "scene:play") { asked = -1; layout(); start(); }   // re-send the pan each time the slide shows
-    // the homepage scroll: a = how far through the freeze (three strikes), pan = how far down the desk
+    if (e.data === "scene:play") { asked = -1; layout(); start(); }   // re-send the height each time the slide shows
+    // the homepage scroll: a = how far through the freeze (three strikes at 1/6, 1/2, 5/6)
     if (e.data && e.data.scene === "scroll") {
       driven = true;
       const a = Math.max(0, Math.min(1, +e.data.a || 0));
       [1 / 6, 1 / 2, 5 / 6].forEach((th, k) => { if ((lastA < th) !== (a < th)) scrollStrike(k); });
       lastA = a;
-      pan = Math.max(0, Math.min(1, +e.data.pan || 0));
-      Y = TOP - pan * span;
-      placeCopy(); placeCallouts();
-      if (!running) draw(performance.now());
     }
   });
   addEventListener("resize", () => { if (!running) draw(performance.now()); });
   draw(0);
+  document.documentElement.classList.add("ready");
   start();
 }

@@ -24,7 +24,10 @@
   body { font-family: Inter, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
 
   /* The desk is authored in the plate's own pixels; JS scales and frames it. */
-  #view { position: fixed; inset: 30px 0 0 0; overflow: hidden; background: var(--night); }
+  #view { position: fixed; inset: 30px 0 0 0; overflow: hidden; background: var(--night); opacity: 0; transition: opacity .5s ease; }
+  .ready #view { opacity: 1; }
+  #stage { visibility: hidden; }
+  .wide #stage { visibility: visible; }
   #stage { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
   #stage > *, .scr, .bolt, .impact, .spill { position: absolute; }
   .plate, #screens, #fx { left: 0; top: 0; }
@@ -620,7 +623,7 @@ addEventListener("message", (e) => {
   });
   lastA = a;
 });
-if (root.classList.contains("embed") && window.parent !== window) window.parent.postMessage({ scene: "pan", px: 0 }, location.origin);
+plate.decode().catch(() => {}).then(() => root.classList.add("ready"));
 if (reduced) {
   applyCamera(16); carl(0, 0); if (askEl) askEl.textContent = ASKS[0];
   document.querySelectorAll(".stat b").forEach((el) => (el.textContent = el.dataset.fmt.replace("{}", el.dataset.to)));

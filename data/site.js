@@ -12,6 +12,7 @@ export const products = [
     logo: "/img/products/rir-mark.svg",
     // The ambient desk (scenes/rir-desk): Carl rises out of the centre screen and strikes the real product onto the glass.
     scene: "/scenes/rir-desk/?embed=1",
+    sceneBg: "#070B12",   // the night desk's colour while it loads
     video: null, poster: null, todo: null,
     visit: { label: "Visit Retail Investor Report", href: "https://retailinvestorreport.com" },
     explainer: null,
