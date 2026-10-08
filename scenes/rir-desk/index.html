@@ -75,11 +75,15 @@
     background: rgba(7,11,18,.78); border-bottom: 1px solid rgba(138,199,222,.14);
   }
   #tape .runwrap { -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 95%, transparent); }
-  #tape .run { display: flex; white-space: nowrap; animation: tape 70s linear infinite; will-change: transform; }
-  #tape span { font: 500 11.5px/1 "DM Mono", monospace; color: var(--mute); padding: 0 16px; letter-spacing: .02em; }
-  #tape span b { color: #fff; font-weight: 500; }
-  #tape span i { font-style: normal; color: var(--green); }
-  #tape span.brag { color: var(--blue); letter-spacing: .12em; text-transform: uppercase; }
+  #tape .run { display: flex; white-space: nowrap; animation: tape 34s linear infinite; will-change: transform; }
+  #tape span { font: 500 11.5px/1 "DM Mono", monospace; color: #8592a3; padding: 0 14px; letter-spacing: .01em; border-right: 1px solid rgba(138,199,222,.12); }
+  #tape span b { color: #fff; font-weight: 500; margin-right: 6px; }
+  #tape span em { font-style: normal; color: #c9d4df; margin-right: 6px; }
+  #tape span i { font-style: normal; color: var(--green); margin-right: 6px; }
+  #tape span u { text-decoration: none; color: var(--blue); }
+  #tape span.brag { color: var(--blue); letter-spacing: .14em; text-transform: uppercase; font-size: 10.5px; }
+  #tape span.hot b, #tape span.hot i { animation: tick .9s ease; }
+  @keyframes tick { 0% { color: #fff; text-shadow: 0 0 10px rgba(95,224,160,.9); } 100% { text-shadow: none; } }
   @keyframes tape { to { transform: translateX(-50%); } }
 
   #copy { left: clamp(16px, 4vw, 56px); bottom: clamp(20px, 5vh, 56px); max-width: 440px; }
@@ -117,7 +121,8 @@
   .callout .s { margin-top: 5px; font: 500 11px/1 "DM Mono", monospace; color: var(--green); }
 
   /* inside the portfolio swipe the site header sits over the top 68px */
-  .embed #view { top: 98px; }
+  /* inside the swipe the scene runs to the very top: the band under the (late-arriving) site header is sky, not a gap */
+  .embed #view { top: 0; }
   .embed #tape { top: 68px; }
   .embed #copy { left: clamp(16px, 7vw, 104px); }
 
@@ -239,15 +244,21 @@ const ROTA = Object.assign({
 }, L.rota || {});
 
 // ---------- the tape ----------
-const TAPE = [["MSTY", "weekly"], ["PLTY", "weekly"], ["JEPQ", "monthly"], ["ULTY", "weekly"], ["NFLY", "weekly"], ["SLVO", "monthly"],
-  ["HOOW", "weekly"], ["ARMW", "weekly"], ["MRNY", "weekly"], ["QQQI", "monthly"], ["QDTE", "weekly"], ["FIAT", "weekly"]];
-const BRAGS = ["450+ income ETFs", "live distributions · updated daily", "free, not free-trial free", "backtest the real payouts"];
+// The Income Board's yield leaders as they stood on 2026-10-07 (price, yield, latest distribution, cadence).
+const TAPE = [["MRNY", "19.84", "167.65", "0.8073", "wk"], ["MSTW", "3.42", "122.40", "0.0780", "wk"], ["MSTY", "12.73", "121.46", "0.3111", "wk"],
+  ["CRCO", "13.44", "97.11", "0.1940", "wk"], ["SMCY", "4.77", "92.83", "0.0824", "wk"], ["PLTW", "18.59", "88.81", "0.3550", "wk"],
+  ["CONY", "19.57", "77.10", "0.2577", "wk"], ["COIW", "8.78", "76.99", "0.1210", "wk"], ["MAAY", "6.29", "76.47", "0.0890", "wk"],
+  ["CRY", "18.76", "76.36", "0.2490", "wk"], ["YSPC", "42.93", "75.42", "0.4920", "wk"], ["ZVOL", "7.75", "75.10", "0.4850", "mo"]];
+const BRAGS = ["Income Board · yield leaders", "450+ income ETFs", "free, not free-trial free"];
 let tapeHtml = "";
-TAPE.forEach(([t, f], i) => {
-  tapeHtml += `<span><b>$${t}</b> <i>${f} payer</i></span>`;
-  if (i % 3 === 2) tapeHtml += `<span class="brag">${BRAGS[Math.floor(i / 3) % BRAGS.length]}</span>`;
+TAPE.forEach(([t, px, y, d, f], i) => {
+  if (i % 4 === 0) tapeHtml += `<span class="brag">${BRAGS[(i / 4) % BRAGS.length]}</span>`;
+  tapeHtml += `<span><b>${t}</b><em>$${px}</em><i>${y}%</i><u>$${d}/${f}</u></span>`;
 });
 $("#tapeRun").innerHTML = tapeHtml + tapeHtml;
+// now and then one quote lights up, the way a terminal tape ticks
+const tapeCells = [...document.querySelectorAll("#tapeRun span:not(.brag)")];
+if (!reduced) setInterval(() => { const c = tapeCells[Math.floor(Math.random() * tapeCells.length)]; c.classList.remove("hot"); void c.offsetWidth; c.classList.add("hot"); }, 1300);
 
 // ---------- the tall desk (phones) draws into one canvas; the wide desk builds DOM layers ----------
 if (desk.tall) {
@@ -409,12 +420,13 @@ function placeCallouts() {
 // cover the viewport; when the wide desk is seen narrow, follow the strike rather than crawl across
 let fit = {}, cam = { x: 0, y: 0, s: 1 }, focusX = O.x, focusTarget = O.x, push = 0, pushTarget = 0, pushAt = [O.x, O.y];
 function layout() {
-  const vw = view.clientWidth, vh = view.clientHeight;
+  const pad = root.classList.contains("embed") ? 98 : 0;          // the band under the header + tape
+  const vw = view.clientWidth, vh = view.clientHeight - pad;
   const s = Math.max(vw / W, vh / H);
   const rows = vh / s, cols = vw / s;
   const narrowWide = !desk.tall && vw / vh < 0.8;
   const top = Math.min(H - rows, Math.max(0, (narrowWide ? 400 : (L.focusY ?? 420)) - rows * (narrowWide ? 0.55 : (L.focusAt ?? 0.52))));
-  fit = { s, rows, cols, top, vw, vh };
+  fit = { s, rows, cols, top: Math.max(0, top - pad / s), vw, vh: vh + pad };
 }
 addEventListener("resize", layout); layout();
 function applyCamera(dt) {

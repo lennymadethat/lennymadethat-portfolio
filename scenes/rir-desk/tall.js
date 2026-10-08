@@ -18,8 +18,8 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
 
   // ---------- assets ----------
   const keys = Object.keys(L.warped);
-  const [plate, man, orb, halo, ...rest] = await Promise.all([
-    load(DIR + L.plate), load(DIR + "man.webp"), load(DIR + "orb.webp"), load(DIR + "halo.webp"),
+  const [plate, man, orb, ...rest] = await Promise.all([
+    load(DIR + L.plate), load(DIR + "man.webp"), load(DIR + "orb.webp"),
     ...L.placed.map((p) => load("img/" + p.src)),
     ...keys.flatMap((k) => L.warped[k].shots.map((n) => load(DIR + n))),
   ]);
@@ -32,6 +32,24 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     at += w.shots.length;
   }
   const O = { x: L.orbCentre.x, y: L.orbCentre.y, r: L.orbCentre.r };
+
+  // Carl alive: a looping clip of his sphere (Gemini Veo, from his own painting), drawn through a soft round mask.
+  // Until it can play (or if it never can), the painted sphere stands in.
+  let carlVid = null, carlReady = false, vc = null, vg = null, mask = null;
+  if (L.carlVideo) {
+    carlVid = Object.assign(document.createElement("video"), { muted: true, loop: true, playsInline: true, autoplay: true, preload: "auto" });
+    carlVid.setAttribute("muted", ""); carlVid.setAttribute("playsinline", "");
+    carlVid.src = DIR + L.carlVideo.src;
+    carlVid.addEventListener("playing", () => (carlReady = true));
+    carlVid.play().catch(() => {});
+    const SZ = 512;
+    vc = document.createElement("canvas"); vc.width = vc.height = SZ; vg = vc.getContext("2d");
+    mask = document.createElement("canvas"); mask.width = mask.height = SZ;
+    const mg = mask.getContext("2d"), gr = mg.createRadialGradient(SZ / 2, SZ / 2, 0, SZ / 2, SZ / 2, SZ / 2);
+    const inner = L.carlVideo.solid || 0.72;
+    gr.addColorStop(0, "rgba(0,0,0,1)"); gr.addColorStop(inner, "rgba(0,0,0,1)"); gr.addColorStop(1, "rgba(0,0,0,0)");
+    mg.fillStyle = gr; mg.fillRect(0, 0, SZ, SZ);
+  }
 
   // little light sprites, made once
   const dot = (size, inner) => {
@@ -196,12 +214,26 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     // Carl: halo, glass, motes
     const breath = 0.5 - 0.5 * Math.cos((t / 4200) * Math.PI * 2);
     const bob = Math.sin(t / 2900) * 6;
-    ctx.globalAlpha = Math.min(1, 0.75 + breath * 0.2 + charge * 0.5);
-    ctx.drawImage(halo, L.halo.x, L.halo.y + bob, L.halo.w, L.halo.h);
+    const gR = O.r * (1.75 + breath * 0.12 + charge * 0.35);
+    const gg = ctx.createRadialGradient(O.x, O.y + bob, O.r * 0.85, O.x, O.y + bob, gR);
+    gg.addColorStop(0, `rgba(120,190,230,${0.34 + breath * 0.1 + charge * 0.35})`);
+    gg.addColorStop(0.45, `rgba(90,160,215,${0.12 + breath * 0.05 + charge * 0.15})`);
+    gg.addColorStop(1, "rgba(80,150,210,0)");
+    ctx.fillStyle = gg; ctx.fillRect(O.x - gR, O.y + bob - gR, gR * 2, gR * 2);
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
     const sc = 1 + breath * 0.01 + charge * 0.025;
     const ow = L.orb.w * sc, oh = L.orb.h * sc;
-    ctx.drawImage(orb, O.x - ow / 2, O.y - oh / 2 + bob, ow, oh);
+    if (carlReady && carlVid.readyState >= 2) {
+      // the clip, masked round so its own sky melts into ours
+      const SZ = vc.width;
+      vg.globalCompositeOperation = "source-over"; vg.clearRect(0, 0, SZ, SZ);
+      vg.drawImage(carlVid, 0, 0, SZ, SZ);
+      vg.globalCompositeOperation = "destination-in"; vg.drawImage(mask, 0, 0);
+      const vr = L.carlVideo.r * sc;
+      ctx.drawImage(vc, O.x - vr, O.y - vr + bob, vr * 2, vr * 2);
+    } else {
+      ctx.drawImage(orb, O.x - ow / 2, O.y - oh / 2 + bob, ow, oh);
+    }
     ctx.globalCompositeOperation = "lighter";
     if (charge > 0.02) { ctx.globalAlpha = charge * 0.45; ctx.drawImage(orb, O.x - ow / 2, O.y - oh / 2 + bob, ow, oh); }
     ctx.save(); ctx.beginPath(); ctx.arc(O.x, O.y + bob, O.r - 8, 0, Math.PI * 2); ctx.clip();
@@ -251,8 +283,8 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     }
     requestAnimationFrame(frame);
   }
-  const start = () => { if (running || reduced) return; running = true; requestAnimationFrame(frame); };
-  const stop = () => { running = false; };
+  const start = () => { if (running || reduced) return; running = true; carlVid?.play().catch(() => {}); requestAnimationFrame(frame); };
+  const stop = () => { running = false; carlVid?.pause(); };
   document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
   addEventListener("message", (e) => {
     if (e.origin !== location.origin) return;
