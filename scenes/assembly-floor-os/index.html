@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Assembly Floor OS</title>
+<meta name="description" content="An ambient Assembly Floor OS dashboard: the operating system for equipment rental fleets, with Foreman the AI, the Ingestor, and a live 3D build floor.">
+<link rel="icon" type="image/png" href="img/logo-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Oswald:wght@500;600;700&display=swap">
+<style>
+/* ==== Tokens: the house design system. Control (dark) is the default; light via body.light ==== */
+:root{
+  --bg:#0B1017;--surface:#141C27;--surface-2:#1A2431;--surface-3:#233040;--border:#233040;--border-strong:#324256;
+  --text:#E9EEF5;--text-2:#9DAEC2;--text-3:#657588;--brand:#3F9EE3;--brand-2:#5FB0EA;--brand-weak:#132B3F;
+  --accent:#25BACB;--accent-weak:#0E2E34;--danger:#F26670;--danger-weak:#341B1F;--warn:#E2A945;--warn-weak:#32280F;
+  --ok:#40C08A;--ok-weak:#123026;
+  --sidebar-bg:#0A0E15;--sidebar-border:#1B2634;--sidebar-text:#9DAEC2;--sidebar-text-2:#657588;
+  --sidebar-active-bg:#152234;--sidebar-active-text:#EAF1F8;--sidebar-group:#5A6A7D;--topbar-bg:#0E1620;--topbar-border:#1B2634;
+  --logo-chip:#FFFFFF;--brand-contrast:#04121E;--af:#0071BC;
+  --glass:rgba(12,18,27,.72);--glass-line:rgba(63,158,227,.22);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 50px rgba(0,0,0,.6);
+  --nav-w:262px;--top-h:64px;--tick-h:30px;--dock:132px;
+}
+body.light{
+  --bg:#F5F7FA;--surface:#FFFFFF;--surface-2:#F0F3F8;--surface-3:#E7EDF4;--border:#E4E9F1;--border-strong:#D2DAE6;
+  --text:#111A2B;--text-2:#4C5A6E;--text-3:#8593A6;--brand:#0B6FB8;--brand-2:#0A5C99;--brand-weak:#E7F1FB;
+  --accent:#0E9BAE;--accent-weak:#E0F4F6;--danger:#DA2B36;--danger-weak:#FBEAEB;--warn:#B0730A;--warn-weak:#FAF0DA;
+  --ok:#1C9A66;--ok-weak:#E2F4EC;
+  --sidebar-bg:#FFFFFF;--sidebar-border:#E4E9F1;--sidebar-text:#4C5A6E;--sidebar-text-2:#8593A6;
+  --sidebar-active-bg:#E7F1FB;--sidebar-active-text:#0B6FB8;--sidebar-group:#95A2B3;--topbar-bg:#FFFFFF;--topbar-border:#E4E9F1;
+  --brand-contrast:#FFFFFF;
+  --glass:rgba(255,255,255,.80);--glass-line:rgba(11,111,184,.18);
+  --shadow:0 1px 2px rgba(17,26,43,.04),0 6px 20px rgba(17,26,43,.08);--shadow-lg:0 16px 46px rgba(17,26,43,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Hanken Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+
+/* ==== Sidebar: the house shell ==== */
+#nav{position:fixed;top:0;left:0;bottom:0;width:var(--nav-w);z-index:300;background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);display:flex;flex-direction:column}
+.af-brand{display:flex;align-items:center;gap:11px;padding:18px 18px 15px;flex:none}
+.af-brand-logo{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden}
+.af-brand-logo img{width:38px;height:38px;display:block}
+.af-brand-name{font:700 15px/1 'Hanken Grotesk',sans-serif;color:var(--text);letter-spacing:.01em}
+.af-brand-sub{font-size:11px;color:var(--sidebar-text-2);margin-top:3px;letter-spacing:.02em}
+.af-navwrap{flex:1;min-height:0;overflow-y:auto;padding:6px 12px 12px;scrollbar-width:thin}
+.af-navgroup-label{font:700 10.5px/1 'Hanken Grotesk',sans-serif;letter-spacing:.11em;text-transform:uppercase;color:var(--sidebar-group);padding:14px 10px 7px}
+#nav .ntab{display:flex;align-items:center;gap:11px;width:100%;padding:9px 10px;margin:1px 0;border:0;border-radius:9px;background:transparent;color:var(--sidebar-text);font:600 13px/1.2 'Hanken Grotesk',sans-serif;cursor:pointer;transition:.15s;white-space:nowrap;text-align:left}
+#nav .ntab:hover{background:var(--sidebar-active-bg);color:var(--sidebar-active-text)}
+#nav .ntab.active{background:var(--sidebar-active-bg);color:var(--sidebar-active-text);font-weight:700}
+#nav .ntab .ti{font-size:16px;width:20px;text-align:center;flex:none}
+#nav .ntab>span:nth-child(2){flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#nav .ntab .af-navcar{flex:none;font-size:11px;opacity:.8;transition:transform .18s}
+#nav .ntab.af-open .af-navcar{transform:rotate(180deg)}
+.badge{min-width:16px;height:16px;border-radius:8px;background:var(--danger);color:#fff;font:700 10px/16px 'IBM Plex Mono',monospace;text-align:center;padding:0 4px;margin-left:auto;flex:none}
+.badge.b{background:var(--brand)}
+.badge.g{background:var(--ok)}
+.af-subnav{display:none}
+.af-subnav.open{display:block}
+#nav .nsub{display:flex;align-items:center;gap:9px;width:calc(100% - 19px);padding:7px 10px 7px 20px;margin:1px 0 1px 19px;border:0;border-left:1.5px solid var(--sidebar-border);border-radius:0 9px 9px 0;background:transparent;color:var(--sidebar-text-2);font:600 12.5px/1.2 'Hanken Grotesk',sans-serif;text-align:left;cursor:pointer;transition:.15s;white-space:nowrap}
+#nav .nsub:hover{background:var(--sidebar-active-bg);color:var(--sidebar-active-text)}
+#nav .nsub .nsi{font-size:13px;width:16px;text-align:center;flex:none}
+#nav .nsub>span:nth-child(2){flex:1}
+#nav .nsub .nsc{flex:none;font:600 10.5px 'IBM Plex Mono',monospace;opacity:.75}
+.af-userbox{padding:12px;border-top:1px solid var(--sidebar-border);flex:none}
+.af-userbox .nr{display:flex;align-items:center;gap:10px;padding:8px;border-radius:11px;cursor:pointer;transition:background .15s}
+.af-userbox .nr:hover{background:var(--sidebar-active-bg)}
+.af-uav{width:34px;height:34px;border-radius:9px;flex:none;background:var(--brand);color:var(--brand-contrast);display:flex;align-items:center;justify-content:center;font:700 12.5px 'Hanken Grotesk',sans-serif}
+
+/* ==== Foreman's bay: the bottom-left of the sidebar is his ==== */
+.fm-bay{position:relative;flex:none;margin:0 12px 2px;height:206px;border-radius:14px;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 100%,rgba(37,186,203,.16),transparent 62%),linear-gradient(180deg,var(--surface),var(--sidebar-bg));
+  border:1px solid var(--sidebar-border)}
+.fm-bay .fm-tag{position:absolute;left:12px;top:10px;z-index:3;font:700 10px/1 'Hanken Grotesk',sans-serif;letter-spacing:.11em;text-transform:uppercase;color:var(--sidebar-group);display:flex;align-items:center;gap:6px}
+.fm-bay .fm-tag i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(64,192,138,.6);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(64,192,138,.55)}70%{box-shadow:0 0 0 7px rgba(64,192,138,0)}100%{box-shadow:0 0 0 0 rgba(64,192,138,0)}}
+.fm-bubble{position:absolute;left:10px;right:10px;top:28px;z-index:3;background:var(--surface-2);border:1px solid var(--border-strong);border-radius:11px 11px 11px 3px;
+  padding:8px 10px;font:500 12px/1.35 'Hanken Grotesk',sans-serif;color:var(--text);box-shadow:var(--shadow);min-height:48px;transition:opacity .35s,transform .35s}
+.fm-bubble.swap{opacity:0;transform:translateY(-4px)}
+.fm-bubble b{color:var(--brand-2);font-weight:700}
+body.light .fm-bubble b{color:var(--brand)}
+.fm{position:absolute;width:118px;height:118px;left:50%;bottom:-6px;margin-left:-40px;z-index:2;pointer-events:none}
+.fm .bob{position:absolute;inset:0;animation:bob 4.2s ease-in-out infinite}
+.fm img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.fm .flame{transform-origin:50% 86%;animation:flame .16s steps(2) infinite}
+.fm .blink{opacity:0}
+.fm .eyes{opacity:0;filter:drop-shadow(0 0 6px #ff5fb0) brightness(1.25)}
+.fm.talk .eyes{animation:talk .9s ease-in-out 2}
+.fm .shadow{position:absolute;left:50%;bottom:6px;width:56px;height:9px;margin-left:-28px;border-radius:50%;background:rgba(37,186,203,.28);filter:blur(4px);animation:shadow 4.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-1.6deg)}50%{transform:translateY(-9px) rotate(1.6deg)}}
+@keyframes shadow{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(.72);opacity:.5}}
+@keyframes flame{0%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.86);opacity:.82}100%{transform:scaleY(1.06);opacity:1}}
+@keyframes talk{0%,100%{opacity:0}40%{opacity:1}}
+
+/* ==== Top bar: Assembly Floor branded ==== */
+#topbar{position:fixed;left:var(--nav-w);right:0;top:0;height:var(--top-h);z-index:200;display:flex;align-items:center;gap:14px;padding:0 18px;background:var(--topbar-bg);border-bottom:1px solid var(--topbar-border)}
+.af-hamb{display:none;width:38px;height:38px;border-radius:9px;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--text-2);flex:none;border:0;background:transparent}
+.af-crumb{display:flex;align-items:center;gap:6px;font:600 13px 'Hanken Grotesk',sans-serif;color:var(--text-3);white-space:nowrap}
+.af-crumb b{color:var(--text);font-weight:700}
+.lockup{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:12px;pointer-events:none;white-space:nowrap}
+.lockup img{width:42px;height:42px;filter:drop-shadow(0 4px 10px rgba(0,113,188,.45))}
+.lockup .wm{font:700 25px/1 Oswald,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--text);
+  background:linear-gradient(100deg,var(--text) 0%,var(--text) 40%,#9fd6ff 50%,var(--text) 60%,var(--text) 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:sheen 7s ease-in-out infinite}
+.lockup .wm em{font-style:normal;-webkit-text-fill-color:var(--brand)}
+.lockup .os{font:600 10px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;color:var(--brand-contrast);background:var(--brand);border-radius:4px;padding:4px 6px;align-self:center}
+@keyframes sheen{0%,100%{background-position:100% 0}50%{background-position:0 0}}
+.spacer{flex:1}
+.af-topsearch{display:flex;align-items:center;gap:8px;height:38px;width:min(320px,24vw);padding:0 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border)}
+.af-topsearch input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font:500 13px 'Hanken Grotesk',sans-serif}
+.af-topsearch input::placeholder{color:var(--text-3)}
+.af-seg{display:flex;border:1px solid var(--border);border-radius:9px;overflow:hidden;flex:none}
+.af-seg button{width:34px;height:34px;border:0;background:transparent;color:var(--text-3);cursor:pointer;font-size:14px}
+.af-seg button.on{background:var(--brand-weak);color:var(--brand)}
+.af-bell{position:relative;width:38px;height:38px;border:0;background:transparent;color:var(--text-2);cursor:pointer;flex:none;border-radius:9px}
+.af-bell .dot{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--danger);border:2px solid var(--topbar-bg)}
+
+/* ==== The ticker: live floor events crossing the top ==== */
+#ticker{position:fixed;left:var(--nav-w);right:0;top:var(--top-h);height:var(--tick-h);z-index:190;display:flex;align-items:center;overflow:hidden;
+  background:linear-gradient(90deg,var(--brand-weak),var(--surface) 30%,var(--surface));border-bottom:1px solid var(--topbar-border)}
+#ticker .live{flex:none;display:flex;align-items:center;gap:7px;height:100%;padding:0 14px;font:700 10.5px 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-contrast);background:var(--brand);z-index:2}
+#ticker .live i{width:7px;height:7px;border-radius:50%;background:#fff;animation:blinkdot 1.4s infinite}
+@keyframes blinkdot{50%{opacity:.25}}
+#ticker .track{display:flex;white-space:nowrap;animation:crawl 70s linear infinite;will-change:transform}
+#ticker:hover .track{animation-play-state:paused}
+#ticker .ev{display:inline-flex;align-items:center;gap:8px;padding:0 26px;font:500 12.5px 'Hanken Grotesk',sans-serif;color:var(--text-2)}
+#ticker .ev b{color:var(--text);font-weight:700}
+#ticker .ev .t{font:500 11px 'IBM Plex Mono',monospace;color:var(--text-3)}
+#ticker .ev .k{width:7px;height:7px;border-radius:2px;flex:none}
+@keyframes crawl{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ==== Main: the 3D floor fills it ==== */
+#main{position:fixed;left:var(--nav-w);right:0;top:calc(var(--top-h) + var(--tick-h));bottom:0;overflow:hidden;background:var(--bg)}
+#world{position:absolute;left:0;right:0;top:0;bottom:var(--dock);width:100%;height:calc(100% - var(--dock));border:0;display:block;opacity:0;transition:opacity 1s ease}
+.ready #world{opacity:1}
+#veil{position:absolute;left:0;right:0;top:0;bottom:var(--dock);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:5;background:var(--bg);transition:opacity .8s ease}
+.ready #veil{opacity:0;pointer-events:none}
+#veil img{width:86px;height:86px;animation:breathe 2.2s ease-in-out infinite}
+#veil span{font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3)}
+@keyframes breathe{50%{transform:scale(1.06);filter:drop-shadow(0 0 18px rgba(63,158,227,.5))}}
+
+.glass{background:var(--glass);border:1px solid var(--glass-line);border-radius:14px;box-shadow:var(--shadow);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.eyebrow{font:700 10px/1 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3)}
+
+/* activity card, top-left of the floor */
+#act{position:absolute;left:16px;top:16px;z-index:4;width:min(340px,calc(100% - 32px));padding:13px 15px 14px}
+#act .eyebrow{display:flex;align-items:center;gap:7px}
+#act .eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+#act h3{font:700 18px/1.15 Oswald,sans-serif;letter-spacing:.06em;text-transform:uppercase;margin:7px 0 3px;color:var(--text)}
+#act p{font:500 13px/1.4 'Hanken Grotesk',sans-serif;color:var(--text-2);min-height:36px}
+#act p b{color:var(--text)}
+#act .pips{display:flex;gap:4px;margin-top:10px}
+#act .pips i{flex:1;height:4px;border-radius:2px;background:var(--surface-3);transition:background .3s}
+#act .pips i.on{background:var(--k,var(--brand))}
+
+/* KPI chips, top-right */
+#kpis{position:absolute;right:16px;top:16px;z-index:4;display:grid;grid-template-columns:repeat(2,minmax(0,150px));gap:8px}
+.kpi{padding:10px 12px}
+.kpi .v{font:600 24px/1 'IBM Plex Mono',monospace;color:var(--text);margin-top:6px;display:flex;align-items:baseline;gap:5px}
+.kpi .v small{font:500 11px 'IBM Plex Mono',monospace;color:var(--text-3)}
+.kpi .s{font:500 11.5px 'Hanken Grotesk',sans-serif;color:var(--text-2);margin-top:4px;white-space:nowrap}
+.kpi.ok .v{color:var(--ok)} .kpi.warn .v{color:var(--warn)}
+.kpi .spark{height:3px;border-radius:2px;margin-top:8px;background:var(--surface-3);overflow:hidden}
+.kpi .spark i{display:block;height:100%;background:currentColor;transition:width 1.2s ease}
+.kpi.ok .spark{color:var(--ok)} .kpi.warn .spark{color:var(--warn)} .kpi .spark{color:var(--brand)}
+
+/* the dock under the floor: kit buttons + explainers crossing */
+#dock{position:absolute;left:0;right:0;bottom:0;height:var(--dock);z-index:4;display:flex;align-items:center;gap:12px;padding:0 0 0 14px;background:var(--topbar-bg);border-top:1px solid var(--topbar-border)}
+#kits{flex:none;display:flex;flex-direction:column;gap:4px}
+.kit{display:flex;align-items:center;gap:9px;width:190px;height:36px;line-height:1.1;padding:0 10px 0 8px;cursor:pointer;border-radius:9px;transition:transform .15s,border-color .15s;text-align:left;background:var(--surface);border:1px solid var(--border)}
+.kit:hover{transform:translateX(2px);border-color:var(--k)}
+.kit.on{border-color:var(--k);box-shadow:0 0 0 1px var(--k) inset}
+.kit i{width:6px;height:22px;border-radius:3px;background:var(--k);flex:none}
+.kit b{display:block;font:700 12px/1.1 'Hanken Grotesk',sans-serif;color:var(--text)}
+.kit em{font-style:normal}
+.kit span{font:500 10.5px 'IBM Plex Mono',monospace;color:var(--text-3)}
+#explain{flex:1;min-width:0;align-self:stretch;display:flex;align-items:center;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+#explain .track{display:flex;gap:12px;width:max-content;animation:crawl 95s linear infinite;will-change:transform}
+#explain:hover .track{animation-play-state:paused}
+.ex{width:340px;flex:none;padding:11px 14px;display:flex;gap:12px;align-items:flex-start;box-shadow:none;background:var(--surface);border-color:var(--border)}
+.ex .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--af);color:#fff;display:flex;align-items:center;justify-content:center;font:700 13px 'Hanken Grotesk',sans-serif}
+.ex.o .n{background:#e8792b}
+.ex h4{font:700 13px/1.15 'Hanken Grotesk',sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--text)}
+.ex p{font:500 12.5px/1.38 'Hanken Grotesk',sans-serif;color:var(--text-2);margin-top:4px}
+
+#toast{position:fixed;left:50%;bottom:24px;z-index:500;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:10px 14px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-strong);box-shadow:var(--shadow-lg);font:600 13px 'Hanken Grotesk',sans-serif;transition:.25s;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#scrim{position:fixed;inset:0;z-index:290;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .2s}
+
+/* ==== Narrower desktops ==== */
+@media (max-width:1380px){ .af-topsearch{display:none} }
+@media (max-width:1240px){ .lockup{position:static;transform:none;margin-left:6px} .af-crumb{display:none} #kpis{grid-template-columns:repeat(2,minmax(0,132px))} }
+
+/* ==== Phone + tablet: sidebar becomes a drawer, Foreman floats over the floor ==== */
+@media (max-width:1099px){
+  :root{--nav-w:0px;--top-h:58px;--tick-h:28px}
+  #nav{width:280px;transform:translateX(-100%);transition:transform .25s ease;box-shadow:var(--shadow-lg)}
+  body.drawer #nav{transform:none}
+  body.drawer #scrim{opacity:1;pointer-events:auto}
+  .af-hamb{display:flex}
+  #topbar{padding:0 10px;gap:8px}
+  .lockup{gap:9px}
+  .lockup img{width:34px;height:34px}
+  .lockup .wm{font-size:19px;letter-spacing:.11em}
+  .af-bell{display:none}
+  #nav .fm-bay{display:none}
+  #act{left:10px;top:10px;width:calc(100% - 20px);padding:11px 13px 12px}
+  #act h3{font-size:15px}
+  #act p{font-size:12.5px;min-height:34px}
+  :root{--dock:296px}
+  #kpis{z-index:6;left:10px;right:10px;top:auto;bottom:142px;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .kpi{padding:8px 8px;border-radius:11px;box-shadow:none;background:var(--surface);border-color:var(--border)}
+  .kpi .v{font-size:17px}
+  .kpi .v small,.kpi .spark{display:none}
+  .kpi .s{font-size:10.5px;white-space:normal;line-height:1.2}
+  .kpi .eyebrow{font-size:9px;letter-spacing:.08em}
+  #dock{flex-direction:column;align-items:stretch;gap:0;padding:8px 0 8px}
+  #kits{flex-direction:row;gap:6px;padding:0 10px}
+  .kit{flex:1;width:auto;min-width:0;padding:5px 7px 5px 6px;gap:7px}
+  .kit b{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kit span{font-size:9.5px;white-space:nowrap}
+  .kit .r{display:none}
+  .kit div{min-width:0}
+  #explain{position:absolute;left:0;right:0;bottom:8px;height:124px}
+  .ex{width:272px;padding:10px 12px}
+  .ex p{font-size:12px}
+  .fm-float{display:block!important;bottom:calc(var(--dock) - 2px)}
+}
+@media (max-width:420px){ .lockup .os{display:none} .af-seg button{width:30px} }
+/* Foreman on phones: bottom-left of the floor, above the explainers */
+.fm-float{display:none;position:fixed;left:6px;bottom:calc(var(--dock) - 2px);width:116px;height:150px;z-index:240;pointer-events:none}
+.fm-float .fm{left:0;margin-left:0;bottom:0;width:104px;height:104px}
+.fm-float .fm-bubble{display:none}
+.fm-float .say{position:absolute;left:84px;bottom:66px;width:min(220px,calc(100vw - 110px));padding:8px 10px;border-radius:11px 11px 11px 3px;background:var(--surface-2);border:1px solid var(--border-strong);box-shadow:var(--shadow);font:500 12px/1.35 'Hanken Grotesk',sans-serif;color:var(--text);transition:opacity .35s,transform .35s}
+.fm-float .say.swap{opacity:0;transform:translateY(-4px)}
+.fm-float .say b{color:var(--brand-2)}
+body.light .fm-float .say b{color:var(--brand)}
+@media (max-height:700px) and (max-width:1099px){ :root{--dock:190px} #kpis{display:none} }
+@media (prefers-reduced-motion:reduce){
+  .fm .bob,.fm .shadow,.fm .flame,#ticker .track,#explain .track,.lockup .wm{animation:none!important}
+  #ticker .track,#explain .track{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================================================== SIDEBAR (house shell) -->
+<nav id="nav" aria-label="Assembly Floor OS">
+  <div class="af-brand">
+    <div class="af-brand-logo"><img src="img/logo-128.webp" alt="Assembly Floor"></div>
+    <div style="min-width:0">
+      <div class="af-brand-name">Assembly Floor</div>
+      <div class="af-brand-sub">Rental Fleet OS</div>
+    </div>
+  </div>
+  <div class="af-navwrap">
+    <div class="af-navgroup-label">Operations</div>
+    <button class="ntab active" data-t="Dashboard"><span class="ti">&#128200;</span><span>Dashboard</span></button>
+    <button class="ntab" data-t="Fleet Availability"><span class="ti">&#128225;</span><span>Fleet Availability</span></button>
+    <button class="ntab" data-t="Rentals &amp; Reservations"><span class="ti">&#128197;</span><span>Rentals &amp; Reservations</span><span class="badge b">3</span></button>
+    <button class="ntab" data-t="Field Service"><span class="ti">&#128736;</span><span>Field Service</span><span class="badge">14</span></button>
+    <button class="ntab af-has-sub af-open" data-sub="equipSub"><span class="ti">&#128506;</span><span>Equipment Tracking</span><span class="af-navcar">&#9662;</span></button>
+    <div class="af-subnav open" id="equipSub">
+      <button class="nsub" data-t="Live map"><span class="nsi">&#128205;</span><span>Live map</span><span class="nsc">412</span></button>
+      <button class="nsub" data-t="Gone quiet"><span class="nsi">&#128263;</span><span>Gone quiet</span><span class="nsc">3</span></button>
+      <button class="nsub" data-t="Calibration due"><span class="nsi">&#9881;</span><span>Calibration due</span><span class="nsc">9</span></button>
+      <button class="nsub" data-t="Battery health"><span class="nsi">&#128267;</span><span>Battery health</span><span class="nsc">5</span></button>
+    </div>
+    <button class="ntab af-has-sub" data-sub="shipSub"><span class="ti">&#127981;</span><span>Ship Station</span><span class="af-navcar">&#9662;</span></button>
+    <div class="af-subnav" id="shipSub">
+      <button class="nsub" data-t="Pick &amp; pack"><span class="nsi">&#128230;</span><span>Pick &amp; pack</span></button>
+      <button class="nsub" data-t="Returns"><span class="nsi">&#8617;</span><span>Returns</span><span class="nsc">6</span></button>
+    </div>
+    <button class="ntab af-has-sub" data-sub="invSub"><span class="ti">&#129518;</span><span>Inventory</span><span class="af-navcar">&#9662;</span></button>
+    <div class="af-subnav" id="invSub">
+      <button class="nsub" data-t="Shelf count"><span class="nsi">&#128202;</span><span>Shelf count</span></button>
+      <button class="nsub" data-t="Red tag / green tag"><span class="nsi">&#128308;</span><span>Red tag / green tag</span></button>
+    </div>
+    <button class="ntab" data-t="Packing Checklists"><span class="ti">&#128203;</span><span>Packing Checklists</span></button>
+    <button class="ntab" data-t="Internal Transfers"><span class="ti">&#128257;</span><span>Internal Transfers</span></button>
+    <button class="ntab" data-t="Tickets"><span class="ti">&#127915;</span><span>Tickets</span><span class="badge">5</span></button>
+    <button class="ntab" data-t="Shipment Tracking"><span class="ti">&#128666;</span><span>Shipment Tracking</span></button>
+    <button class="ntab" data-t="Decommission"><span class="ti">&#128202;</span><span>Decommission</span></button>
+    <button class="ntab" data-t="Settings"><span class="ti">&#9881;</span><span>Settings</span></button>
+    <button class="ntab" id="themeTab"><span class="ti">&#9728;</span><span>Light / dark</span><span id="themeTabState" style="margin-left:auto;font:600 10px 'Hanken Grotesk',sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)"></span></button>
+    <div class="af-navgroup-label">Intelligence</div>
+    <button class="ntab" data-t="Foreman, the assistant"><span class="ti">&#129302;</span><span>Foreman Assistant</span></button>
+    <button class="ntab" data-t="The Ingestor"><span class="ti">&#128229;</span><span>The Ingestor</span><span class="badge g">14</span></button>
+  </div>
+
+  <!-- Foreman lives here -->
+  <div class="fm-bay" aria-live="polite">
+    <div class="fm-tag"><i></i>Foreman &middot; on shift</div>
+    <div class="fm-bubble" id="say1">Morning. I'm watching <b>412 devices</b> across 38 sites.</div>
+    <div class="fm" data-fm><div class="shadow"></div><div class="bob">
+      <img class="flame" src="img/foreman-flame.webp" alt="" hidden>
+      <img class="body" src="img/foreman.webp" alt="Foreman, the Assembly Floor assistant">
+      <img class="eyes" src="img/foreman-eyes.webp" alt="" hidden>
+      <img class="blink" src="img/foreman-blink.webp" alt="" hidden>
+    </div></div>
+  </div>
+
+  <div class="af-userbox">
+    <div class="nr">
+      <div class="af-uav">DO</div>
+      <div style="min-width:0;flex:1">
+        <span style="font:600 13px/1.2 'Hanken Grotesk',sans-serif;color:var(--text);display:block">Demo Operator</span>
+        <span style="display:block;font-size:11px;color:var(--sidebar-text-2);margin-top:1px">Main Depot &middot; Admin</span>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sidebar-text-2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+  </div>
+</nav>
+<div id="scrim"></div>
+
+<!-- ===================================================== HEADER -->
+<header id="topbar">
+  <button class="af-hamb" id="hamb" aria-label="Menu">&#9776;</button>
+  <div class="af-crumb"><span>Operations</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.8" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg><b>Floor Live</b></div>
+  <div class="lockup">
+    <img src="img/logo-128.webp" alt="">
+    <span class="wm">Assembly <em>Floor</em></span>
+    <span class="os">OS</span>
+  </div>
+  <div class="spacer"></div>
+  <label class="af-topsearch"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="1.8" stroke-linecap="round"><path d="M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z M21 21l-4.3-4.3"/></svg><input id="ask" placeholder="Ask Foreman anything: devices, rentals, sites&hellip;"></label>
+  <div class="af-seg" title="Theme"><button id="segLight" type="button" title="Light mode">&#9728;</button><button id="segDark" type="button" title="Dark mode">&#9789;</button></div>
+  <button class="af-bell" type="button" title="Notifications"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6z M10 20a2 2 0 0 0 4 0"/></svg><span class="dot"></span></button>
+</header>
+
+<div id="ticker" aria-label="Live floor events"><div class="live"><i></i>Live</div><div class="track" id="tickTrack"></div></div>
+
+<!-- ===================================================== THE FLOOR -->
+<main id="main">
+  <iframe id="world" title="The Assembly Floor: what the shelf can build today" src="world.html?ambient&amp;theme=dark" loading="eager"></iframe>
+  <div id="veil"><img src="img/logo-128.webp" alt=""><span>Opening the floor</span></div>
+
+  <section id="act" class="glass" aria-live="polite">
+    <div class="eyebrow"><i></i>Build desk &middot; live</div>
+    <h3 id="actT">The floor is warming up</h3>
+    <p id="actP">Parts on the shelf become rental kits. Watch one get packed.</p>
+    <div class="pips" id="pips"></div>
+  </section>
+
+  <section id="kpis">
+    <div class="kpi glass"><div class="eyebrow">Fleet</div><div class="v">412<small>devices</small></div><div class="s">38 sites &middot; 3 depots</div><div class="spark"><i style="width:100%"></i></div></div>
+    <div class="kpi glass"><div class="eyebrow">On rent</div><div class="v" id="kRent">286<small>69%</small></div><div class="s">11 out this week</div><div class="spark"><i id="kRentBar" style="width:69%"></i></div></div>
+    <div class="kpi glass ok"><div class="eyebrow">Reporting</div><div class="v" id="kRep">97.6<small>%</small></div><div class="s">3 gone quiet</div><div class="spark"><i id="kRepBar" style="width:97.6%"></i></div></div>
+    <div class="kpi glass warn"><div class="eyebrow">Service due</div><div class="v">14<small>devices</small></div><div class="s">9 calibrations &middot; 5 batteries</div><div class="spark"><i style="width:34%"></i></div></div>
+  </section>
+
+  <div id="dock">
+  <div id="kits">
+    <button class="kit" data-k="ff" style="--k:#0071BC"><i></i><div><b>Flow Monitor</b><span>24 buildable</span></div></button>
+    <button class="kit" data-k="cric" style="--k:#00c49a"><i></i><div><b>Level Monitor</b><span>29 buildable<em class="r"> &middot; 3 ready</em></span></div></button>
+    <button class="kit" data-k="ffpr" style="--k:#9b59b6"><i></i><div><b>Export Flow</b><span>0 buildable<em class="r"> &middot; 6 ready</em></span></div></button>
+  </div>
+
+  <div id="explain" aria-label="What Assembly Floor OS does"><div class="track" id="exTrack"></div></div>
+  </div>
+</main>
+
+<!-- Foreman, phone edition -->
+<div class="fm-float" aria-hidden="true">
+  <div class="say" id="say2">Morning. I'm watching <b>412 devices</b>.</div>
+  <div class="fm" data-fm><div class="shadow"></div><div class="bob">
+    <img class="flame" src="img/foreman-flame.webp" alt="" hidden>
+    <img class="body" src="img/foreman.webp" alt="">
+    <img class="eyes" src="img/foreman-eyes.webp" alt="" hidden>
+    <img class="blink" src="img/foreman-blink.webp" alt="" hidden>
+  </div></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const world = $('#world');
+  const send = m => { try{ world.contentWindow.postMessage(Object.assign({src:'af-host'}, m), '*'); }catch(e){} };
+
+  // ---------------------------------------------------------------- theme (dark default)
+  let theme = 'dark';
+  try{ const t = localStorage.getItem('af-os-theme'); if(t === 'light' || t === 'dark') theme = t; }catch(e){}
+  function setTheme(t){
+    theme = t; document.body.classList.toggle('light', t === 'light');
+    $('#segLight').classList.toggle('on', t === 'light'); $('#segDark').classList.toggle('on', t === 'dark');
+    $('#themeTabState').textContent = t; send({type:'theme', theme:t});
+    try{ localStorage.setItem('af-os-theme', t); }catch(e){}
+  }
+  world.src = 'world.html?ambient&theme=' + theme;
+  setTheme(theme);
+  $('#segLight').onclick = () => setTheme('light');
+  $('#segDark').onclick = () => setTheme('dark');
+  $('#themeTab').onclick = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+
+  // ---------------------------------------------------------------- sidebar (drawer on phones, subnavs, demo taps)
+  const toast = (msg) => { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2200); };
+  $('#hamb').onclick = () => document.body.classList.toggle('drawer');
+  $('#scrim').onclick = () => document.body.classList.remove('drawer');
+  $$('#nav .af-has-sub').forEach(b => b.addEventListener('click', () => {
+    const s = document.getElementById(b.dataset.sub); const open = !s.classList.contains('open');
+    s.classList.toggle('open', open); b.classList.toggle('af-open', open);
+  }));
+  $$('#nav [data-t]').forEach(b => b.addEventListener('click', () => {
+    $$('#nav .ntab').forEach(x => x.classList.remove('active'));
+    if(b.classList.contains('ntab')) b.classList.add('active');
+    toast(b.dataset.t.replace('&amp;','&') + ' opens in the full OS. This screen is the floor at a glance.');
+    document.body.classList.remove('drawer');
+  }));
+  $('#ask').addEventListener('keydown', e => { if(e.key === 'Enter' && e.target.value.trim()){ say('Good question. In the full OS I answer that from your own records: <b>' + esc(e.target.value.trim()) + '</b>'); e.target.value = ''; } });
+  function esc(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  // ---------------------------------------------------------------- ticker (demo events)
+  const EV = [
+    ['#40C08A','09:12','<b>FM-0142</b> reporting again after a battery swap at Harbor Pump Station'],
+    ['#F26670','09:31','<b>LM-0388</b> went quiet at Riverside Basin. Foreman opened ticket <b>T-2291</b>'],
+    ['#3F9EE3','09:48','Rental <b>R-2214</b> returns Friday: 6 flow monitors booked for the calibration bench'],
+    ['#25BACB','10:05','The Ingestor filed <b>14 field photos</b> and 3 calibration certificates to the right devices'],
+    ['#E2A945','10:20','Flow sensors are today’s limit: <b>38</b> sensors for 60 loggers'],
+    ['#40C08A','10:34','<b>Kit FM-24</b> packed and boxed. Ready to rent'],
+    ['#E2A945','10:52','<b>5 batteries</b> trending low. Swaps scheduled with the Tuesday route'],
+    ['#3F9EE3','11:10','New rental <b>R-2231</b>: 4 level monitors, North Canal survey, ships Monday'],
+    ['#25BACB','11:26','Foreman answered: "How many level monitors can I promise for November?" <b>29 + 3 boxed</b>'],
+    ['#F26670','11:40','<b>RG-0061</b> rain gauge on hold: 0 tripods on the shelf'],
+  ];
+  const tickHtml = EV.map(e => `<span class="ev"><span class="k" style="background:${e[0]}"></span><span class="t">${e[1]}</span><span>${e[2]}</span></span>`).join('');
+  $('#tickTrack').innerHTML = tickHtml + tickHtml;
+
+  // ---------------------------------------------------------------- explainers (what we pitched)
+  const EX = [
+    ['1','An AI for the business','Foreman reads every table you approve and answers in plain English. "Which devices went quiet this week?"'],
+    ['2','The Ingestor','Drop a PDF, a photo or a spreadsheet. It is read, named and filed to the right device, job or customer.'],
+    ['3','Built for rental fleets','Every monitor on rent, on the shelf, in the van or on the bench, with who has it and when it comes back.'],
+    ['4','Always-on maintenance','Devices that stop reporting, fading batteries, calibrations coming due: flagged before the customer calls.'],
+    ['5','What the shelf can build','The floor above turns live part counts into kits, and shows which part is holding the fleet back.'],
+    ['6','One record of the operation','Field forms, jobs, shipping, purchasing and telemetry in one place. Any AI can sit on top.'],
+  ];
+  const exHtml = EX.map((e,i) => `<div class="ex glass${i%2?' o':''}"><div class="n">${e[0]}</div><div><h4>${e[1]}</h4><p>${e[2]}</p></div></div>`).join('');
+  $('#exTrack').innerHTML = exHtml + exHtml;
+
+  // ---------------------------------------------------------------- Foreman: layered plates, code does the motion
+  const fms = $$('[data-fm]');
+  fms.forEach(fm => fm.querySelectorAll('img[hidden]').forEach(img => {
+    img.addEventListener('load', () => { img.hidden = false; if(img.classList.contains('flame')) fm.classList.add('has-flame'); });
+    img.addEventListener('error', () => img.remove());
+    if(img.complete && img.naturalWidth) img.hidden = false;
+  }));
+  function blink(){
+    fms.forEach(fm => { const b = fm.querySelector('.blink'); if(!b || b.hidden) return; b.style.opacity = 1; setTimeout(() => b.style.opacity = 0, 130); });
+    setTimeout(blink, 2600 + Math.random()*3800);
+  }
+  setTimeout(blink, 1800);
+  const sayEls = [$('#say1'), $('#say2')];
+  let lastSay = 0;
+  function say(html, force){
+    const now = Date.now(); if(!force && now - lastSay < 3200) return; lastSay = now;
+    sayEls.forEach(el => { el.classList.add('swap'); setTimeout(() => { el.innerHTML = html; el.classList.remove('swap'); }, 320); });
+    fms.forEach(fm => { fm.classList.remove('talk'); void fm.offsetWidth; fm.classList.add('talk'); });
+  }
+  const IDLE = [
+    'Three loggers went quiet overnight. <b>I opened tickets</b> for all three.',
+    'R-2214 comes back Friday. I booked <b>bench time</b> for the calibrations.',
+    'Drop a file on me and <b>the Ingestor</b> files it where it belongs.',
+    'Ask me: <b>how many level monitors</b> can I promise for November?',
+    '<b>5 batteries</b> are fading. The swaps ride Tuesday’s route.',
+    'Flow sensors are the bottleneck today. <b>22 loggers</b> are waiting on them.',
+  ];
+  let idleI = 0, building = false;
+  setInterval(() => { if(!building) say(IDLE[idleI++ % IDLE.length]); }, 8500);
+
+  // ---------------------------------------------------------------- KPIs breathe a little
+  let rep = 97.6;
+  setInterval(() => {
+    rep = Math.max(97.1, Math.min(98.4, rep + (Math.random() - .5) * .3));
+    $('#kRep').firstChild.nodeValue = rep.toFixed(1); $('#kRepBar').style.width = rep + '%';
+  }, 4200);
+
+  // ---------------------------------------------------------------- follow the 3D floor
+  const KC = {ff:'#0071BC', cric:'#00c49a', ffpr:'#9b59b6'};
+  let curK = null;
+  function setPips(n, on, k){
+    const p = $('#pips'); if(p.children.length !== n) p.innerHTML = '<i></i>'.repeat(n);
+    [...p.children].forEach((x,i) => x.classList.toggle('on', i < on)); p.style.setProperty('--k', KC[k] || 'var(--brand)');
+  }
+  addEventListener('message', e => {
+    const d = e.data || {}; if(d.src !== 'af-world') return;
+    if(d.type === 'ready'){ document.body.classList.add('ready'); send({type:'theme', theme}); }
+    if(d.type === 'kit-start'){
+      building = true; curK = d.k;
+      $$('.kit').forEach(b => b.classList.toggle('on', b.dataset.k === d.k));
+      $('#actT').textContent = 'Packing a ' + d.name + ' kit';
+      $('#actP').innerHTML = d.limit ? `<b>${d.limit.label}</b> sets the pace: ${d.limit.stock} on the shelf.` : `Built from the flex pool. ${d.ready} already boxed.`;
+      setPips(d.parts, 0, d.k);
+      say(d.limit ? `Packing a <b>${d.name}</b>. ${d.limit.label} is the limit: ${d.limit.stock} on the shelf.` : `Packing an <b>${d.name}</b> from the flex pool. A SIM swap, no epoxy.`, true);
+    }
+    if(d.type === 'part'){
+      setPips(d.n, d.i + 1, d.k);
+      $('#actP').innerHTML = `Part ${d.i + 1} of ${d.n}: <b>${d.label}</b>, into the box.`;
+    }
+    if(d.type === 'kit-done'){
+      building = false;
+      $('#actT').textContent = d.name + ': packed';
+      $('#actP').innerHTML = `<b>${d.buildable}</b> more buildable &middot; <b>${d.ready}</b> boxed and ready to rent.`;
+      say(`Done. <b>${d.name}</b> boxed. ${d.ready} ready to rent, ${d.buildable} more on the shelf.`, true);
+    }
+  });
+  $$('.kit').forEach(b => b.addEventListener('click', () => send({type:'kit', k:b.dataset.k})));
+  // if the frame never reports (old browser, blocked module), lift the veil anyway
+  setTimeout(() => document.body.classList.add('ready'), 12000);
+})();
+</script>
+</body>
+</html>
