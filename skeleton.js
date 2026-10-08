@@ -96,7 +96,8 @@ const sectionObs = new IntersectionObserver((entries) => {
     const B = Math.max(0, rirNeed - vh), f0 = frameOf(0);
     if (f0) f0.style.height = B ? `${rirNeed}px` : "";
     // PlayLetter's day gets 3.6 screens of scroll (1.8 felt far too fast on his phone, 10-08)
-    const A = Math.round(1.25 * vh), C = Math.round(0.9 * vh), D = Math.round(3.6 * vh);
+    // the freeze takes six strikes now (Lenny 10-08: "at least four or five bolts, keep scrolling down")
+    const A = Math.round(2.4 * vh), C = Math.round(0.9 * vh), D = Math.round(3.6 * vh);
     phases = { A, B, C, D, total: A + B + C + D };
     section.style.height = `${vh + phases.total}px`;
   }

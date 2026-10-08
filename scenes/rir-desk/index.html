@@ -114,16 +114,25 @@
   .stat b { display: block; font: 700 28px/1 Barlow, sans-serif; color: #fff; font-variant-numeric: tabular-nums; }
   .stat span { display: block; margin-top: 6px; font: 500 10.5px/1.25 "DM Mono", monospace; letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
 
-  /* a callout rises off the screen Carl just struck */
-  .callout { position: fixed; z-index: 8; width: 270px; padding: 11px 14px 12px; border-radius: 12px; pointer-events: none;
-    background: rgba(10,18,30,.74); border: 1px solid rgba(138,199,222,.38); box-shadow: 0 0 0 1px rgba(138,199,222,.06), 0 10px 40px -10px rgba(110,180,214,.45);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); opacity: 0; transform: translate(-50%, -100%) translateY(10px);
-    transition: opacity .35s ease, transform .5s cubic-bezier(.2,.8,.2,1); }
-  .callout.on { opacity: 1; transform: translate(-50%, -100%) translateY(0); }
-  .callout .k { display: flex; align-items: center; gap: 7px; font: 500 10.5px/1 "DM Mono", monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--blue); margin-bottom: 7px; }
-  .callout .k::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 8px var(--blue); }
-  .callout .t { font: 600 14.5px/1.3 Inter, sans-serif; color: #fff; }
-  .callout .s { margin-top: 5px; font: 500 11px/1 "DM Mono", monospace; color: var(--green); }
+  /* Carl talks: a chat window in the upper corner of the screen he just struck (Lenny 10-08) */
+  .callout { position: fixed; z-index: 8; width: 260px; padding: 9px 12px 10px; border-radius: 16px; pointer-events: none;
+    background: rgba(9,16,28,.86); border: 1px solid rgba(138,199,222,.38);
+    box-shadow: 0 10px 34px -10px rgba(0,0,0,.7), 0 0 22px -6px rgba(110,180,214,.45);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    opacity: 0; transform: translateY(6px) scale(.94); transition: opacity .3s ease, transform .45s cubic-bezier(.2,.9,.25,1.15); }
+  .callout.left { border-top-left-radius: 4px; transform-origin: 0 0; }
+  .callout.right { border-top-right-radius: 4px; transform-origin: 100% 0; }
+  .callout.on { opacity: 1; transform: none; }
+  .callout .k { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font: 500 9.5px/1 "DM Mono", monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--mute); white-space: nowrap; overflow: hidden; }
+  .callout .av { width: 16px; height: 16px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 45% 40%, #EAF8FF, #8AC7DE 32%, #24506a 72%, #0b1220); box-shadow: 0 0 8px rgba(138,199,222,.7); }
+  .callout .who { color: #fff; }
+  .callout .tool { color: var(--blue); overflow: hidden; text-overflow: ellipsis; }
+  .callout .t { font: 500 13px/1.36 Inter, sans-serif; color: #eaf1f7; min-height: 2.72em;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .callout.typing .t { color: transparent; position: relative; }
+  .callout.typing .t::after { content: "• • •"; position: absolute; left: 0; top: 0; color: var(--blue); letter-spacing: .1em; animation: typing 1s ease-in-out infinite; }
+  @keyframes typing { 50% { opacity: .35; } }
 
   /* inside the portfolio swipe the site header sits over the top 68px */
   /* inside the swipe the scene runs to the very top: the band under the (late-arriving) site header is sky, not a gap */
@@ -145,8 +154,6 @@
   .narrow .stat { flex: 1; min-width: 0; padding: 9px 10px 8px; }
   .narrow .stat b { font-size: 21px; }
   .narrow .stat span { font-size: 9px; }
-  .narrow .callout { width: 220px; padding: 9px 11px 10px; }
-  .narrow .callout .t { font-size: 13px; }
   @media (max-width: 900px) { #stats .stat:nth-child(3) { display: none; } }
 
   /* the tall desk: words centred in the sky above Carl, the way the PlayLetter room does it */
@@ -157,14 +164,10 @@
   .tall #copy p { margin-bottom: 12px; }
   .tall .ctas { justify-content: center; }
   .tall #stats { display: none; }
-  .tall .callout { transform: translate(-50%, -100%) translateY(8px); padding: 8px 11px 9px; border-radius: 10px; }
-  .tall .callout.on { transform: translate(-50%, -100%); }
-  .tall .callout .k { margin-bottom: 4px; font-size: 9.5px; }
-  .tall .callout .t { font-size: 12.5px; }
-  .tall .callout .s { display: none; }
   .narrow #tape, .narrow .btn--ghost, .narrow .callout, .narrow .stat { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .narrow .callout { width: 236px; background: rgba(9,16,28,.92); padding: 8px 11px 9px; }
+  .narrow .callout .t { font-size: 12.5px; }
   .narrow .btn--ghost { background: rgba(18,27,42,.88); }
-  .narrow .callout { background: rgba(10,18,30,.9); }
   .narrow #tape { display: none; }
   .narrow.embed #copy { top: 76px; will-change: transform; }
   @media (max-width: 380px) { .tall .btn { height: 38px; padding: 0 12px; font-size: 13px; } .tall .ctas { gap: 8px; flex-wrap: nowrap; } }
@@ -232,20 +235,24 @@ const plate = $("#plate"); plate.src = DIR + (L.plate || "plate.webp"); Object.a
 
 // ---------- what each screen says when Carl lands on it (the platform's own words) ----------
 const SHOTS = {
-  "income-board": ["The Income Board", "Every income ETF in one sortable table.", "450+ funds · live"],
-  "backtester":   ["High Yield Terminal", "What did the fund actually do to your money?", "real distributions · any start date"],
-  "head-to-head": ["Head-to-Head", "Up to ten funds on one chart. The data decides.", "cash generated · NAV drift · total value"],
-  "factory":      ["My Income Factory", "Your portfolio as a paycheck machine.", "payout calendar · income goal"],
-  "issuers":      ["Fund Issuers", "The income architects, side by side.", "who runs what · who ships ghost towns"],
-  "graveyard":    ["ETF Graveyard", "Every income ETF that liquidated or delisted.", "kept on the record"],
-  "dossier":      ["The Dossier", "The full file on any ticker. One page.", "fundamentals · valuation · dividends"],
-  "stage":        ["Stage Board", "The whole U.S. stock market, staged.", "basing · advancing · topping · declining"],
-  "etf":          ["ETF Database", "Every ETF, not just income.", "lane · issuer · leverage"],
-  "carl":         ["CARL", "Ask anything about any income fund.", "5 questions a day, free"],
+  "income-board": ["The Income Board", "Every income ETF in one sortable table. 450+ funds, live."],
+  "backtester":   ["High Yield Terminal", "What did the fund actually do to your money? Real payouts."],
+  "qdte":         ["High Yield Terminal", "Backtest the real payouts against the price erosion."],
+  "head-to-head": ["Head-to-Head", "Two funds walk in. The data decides. Up to ten on one chart."],
+  "factory":      ["My Income Factory", "Your portfolio as a paycheck machine. What pays next."],
+  "issuers":      ["Fund Issuers", "Who runs which income funds, and who ships ghost towns."],
+  "graveyard":    ["ETF Graveyard", "Every income ETF that died, kept on the record."],
+  "dossier":      ["The Dossier", "The full file on any ticker. One page. Check the engine first."],
+  "stage":        ["Stage Board", "The whole U.S. stock market, staged: basing to declining."],
+  "etf":          ["ETF Database", "Every ETF, not just income. Lane, issuer, leverage."],
+  "carl":         ["CARL", "Ask anything about any income fund. Five a day, free."],
+  "newsroom":     ["The Newsroom", "Every SEC fund filing, read for what it means to you."],
+  "report":       ["The Report", "One income-market story a week, done properly. Free."],
+  "trends":       ["Trend Deck", "Every sector vs the S&P: how far ahead, how broadly."],
 };
 const ROTA = Object.assign({
-  L: ["income-board", "backtester", "factory", "head-to-head", "issuers", "graveyard"],
-  R: ["stage", "dossier", "carl", "etf"],
+  L: ["income-board", "backtester", "factory", "head-to-head", "issuers", "qdte", "graveyard", "report"],
+  R: ["stage", "dossier", "carl", "etf", "newsroom", "trends"],
   C: ["backtester", "stage", "income-board", "factory"],
 }, L.rota || {});
 
@@ -393,41 +400,32 @@ const strikes = strikeList.map((st, i) => {
   return { ...st, wrap, impact, spill, i };
 });
 
-// ---------- callouts: the platform's own words, rising off the struck screen ----------
+// ---------- Carl's chat windows: one per screen, in the upper corner away from where the bolt lands ----------
+const CHAT = '<div class="k"><i class="av"></i><span class="who">Carl</span><span class="tool"></span></div><div class="t"></div>';
 const callouts = {};
 for (const k of Object.keys(scr)) {
-  const c = document.createElement("div"); c.className = "callout";
-  c.innerHTML = '<div class="k"></div><div class="t"></div><div class="s"></div>';
-  document.body.appendChild(c); callouts[k] = { el: c, until: 0 };
+  const c = document.createElement("div"); c.className = "callout left"; c.innerHTML = CHAT;
+  document.body.appendChild(c); callouts[k] = { el: c, until: 0, side: "left", timer: 0 };
 }
-function showCallout(k, shot, t) {
+function showCallout(k, shot, t, side) {
   const c = callouts[k], words = SHOTS[shot]; if (!c || !words) return;
-  c.el.querySelector(".k").textContent = words[0];
+  c.side = side; c.el.classList.remove("left", "right"); c.el.classList.add(side, "on", "typing");
+  c.el.querySelector(".tool").textContent = "· " + words[0];
   c.el.querySelector(".t").textContent = words[1];
-  c.el.querySelector(".s").textContent = words[2];
-  c.el.classList.add("on"); c.until = t + 3600;
+  clearTimeout(c.timer); c.timer = setTimeout(() => c.el.classList.remove("typing"), 420);
+  c.until = t + 3600; placeCallouts();
 }
-// a callout sits over the top-middle of its screen, kept inside the viewport
-const copyEl = $("#copy"), narrow = root.classList.contains("narrow");
 function placeCallouts() {
   const vr = view.getBoundingClientRect();
   for (const [k, c] of Object.entries(callouts)) {
-    const sc = scr[k];
-    if (desk.tall) {
-      // a lower third, sat on the bottom of the struck screen
-      const w = Math.min(360, (sc.br[0] - sc.bl[0]) * cam.s * 0.86);
-      c.el.style.width = w + "px";
-      c.el.style.left = vr.left + cam.x + sc.bottomMid[0] * cam.s + "px";
-      c.el.style.top = vr.top + cam.y + (sc.bottomMid[1] - 18) * cam.s + "px";
-      continue;
-    }
-    const a = (L.callouts && L.callouts[k]) || [(sc.tl[0] + sc.tr[0]) / 2, Math.min(sc.tl[1], sc.tr[1]) - 12];
-    const half = c.el.offsetWidth / 2 || 135;
-    const x = Math.min(innerWidth - half - 10, Math.max(half + 10, vr.left + cam.x + a[0] * cam.s));
-    // never over the copy: on a phone the copy sits above the screens
-    const floor = narrow ? copyEl.getBoundingClientRect().bottom + 10 : vr.top + 8;
-    const y = Math.max(floor + c.el.offsetHeight, vr.top + cam.y + a[1] * cam.s);
-    c.el.style.left = x + "px"; c.el.style.top = y + "px";
+    const sc = scr[k], sw = (sc.tr[0] - sc.tl[0]) * cam.s, sh = (sc.bl[1] - sc.tl[1]) * cam.s;
+    const w = Math.round(Math.min(270, sw * 0.62)); c.el.style.width = w + "px";
+    const inset = Math.max(8, sw * 0.05);
+    const corner = c.side === "left" ? sc.tl : sc.tr;
+    let x = vr.left + cam.x + corner[0] * cam.s + (c.side === "left" ? inset : -inset - w);
+    x = Math.max(8, Math.min(innerWidth - w - 8, x));
+    c.el.style.left = x + "px";
+    c.el.style.top = vr.top + cam.y + corner[1] * cam.s + sh * 0.16 + "px";
   }
 }
 
@@ -524,7 +522,11 @@ function strikeFrame(t) {
         o.flash = Math.max(0, 1 - w * 1.6) * 0.75;
         o.hit = (1 - w) * rand(0.75, 1);
         pushTarget = 1;
-        if (!s.swapped) { s.swapped = true; showCallout(st.screen, advance(st.screen), t); }
+        if (!s.swapped) {
+          s.swapped = true;
+          const sc = scr[st.screen], cx = sc ? (sc.tl[0] + sc.tr[0]) / 2 : O.x;
+          showCallout(st.screen, advance(st.screen), t, st.hit[0] > cx ? "left" : "right");
+        }
       }
       return true;
     }
@@ -618,8 +620,9 @@ addEventListener("message", (e) => {
   if (e.origin !== location.origin || !e.data || e.data.scene !== "scroll") return;
   nextStrike = Infinity;
   const a = Math.max(0, Math.min(1, +e.data.a || 0));
-  [1 / 6, 1 / 2, 5 / 6].forEach((th, k) => {
-    if ((lastA < th) !== (a < th)) strikeWide(k === 2 ? strikes.slice(0, 2) : [strikes[k % strikes.length]]);
+  [0, 1, 2, 3, 4, 5].forEach((k) => {
+    const th = (k + 0.5) / 6;
+    if ((lastA < th) !== (a < th)) strikeWide(k === 4 ? strikes.slice(0, 2) : [strikes[k % 2 % strikes.length]]);
   });
   lastA = a;
 });

@@ -89,29 +89,31 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     placeCallouts(); placeSentinels();
   }
 
-  // ---------- callouts: a lower third on the struck screen ----------
+  // ---------- Carl's chat windows: in the upper corner of the struck screen, away from where the bolt lands ----------
+  const CHAT = '<div class="k"><i class="av"></i><span class="who">Carl</span><span class="tool"></span></div><div class="t"></div>';
   const callouts = {};
   for (const k of keys) {
-    const c = document.createElement("div"); c.className = "callout";
-    c.innerHTML = '<div class="k"></div><div class="t"></div><div class="s"></div>';
-    document.body.appendChild(c); callouts[k] = { el: c, until: 0 };
+    const c = document.createElement("div"); c.className = "callout left"; c.innerHTML = CHAT;
+    document.body.appendChild(c); callouts[k] = { el: c, until: 0, side: "left", timer: 0 };
   }
   function placeCallouts() {
     const vr = view.getBoundingClientRect();
     for (const [k, c] of Object.entries(callouts)) {
-      const edge = L.curved[k], mid = edge.bot[Math.floor(edge.bot.length / 2)];
-      const w = Math.min(360, (edge.bot[edge.bot.length - 1][0] - edge.bot[0][0]) * s * 0.86);
-      c.el.style.width = w + "px";
-      c.el.style.left = vr.left + X + mid[0] * s + "px";
-      c.el.style.top = vr.top + Y + (mid[1] - 18) * s + "px";
+      const edge = L.curved[k], tl = edge.top[0], tr = edge.top[edge.top.length - 1], bl = edge.bot[0];
+      const sw = (tr[0] - tl[0]) * s, sh = (bl[1] - tl[1]) * s;
+      const w = Math.round(Math.min(252, sw * 0.68)); c.el.style.width = w + "px";
+      const inset = sw * 0.04, corner = c.side === "left" ? tl : tr;
+      c.el.style.left = vr.left + X + corner[0] * s + (c.side === "left" ? inset : -inset - w) + "px";
+      c.el.style.top = vr.top + Y + corner[1] * s + sh * 0.17 + "px";
     }
   }
-  function showCallout(k, shot, t) {
+  function showCallout(k, shot, t, side) {
     const c = callouts[k], words = SHOTS[shot]; if (!c || !words) return;
-    c.el.querySelector(".k").textContent = words[0];
+    c.side = side; c.el.classList.remove("left", "right"); c.el.classList.add(side, "on", "typing");
+    c.el.querySelector(".tool").textContent = "· " + words[0];
     c.el.querySelector(".t").textContent = words[1];
-    c.el.querySelector(".s").textContent = words[2];
-    c.el.classList.add("on"); c.until = t + 3400;
+    clearTimeout(c.timer); c.timer = setTimeout(() => c.el.classList.remove("typing"), 420);
+    c.until = t + 3400; placeCallouts();
   }
   addEventListener("resize", layout);
 
@@ -156,10 +158,10 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     for (const [k, d] of Object.entries(sentinels)) { const b = L.warped[k]; d.style.top = Y + (b.y + b.h / 2) * s + "px"; }
   }
   placeSentinels();
-  // scroll strikes: the top screen, the bottom screen, then both at once (the mirrored bolts take turns)
+  // scroll strikes: top, bottom, top, bottom, both, top (the painted bolts and their mirrors take turns)
   let lastA = 0;
   function scrollStrike(k) {
-    const t = performance.now(), which = k === 0 ? ["T"] : k === 1 ? ["B"] : ["T", "B"];
+    const t = performance.now(), which = [["T"], ["B"], ["T"], ["B"], ["T", "B"], ["T"]][k];
     for (const scr of which) {
       const list = byScreen[scr]; pickN[scr] = (pickN[scr] || 0) + 1;
       fire(list[pickN[scr] % list.length], t);
@@ -195,7 +197,7 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
           const w = (v - TRAVEL) / HOLD;
           o.hit = (1 - w) * rand(0.8, 1);
           screens[sv.st.screen].flash = Math.max(0, 1 - w * 1.5);
-          if (!sv.swapped) { sv.swapped = true; showCallout(sv.st.screen, advance(sv.st.screen, t), t); }
+          if (!sv.swapped) { sv.swapped = true; showCallout(sv.st.screen, advance(sv.st.screen, t), t, sv.st.hit[0] < O.x ? "right" : "left"); }
         }
         return true;
       }
@@ -307,11 +309,11 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     if (e.origin !== location.origin) return;
     if (e.data === "scene:pause") stop();
     if (e.data === "scene:play") { asked = -1; layout(); start(); }   // re-send the height each time the slide shows
-    // the homepage scroll: a = how far through the freeze (three strikes at 1/6, 1/2, 5/6)
+    // the homepage scroll: a = how far through the freeze (six strikes, at (k + 0.5) / 6)
     if (e.data && e.data.scene === "scroll") {
       driven = true;
       const a = Math.max(0, Math.min(1, +e.data.a || 0));
-      [1 / 6, 1 / 2, 5 / 6].forEach((th, k) => { if ((lastA < th) !== (a < th)) scrollStrike(k); });
+      [0, 1, 2, 3, 4, 5].forEach((k) => { const th = (k + 0.5) / 6; if ((lastA < th) !== (a < th)) scrollStrike(k); });
       lastA = a;
     }
   });
