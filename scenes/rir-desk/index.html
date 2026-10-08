@@ -30,15 +30,16 @@
   .plate, #screens, #fx { left: 0; top: 0; }
 
   /* the real product on the glass, mapped with matrix3d onto each monitor */
-  .scr { left: 0; top: 0; width: 1100px; height: 688px; transform-origin: 0 0; overflow: hidden; background: #0b1220; }
-  .scr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top;
+  .scr { left: 0; top: 0; transform-origin: 0 0; overflow: hidden; background: #0b1220; }
+  .scr-in { position: absolute; top: 0; }
+  .scr-in img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top;
     opacity: 0; transition: opacity .45s ease; filter: brightness(.9) saturate(.95) contrast(1.04); }
-  .scr img.on { opacity: 1; }
-  .scr::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  .scr-in img.on { opacity: 1; }
+  .scr-in::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
     background: radial-gradient(130% 130% at 50% 40%, rgba(0,0,0,0) 60%, rgba(4,8,16,.5) 100%); }
-  .scr::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  .scr-in::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
     background: linear-gradient(118deg, rgba(170,220,240,.10) 0%, rgba(170,220,240,0) 34%, rgba(170,220,240,0) 72%, rgba(170,220,240,.05) 100%); }
-  .scr .flash { position: absolute; inset: 0; z-index: 4; opacity: 0; pointer-events: none;
+  .scr-in .flash { position: absolute; inset: 0; z-index: 4; opacity: 0; pointer-events: none;
     background: radial-gradient(70% 90% at var(--fx, 50%) var(--fy, 50%), rgba(200,236,250,.9), rgba(138,199,222,.35) 45%, rgba(138,199,222,0) 80%); mix-blend-mode: screen; }
 
   /* the phone on the desk: someone asking Carl */
@@ -137,6 +138,21 @@
   .narrow .callout { width: 220px; padding: 9px 11px 10px; }
   .narrow .callout .t { font-size: 13px; }
   @media (max-width: 900px) { #stats .stat:nth-child(3) { display: none; } }
+
+  /* the tall desk: words centred in the sky above Carl, the way the PlayLetter room does it */
+  .tall #scrim { background: linear-gradient(to bottom, rgba(7,11,18,.55) 0%, rgba(7,11,18,0) 26%); }
+  .tall #copy { text-align: center; padding-top: 14px; }
+  .tall #copy .logo { margin: 0 auto 10px; width: min(230px, 60vw); }
+  .tall #copy h1 { font-size: clamp(34px, 9.5vw, 42px); margin-bottom: 4px; }
+  .tall #copy p { margin-bottom: 12px; }
+  .tall .ctas { justify-content: center; }
+  .tall #stats { display: none; }
+  .tall .callout { transform: translate(-50%, -100%) translateY(8px); padding: 8px 11px 9px; border-radius: 10px; }
+  .tall .callout.on { transform: translate(-50%, -100%); }
+  .tall .callout .k { margin-bottom: 4px; font-size: 9.5px; }
+  .tall .callout .t { font-size: 12.5px; }
+  .tall .callout .s { display: none; }
+  @media (max-width: 380px) { .tall .btn { height: 38px; padding: 0 12px; font-size: 13px; } .tall .ctas { gap: 8px; flex-wrap: nowrap; } }
 </style>
 </head>
 <body>
@@ -229,26 +245,44 @@ function quadMatrix(w, h, q) {
   const d = y1 - y0 + g * y1, e = y3 - y0 + hh * y3, f = y0;
   return `matrix3d(${[a / w, d / w, 0, g / w, b / h, e / h, 0, hh / h, 0, 0, 1, 0, c, f, 0, 1].join(",")})`;
 }
+// A screen is one quad (flat glass) or a run of vertical strips following a curved monitor's traced edges.
+// Every strip carries the full page and shows its own slice, so the shot bends with the glass.
+const ULTRA = L.shotSet === "ultra";
+const BW = ULTRA ? 1280 : 1100, BH = ULTRA ? 536 : 688, PFX = ULTRA ? "ultra-" : "shot-";
 const scr = {}, idx = {};
-for (const [k, q] of Object.entries(L.screens)) {
-  if (k === "phone") continue;
-  const el = document.createElement("div"); el.className = "scr";
+function makeScreen(k, parts) {
   const rota = ROTA[k] || ROTA.C;
-  el.innerHTML = rota.map((f, i) => `<img src="img/shot-${f}.webp" alt=""${i === 0 ? ' class="on"' : ""}>`).join("") + '<div class="flash"></div>';
-  el.style.transform = quadMatrix(1100, 688, q);
-  $("#screens").appendChild(el);
-  scr[k] = { el, rota, imgs: [...el.querySelectorAll("img")], flash: el.querySelector(".flash"), quad: q };
-  idx[k] = 0;
+  const s = { rota, imgs: [], flashes: [], parts };
+  for (const pt of parts) {
+    const sw = BW * (pt.u1 - pt.u0);
+    const strip = document.createElement("div"); strip.className = "scr";
+    Object.assign(strip.style, { width: sw + "px", height: BH + "px", transform: quadMatrix(sw, BH, pt.q) });
+    const inner = document.createElement("div"); inner.className = "scr-in";
+    Object.assign(inner.style, { width: BW + "px", height: BH + "px", left: -BW * pt.u0 + "px" });
+    inner.innerHTML = rota.map((f, i) => `<img src="img/${PFX}${f}.webp" alt=""${i === 0 ? ' class="on"' : ""}>`).join("") + '<div class="flash"></div>';
+    strip.appendChild(inner); $("#screens").appendChild(strip);
+    s.imgs.push([...inner.querySelectorAll("img")]); s.flashes.push(inner.querySelector(".flash"));
+  }
+  // the outline of the glass, for placing flashes and callouts
+  s.tl = parts[0].q[0]; s.tr = parts[parts.length - 1].q[1]; s.br = parts[parts.length - 1].q[2]; s.bl = parts[0].q[3];
+  s.bottomMid = parts[Math.floor(parts.length / 2)].q[3];
+  scr[k] = s; idx[k] = 0;
+}
+for (const [k, q] of Object.entries(L.screens)) if (k !== "phone") makeScreen(k, [{ q, u0: 0, u1: 1 }]);
+for (const [k, c] of Object.entries(L.curved || {})) {
+  const n = c.top.length - 1;
+  makeScreen(k, Array.from({ length: n }, (_, i) => ({ q: [c.top[i], c.top[i + 1], c.bot[i + 1], c.bot[i]], u0: i / n, u1: (i + 1) / n })));
 }
 if (L.screens.phone) $("#phone").style.transform = quadMatrix(120, 246, L.screens.phone);
 else $("#phone").remove();
 function advance(k) {
   const s = scr[k]; if (!s) return null;
-  s.imgs[idx[k]].classList.remove("on");
-  idx[k] = (idx[k] + 1) % s.imgs.length;
-  s.imgs[idx[k]].classList.add("on");
-  return s.rota[idx[k]];
+  const next = (idx[k] + 1) % s.rota.length;
+  for (const set of s.imgs) { set[idx[k]].classList.remove("on"); set[next].classList.add("on"); }
+  idx[k] = next;
+  return s.rota[next];
 }
+const setFlash = (k, v) => scr[k] && scr[k].flashes.forEach((f) => (f.style.opacity = v));
 
 // ---------- Carl, raised clear of the beanie ----------
 // Carl floats free of the monitors: raised and scaled about his own centre
@@ -261,23 +295,41 @@ const manEl = $("#man"); manEl.src = DIR + "man.webp";
 Object.assign(manEl.style, { left: L.man.x + "px", top: L.man.y + "px", width: L.man.w + "px", height: L.man.h + "px" });
 const halo = $("#halo"); const HR = 190 * (O.r / 64);
 Object.assign(halo.style, { left: O.x - HR + "px", top: O.y - HR + "px", width: HR * 2 + "px", height: HR * 2 + "px" });
-Object.assign($("#orbfx").style, { left: O.x - 150 + "px", top: O.y - 150 + "px", width: "300px", height: "300px" });
+const FXS = Math.ceil(O.r * 2.4), fxc = $("#orbfx"); fxc.width = fxc.height = FXS;
+Object.assign(fxc.style, { left: O.x - FXS / 2 + "px", top: O.y - FXS / 2 + "px", width: FXS + "px", height: FXS + "px" });
+// a painted halo (the tall desk has one, lifted from Gemini's render); otherwise the CSS glow does the job
+const haloImg = L.halo ? Object.assign(document.createElement("img"), { src: DIR + "halo.webp", className: "light haloimg" }) : null;
+if (haloImg) {
+  Object.assign(haloImg.style, { position: "absolute", left: L.halo.x + "px", top: L.halo.y + "px", width: L.halo.w + "px", height: L.halo.h + "px" });
+  orbEl.before(haloImg); halo.style.display = "none";
+}
 
 // ---------- strikes: a bolt sprite is placed by where it leaves Carl and where it lands ----------
 const sprites = Object.fromEntries((L.bolts || []).map((b) => [b.side, b]));
-const strikes = (L.strikes || [{ screen: "L", sprite: "L", hit: [462, 400] }, { screen: "R", sprite: "R", hit: [947, 385] }]).map((st, i) => {
-  const sp = sprites[st.sprite];
+const strikeList = L.placed || L.strikes || [{ screen: "L", sprite: "L", hit: [462, 400] }, { screen: "R", sprite: "R", hit: [947, 385] }];
+const strikes = strikeList.map((st, i) => {
   const wrap = document.createElement("div"); wrap.className = "bolt light";
-  wrap.innerHTML = `<img class="glow" src="img/${sp.src}" alt=""><img src="img/${sp.src}" alt="">`;
-  Object.assign(wrap.style, { width: sp.w + "px", height: sp.h + "px" });
-  // start: Carl's rim, facing the hit point
-  const [hx, hy] = st.hit, dx = hx - O.x, dy = hy - O.y, dl = Math.hypot(dx, dy);
-  const ax = O.x + (dx / dl) * O.r * 0.86, ay = O.y + (dy / dl) * O.r * 0.86;
-  const [sx, sy] = sp.start, [ex, ey] = sp.end;
-  const k = Math.hypot(hx - ax, hy - ay) / Math.hypot(ex - sx, ey - sy);
-  const rot = Math.atan2(hy - ay, hx - ax) - Math.atan2(ey - sy, ex - sx);
-  wrap.style.transform = `translate(${ax}px, ${ay}px) rotate(${rot}rad) scale(${k}) translate(${-sx}px, ${-sy}px)`;
-  wrap.dataset.dir = ex < sx ? "to left" : "to right";
+  const [hx, hy] = st.hit;
+  // the reveal runs along the bolt, from Carl to the glass (CSS angle: 0deg = up)
+  const toDeg = (dx, dy) => (Math.atan2(dx, -dy) * 180) / Math.PI;
+  if (L.placed) {
+    // a bolt Gemini painted where it belongs: placed as is
+    wrap.innerHTML = `<img class="glow" src="img/${st.src}" alt=""><img src="img/${st.src}" alt="">`;
+    Object.assign(wrap.style, { width: st.w + "px", height: st.h + "px", transform: `translate(${st.x}px, ${st.y}px)` });
+    wrap.dataset.dir = `${toDeg(hx - O.x, hy - O.y)}deg`;
+  } else {
+    const sp = sprites[st.sprite];
+    wrap.innerHTML = `<img class="glow" src="img/${sp.src}" alt=""><img src="img/${sp.src}" alt="">`;
+    Object.assign(wrap.style, { width: sp.w + "px", height: sp.h + "px" });
+    // start: Carl's rim, facing the hit point
+    const dx = hx - O.x, dy = hy - O.y, dl = Math.hypot(dx, dy);
+    const ax = O.x + (dx / dl) * O.r * 0.86, ay = O.y + (dy / dl) * O.r * 0.86;
+    const [sx, sy] = sp.start, [ex, ey] = sp.end;
+    const k = Math.hypot(hx - ax, hy - ay) / Math.hypot(ex - sx, ey - sy);
+    const rot = Math.atan2(hy - ay, hx - ax) - Math.atan2(ey - sy, ex - sx);
+    wrap.style.transform = `translate(${ax}px, ${ay}px) rotate(${rot}rad) scale(${k}) translate(${-sx}px, ${-sy}px)`;
+    wrap.dataset.dir = `${toDeg(ex - sx, ey - sy)}deg`;
+  }
   const impact = document.createElement("div"); impact.className = "impact light";
   Object.assign(impact.style, { left: hx + "px", top: hy + "px" });
   const spill = document.createElement("div"); spill.className = "spill light";
@@ -286,9 +338,11 @@ const strikes = (L.strikes || [{ screen: "L", sprite: "L", hit: [462, 400] }, { 
   // the flash on the glass centres where the bolt lands
   const s = scr[st.screen];
   if (s) {
-    const q = s.quad, u = (hx - q[0][0]) / (q[1][0] - q[0][0]), v = (hy - q[0][1]) / (q[3][1] - q[0][1]);
-    s.flash.style.setProperty("--fx", `${Math.round(Math.min(1, Math.max(0, u)) * 100)}%`);
-    s.flash.style.setProperty("--fy", `${Math.round(Math.min(1, Math.max(0, v)) * 100)}%`);
+    const u = (hx - s.tl[0]) / (s.tr[0] - s.tl[0]), v = (hy - s.tl[1]) / (s.bl[1] - s.tl[1]);
+    for (const f of s.flashes) {
+      f.style.setProperty("--fx", `${Math.round(Math.min(1, Math.max(0, u)) * 100)}%`);
+      f.style.setProperty("--fy", `${Math.round(Math.min(1, Math.max(0, v)) * 100)}%`);
+    }
   }
   return { ...st, wrap, impact, spill, i };
 });
@@ -323,7 +377,16 @@ const copyEl = $("#copy"), narrow = root.classList.contains("narrow");
 function placeCallouts() {
   const vr = view.getBoundingClientRect();
   for (const [k, c] of Object.entries(callouts)) {
-    const q = scr[k].quad, a = (L.callouts && L.callouts[k]) || [(q[0][0] + q[1][0]) / 2, Math.min(q[0][1], q[1][1]) - 12];
+    const sc = scr[k];
+    if (desk.tall) {
+      // a lower third, sat on the bottom of the struck screen
+      const w = Math.min(360, (sc.br[0] - sc.bl[0]) * cam.s * 0.86);
+      c.el.style.width = w + "px";
+      c.el.style.left = vr.left + cam.x + sc.bottomMid[0] * cam.s + "px";
+      c.el.style.top = vr.top + cam.y + (sc.bottomMid[1] - 18) * cam.s + "px";
+      continue;
+    }
+    const a = (L.callouts && L.callouts[k]) || [(sc.tl[0] + sc.tr[0]) / 2, Math.min(sc.tl[1], sc.tr[1]) - 12];
     const half = c.el.offsetWidth / 2 || 135;
     const x = Math.min(innerWidth - half - 10, Math.max(half + 10, vr.left + cam.x + a[0] * cam.s));
     // never over the copy: on a phone the copy sits above the screens
@@ -361,7 +424,8 @@ function applyCamera(dt) {
 
 // ---------- Carl: breath, charge, and the motes inside the glass ----------
 const fx = $("#orbfx").getContext("2d");
-const motes = Array.from({ length: 34 }, () => ({ a: rand(0, Math.PI * 2), r: rand(4, O.r * 0.78), w: rand(0.15, 0.6) * (Math.random() < 0.5 ? -1 : 1), z: rand(0.6, 1.8), al: rand(0.15, 0.45), ph: rand(0, 6) }));
+const MZ = O.r / 64;
+const motes = Array.from({ length: 34 }, () => ({ a: rand(0, Math.PI * 2), r: rand(4, O.r * 0.78), w: rand(0.15, 0.6) * (Math.random() < 0.5 ? -1 : 1), z: rand(0.6, 1.8) * MZ, al: rand(0.15, 0.45), ph: rand(0, 6) }));
 function carl(t, charge) {
   const breath = 0.5 - 0.5 * Math.cos((t / 4200) * Math.PI * 2);
   const bob = Math.sin(t / 2900) * 2.2;
@@ -369,8 +433,9 @@ function carl(t, charge) {
   orbEl.style.filter = `brightness(${1 + breath * 0.08 + charge * 0.45})`;
   halo.style.opacity = (0.55 + breath * 0.25 + charge * 0.9).toFixed(3);
   halo.style.transform = `translateY(${bob}px) scale(${1 + charge * 0.25})`;
-  fx.clearRect(0, 0, 300, 300);
-  fx.save(); fx.translate(150, 150 + bob); fx.beginPath(); fx.arc(0, 0, O.r - 6, 0, Math.PI * 2); fx.clip();
+  if (haloImg) haloImg.style.opacity = (0.75 + breath * 0.2 + charge * 0.5).toFixed(3);
+  fx.clearRect(0, 0, FXS, FXS);
+  fx.save(); fx.translate(FXS / 2, FXS / 2 + bob); fx.beginPath(); fx.arc(0, 0, O.r - 6, 0, Math.PI * 2); fx.clip();
   for (const m of motes) {
     const a = m.a + (t / 1000) * m.w * (1 + charge * 3);
     const x = Math.cos(a) * m.r, y = Math.sin(a) * m.r * 0.8 + Math.sin(t / 900 + m.ph) * 3;
@@ -438,7 +503,7 @@ function strikeFrame(t) {
       const m = `linear-gradient(${st.wrap.dataset.dir}, #000 ${p - 12}%, transparent ${p}%)`;
       st.wrap.style.webkitMaskImage = m; st.wrap.style.maskImage = m;
     }
-    if (scr[st.screen]) scr[st.screen].flash.style.opacity = o.flash.toFixed(3);
+    setFlash(st.screen, o.flash.toFixed(3));
     st.impact.style.opacity = o.hit.toFixed(3);
     st.spill.style.opacity = Math.max(o.hit * 0.9, o.level * 0.35).toFixed(3);
   }
@@ -447,15 +512,17 @@ function strikeFrame(t) {
 }
 
 // ---------- stars and city lights from the painting, twinkling ----------
-const twc = $("#twinkle"); twc.width = W; twc.height = H; Object.assign(twc.style, { width: W + "px", height: H + "px" });
-const tw = twc.getContext("2d");
+const TR = L.twinkleRes || 1;
+const twc = $("#twinkle"); twc.width = Math.round(W * TR); twc.height = Math.round(H * TR); Object.assign(twc.style, { width: W + "px", height: H + "px" });
+const tw = twc.getContext("2d"); tw.scale(TR, TR);
 const lights = (L.lights || []).map(([x, y, v]) => ({ x, y, v, f: rand(0.4, 1.6), ph: rand(0, 6.28), city: y > (L.cityY ?? 400) }));
 function twinkle(t) {
   tw.clearRect(0, 0, W, H);
+  const big = desk.tall ? 2.2 : 1;
   for (const p of lights) {
     const a = (p.city ? 0.22 : 0.4) * Math.pow(0.5 + 0.5 * Math.sin((t / 1000) * p.f + p.ph), 3) * (p.v / 255);
     if (a < 0.01) continue;
-    const r = p.city ? 5 : 2.4;
+    const r = (p.city ? 5 : 2.4) * big;
     const g = tw.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
     g.addColorStop(0, `rgba(235,245,255,${a})`); g.addColorStop(1, "rgba(235,245,255,0)");
     tw.fillStyle = g; tw.fillRect(p.x - r, p.y - r, r * 2, r * 2);
