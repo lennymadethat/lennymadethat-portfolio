@@ -81,6 +81,15 @@
   .ps-skip.r { border-right: 0; border-left: 8px solid var(--fg); }
   .ps-voice { text-align: center; font: 500 8px/1 Inter; color: var(--mute); margin-top: 9px; }
   .ps-voice b { color: var(--fg); font-weight: 600; }
+  .ps-hero { position: relative; height: 150px; margin: 4px 2px 10px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 18px -10px rgba(0,0,0,.4); }
+  .ps-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 1.2s ease; }
+  .ps-ititle { font: italic 400 18px/1.15 Fraunces, serif; margin: 0 2px 4px; }
+  .ps-imeta { font: 500 8px/1 Inter; color: var(--mute); margin: 0 2px 10px; }
+  .ps-lines { flex: 1; padding: 0 2px; }
+  .ps-lines i { display: block; height: 6px; border-radius: 3px; background: var(--line); margin-bottom: 7px; }
+  .ps-lines i:nth-child(2n) { width: 86%; } .ps-lines i:last-child { width: 58%; }
+  .ps-listen { display: flex; align-items: center; justify-content: center; gap: 7px; height: 32px; border-radius: 99px; background: var(--mint); color: #fff; font: 600 10px/1 Inter; }
+  .ps-listen span { border-left: 7px solid #fff; border-top: 4.5px solid transparent; border-bottom: 4.5px solid transparent; }
   .ps-ring { width: 108px; height: 108px; margin: 6px auto 10px; border-radius: 50%; border: 3px solid var(--mint); display: grid; place-items: center;
     box-shadow: 0 0 0 7px rgba(95,176,137,.14); background: var(--card); }
   .ps-ring span { font: italic 400 44px/1 Fraunces, serif; color: var(--mint); }
@@ -101,6 +110,9 @@
   .hs-row span { flex: 1; height: 8px; border-radius: 4px; background: rgba(26,26,24,.18); }
   .hs-row b { width: 14px; height: 14px; border-radius: 50%; background: var(--mint); }
   .night .hs-row span { background: rgba(255,255,255,.2); }
+  .hs-hero { display: block; width: 92px; height: 100px; margin: 26px auto 16px; border-radius: 8px; object-fit: cover; }
+  .hs-ilines i { height: 8px; margin-bottom: 9px; }
+  .hs-listen { height: 22px; margin: 10px 18px 0; border-radius: 11px; background: var(--mint); }
   .hs-ring { width: 72px; height: 72px; margin: 40px auto 20px; border-radius: 50%; border: 4px solid var(--mint); display: grid; place-items: center; }
   .hs-ring span { font: italic 400 36px/1 Fraunces, serif; color: var(--mint); }
   .hs-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 0 14px; }
@@ -164,8 +176,7 @@
     .embed #copy { left: 0; padding-top: 128px; }
     #copy { right: 0; left: 0; top: 0; bottom: auto; max-width: none; padding: 78px 16px 40px;
       background: linear-gradient(to bottom, rgba(247,244,238,.92) 60%, rgba(247,244,238,0)); }
-    #controls { left: 16px; right: 16px; justify-content: space-between; }
-    #clock { display: none; }
+    #controls { left: 16px; right: 16px; justify-content: flex-end; }
   }
 </style>
 </head>
@@ -187,8 +198,8 @@
         <div class="hs-view" data-v="1"><img class="hs-mark" src="img/mark.webp" alt="">
           <div class="hs-lines"><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <div class="hs-bar"><i></i></div></div>
-        <div class="hs-view" data-v="2"><div class="hs-ring"><span id="hsInitial">A</span></div>
-          <div class="hs-pills" id="hsPills"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="hs-view" data-v="2"><img class="hs-hero" id="hsHero" alt="">
+          <div class="hs-lines hs-ilines"><i></i><i></i><i></i></div><div class="hs-listen"></div></div>
       </div>
       <img id="fingers" data-src="man-fingers.webp" alt="">
     </div>
@@ -213,13 +224,14 @@
       <div class="ps-ctrl"><span class="ps-skip"></span><span class="ps-play"><i></i><i></i></span><span class="ps-skip r"></span></div>
       <div class="ps-voice">Read by <b id="kVoice">Lily</b></div>
     </div></div>
-    <div class="fphone" data-i="2"><div class="screen ps" id="scrVoices">
+    <div class="fphone" data-i="2"><div class="screen ps" id="scrIssue">
       <div class="ps-status"><span>9:41</span><span class="ps-sig"></span></div>
-      <div class="ps-h">Choose a voice</div>
-      <div class="ps-ring"><span id="vInitial">A</span></div>
-      <div class="ps-vname" id="vName">Ava</div>
-      <div class="ps-vwave" id="vWave"></div>
-      <div class="ps-vlist" id="vList"></div>
+      <div class="ps-pub" id="iPub">Slow Mornings</div>
+      <div class="ps-hero"><img id="iHeroA" alt=""><img id="iHeroB" alt=""></div>
+      <div class="ps-ititle" id="iTitle">The coffee hour</div>
+      <div class="ps-imeta" id="iMeta">Issue 14 · 6 min</div>
+      <div class="ps-lines"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="ps-listen"><span></span>Listen</div>
     </div></div>
     <canvas id="wave"></canvas>
     <canvas id="glow"></canvas>
@@ -237,12 +249,6 @@
 
 <div id="controls" class="ui">
   <div id="clock" aria-live="off">—</div>
-  <div class="pill" role="group" aria-label="Speed of the day" id="speed">
-    <button type="button" data-speed="1" aria-pressed="true">1×</button>
-    <button type="button" data-speed="2" aria-pressed="false">2×</button>
-    <button type="button" data-speed="3" aria-pressed="false">3×</button>
-    <button type="button" data-speed="4" aria-pressed="false">4×</button>
-  </div>
 </div>
 
 <script type="module">
@@ -279,8 +285,9 @@ const L = TALL ? {
     [7.6, 1180, 2300, 10, -6, 1.1, 1.25, 0.5],
     [8.6, 1150, 2290, 10, -6, 1.1, 1.25, 0],
   ],
-  shaft: { from: [1240, 980], to: [1520, 1780], aim: [1400, 1300] },
-  glows: { phone: [478, 2150, 170], laptop: [1000, 2090, 300], mark: [768, 820, 420], window: [1360, 1350, 640] },
+  shaft: { from: [1560, 860], to: [1560, 1760], aim: [1560, 1300] },
+  glows: { mark: [768, 820, 420], window: null },
+  laptopQuad: [[864, 1998], [1112, 2006], [1096, 2180], [838, 2174]],
   brand: null,
   wave: [[440, 1096, 1010, 12, 7, 90]],
 } : {
@@ -296,7 +303,8 @@ const L = TALL ? {
   floorY: 880, floorK: 0.32,
   sun: null, moon: null,
   shaft: { from: [1850, 210], to: [1972, 640], aim: [1900, 400] },
-  glows: { phone: [292, 760, 110], laptop: [610, 722, 240], mark: [1000, 520, 380], window: [1900, 380, 520] },
+  glows: { mark: [1000, 520, 380], window: [1900, 380, 520] },
+  laptopQuad: [[533, 672], [690, 674], [682, 778], [512, 777]],
   brand: true,
   wave: [[640, 800, 512, 9, 4, 80], [1200, 1360, 512, 9, 4, 80]],
 };
@@ -387,6 +395,7 @@ const PHONES = L.phones;
 const FLOOR_AT = L.shadows || [0, 0, 0];
 const touchedAt = [];
 const fphones = [...document.querySelectorAll(".fphone")], fshadows = [...document.querySelectorAll(".fshadow")];
+let nightGlow = 0;
 function floatPhones(t) {
   PHONES.forEach((p, i) => {
     const bob = Math.sin(t / p.period * Math.PI * 2 + p.phase) * p.amp;
@@ -394,7 +403,7 @@ function floatPhones(t) {
     const touch = Math.max(0, 1 - (t - (touchedAt[i] || -1e9)) / 900);   // eases back after he taps its twin
     Object.assign(fphones[i].style, { left: p.x - 104 + "px", top: p.y - 225 + "px",
       transform: `perspective(1400px) translateY(${bob - 10 * touch}px) rotate(${p.r + tilt * 0.4}deg) rotateY(${p.ry + tilt}deg) scale(${p.s * (1 + 0.045 * touch)})`,
-      boxShadow: `0 0 0 1.5px rgba(255,255,255,.18) inset, 0 30px 60px -20px rgba(30,24,18,.45), 0 0 ${40 * touch}px ${6 * touch}px rgba(95,176,137,${0.55 * touch})` });
+      boxShadow: `0 0 0 1.5px rgba(255,255,255,.18) inset, 0 30px 60px -20px rgba(30,24,18,.45), 0 0 ${40 * touch + 34 * nightGlow}px ${6 * touch + 2 * nightGlow}px rgba(95,176,137,${0.55 * touch + 0.28 * nightGlow})` });
     const lift = 1 - (bob + p.amp) / (p.amp * 2);      // higher phone = softer, smaller shadow
     Object.assign(fshadows[i].style, { left: p.x - 100 + "px", top: FLOOR_AT[i] - 17 + "px",
       transform: `scale(${(0.8 + 0.12 * lift) * p.s}, ${p.s})`, opacity: 0.55 + 0.3 * lift });
@@ -403,14 +412,8 @@ function floatPhones(t) {
 floatPhones(0);
 
 // ---------- the day ----------
-const DAY_MS_1X = 8 * 60 * 1000;
-let speed = Number(qs.get("speed")) || Number(store.get("plroom.speed")) || 1;
-function setSpeed(n) {
-  speed = n; store.set("plroom.speed", String(n));
-  document.querySelectorAll("#speed button").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.speed) === n)));
-}
-document.querySelectorAll("#speed button").forEach((b) => b.addEventListener("click", () => setSpeed(Number(b.dataset.speed))));
-setSpeed(speed);
+// one day passes every two minutes (what the 4x setting was)
+const DAY_MS = 2 * 60 * 1000;
 let hour = qs.has("hour") ? Number(qs.get("hour")) : 8.2;   // where the day starts
 if (reduced && !qs.has("hour")) hour = 15.5;
 
@@ -508,6 +511,7 @@ function drawLight(h) {
   const sun = sunP || (moon ? [...moon, 0] : null);
   const isMoon = !sunP && !!moon;
   stage.classList.toggle("night", screenGlow > 0.55);
+  nightGlow = screenGlow;
   uc.setTransform(1, 0, 0, 1, 0, 0); uc.clearRect(0, 0, unfold.width, unfold.height);
   if (sun && sun[6] > 0.01) {
     const [cx, cy, kx, ky, sx, sy] = sun;
@@ -564,11 +568,13 @@ function drawLight(h) {
       glow.fillStyle = gr; glow.fillRect(0, 0, W / 2, H / 2);
     };
     const G = L.glows;
-    blob(G.phone[0], G.phone[1], G.phone[2], "235,236,225", 0.42 * screenGlow);   // phone on his face
-    blob(G.laptop[0], G.laptop[1], G.laptop[2], "240,232,215", 0.38 * screenGlow); // laptop
-    for (const p of PHONES) blob(p.x, p.y, 380 * p.s, "150,215,185", 0.30 * screenGlow);
-    blob(G.mark[0], G.mark[1], G.mark[2], "120,200,160", 0.22 * screenGlow);
-    blob(G.window[0], G.window[1], G.window[2], "150,175,225", 0.20 * screenGlow); // moonlight at the window
+    // the laptop screen gives off its own light, in its own shape (no round halos)
+    glow.save(); glow.scale(0.5, 0.5); glow.filter = "blur(10px)";
+    glow.fillStyle = `rgba(232,238,246,${0.5 * screenGlow})`;
+    glow.beginPath(); L.laptopQuad.forEach(([x, y], i) => (i ? glow.lineTo(x, y) : glow.moveTo(x, y))); glow.closePath(); glow.fill();
+    glow.restore();
+    blob(G.mark[0], G.mark[1], G.mark[2], "120,200,160", 0.18 * screenGlow);
+    if (G.window) blob(G.window[0], G.window[1], G.window[2], "150,175,225", 0.20 * screenGlow); // moonlight at the window
   }
 }
 const tintCanvas = document.createElement("canvas"); tintCanvas.width = unfold.width; tintCanvas.height = unfold.height;
@@ -618,9 +624,7 @@ function man(t) {
   const breath = Math.sin(t / 4500 * Math.PI * 2) * 0.5 + 0.5;
   bodyEl.style.transform = `scaleY(${1 + 0.004 * breath})`;
   const lift = -0.9 * breath;
-  const look = Math.sin(t / 31000) * Math.sin(t / 13000) * 1.4;
-  const nod = grooving ? 0.6 * tap : 0;
-  headEl.style.transform = `translateY(${lift}px) rotate(${look + nod}deg)`;
+  headEl.style.transform = `translateY(${lift}px)`;
   // a thumb flick every few seconds: the hand bobs, the feed jumps and settles
   if (t - flick.at > flick.next) {
     flick = { at: t, next: 4200 + Math.random() * 3000, from: flick.to, to: flick.to + 60 + Math.random() * 70 };
@@ -640,15 +644,24 @@ const libList = $("#libList");
 const libRow = ([t, sub, c], i) => `<div class="ps-item"><img src="img/cover-${c}.webp" alt=""><div><b>${t}</b><small>${VOICES[i % 6]} · ${6 + (i * 5) % 14} min</small></div><span class="pl"></span></div>`;
 libList.innerHTML = LIB.map(libRow).join("") + LIB.map(libRow).join("");
 let libH = 0, libY = 0, libTarget = 0, libNext = 0;
-$("#vList").innerHTML = VOICES.map((v) => `<span>${v}</span>`).join("");
-const vSpans = [...document.querySelectorAll("#vList span")];
-$("#vWave").innerHTML = "<i></i>".repeat(22);
-const vBars = [...document.querySelectorAll("#vWave i")];
-let vIdx = -1, vNext = 0;
+// the right-hand phone: an issue of a newsletter, its cover one of the paintings on the wall
+const ISSUES = [["Slow Mornings", "The coffee hour", 3, 14, 6], ["Paper Boats", "Small things, sent far", 5, 9, 4],
+  ["Window Seat", "Notes from the city", 2, 22, 8], ["Night Letters", "After the lights go down", 1, 31, 7], ["Faces", "A face in the crowd", 4, 6, 11]];
+const iHeroA = $("#iHeroA"), iHeroB = $("#iHeroB");
+let iIdx = -1, iNext = 0, iFront = iHeroB;
+function nextIssue(t) {
+  iIdx = (iIdx + 1) % ISSUES.length; iNext = t + 7000;
+  const [pub, title, art, no, min] = ISSUES[iIdx];
+  const back = iFront === iHeroA ? iHeroB : iHeroA;
+  back.src = `img/issue-${art}.webp`; back.style.opacity = 1; iFront.style.opacity = 0; iFront = back;
+  $("#iPub").textContent = pub; $("#iTitle").textContent = title; $("#iMeta").textContent = `Issue ${no} · ${min} min`;
+  $("#hsHero").src = `img/issue-${art}.webp`;
+}
+iHeroA.style.opacity = 0; iHeroB.style.opacity = 0;
 
 // his phone mirrors one floating screen at a time; a tap moves both
 const hsViews = [...document.querySelectorAll(".hs-view")];
-const hsLib = $("#hsLib"), hsPills = [...document.querySelectorAll("#hsPills i")];
+const hsLib = $("#hsLib");
 hsLib.innerHTML = [...LIB, ...LIB].map(([, , c]) => `<div class="hs-row"><img src="img/cover-${c}.webp" alt=""><span></span><b></b></div>`).join("");
 let hsCur = 1, hsLibStep = 0;
 hsViews.forEach((v, i) => v.classList.toggle("on", i === hsCur));
@@ -657,7 +670,7 @@ function touchScreen(t) {
   hsViews.forEach((v, i) => v.classList.toggle("on", i === hsCur));
   touchedAt[hsCur] = t;
   if (hsCur === 0) { libTarget += 59; libNext = t + 2400; hsLibStep = (hsLibStep + 1) % LIB.length; hsLib.style.transform = `translateY(${-46 * hsLibStep}px)`; }
-  if (hsCur === 2) vNext = 0;                                     // he picks the next voice
+  if (hsCur === 2) iNext = 0;                                     // he opens the next issue
 }
 
 // karaoke: words light up one at a time, in step with the waveform on the wall
@@ -698,14 +711,7 @@ function screens(t, dt) {
     kProg.style.width = `${f * 100}%`; handBar.style.width = `${f * 100}%`;
   }
   wordPulse *= Math.pow(0.004, dt / 1000);
-  // voices: a new one is chosen every few seconds, its sample bars dance
-  if (t > vNext) {
-    vIdx = (vIdx + 1) % VOICES.length; vNext = t + 3400;
-    vSpans.forEach((sp, i) => sp.classList.toggle("on", i === vIdx));
-    $("#vName").textContent = VOICES[vIdx]; $("#vInitial").textContent = VOICES[vIdx][0];
-    $("#hsInitial").textContent = VOICES[vIdx][0]; hsPills.forEach((pl, i) => pl.classList.toggle("on", i === vIdx));
-  }
-  vBars.forEach((b, i) => { b.style.height = `${4 + 14 * Math.abs(Math.sin(t / 170 + i * 0.7) * Math.sin(t / 430 + i * 0.3))}px`; });
+  if (t > iNext) nextIssue(t);
   floatPhones(t);
 }
 
@@ -718,7 +724,7 @@ let last = performance.now(), running = true, lastLight = -1;
 function frame(now) {
   if (!running) return;
   const dt = Math.min(100, now - last); last = now;
-  if (!reduced) hour = (hour + (dt * speed * 24) / DAY_MS_1X) % 24;
+  if (!reduced) hour = (hour + (dt * 24) / DAY_MS) % 24;
   applyCamera(now);
   const tap = reduced ? 0 : man(now);
   if (!reduced) screens(now, dt);
