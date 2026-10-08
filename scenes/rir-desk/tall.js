@@ -61,19 +61,25 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   const SPARK = dot(64, "rgba(235,248,255,1)"), STAR = dot(16, "rgba(235,245,255,1)");
 
   // ---------- camera ----------
-  // Inside the portfolio swipe the desk is shown whole, at the phone's width, and the page scrolls through it:
-  // the scene tells the swipe how tall it needs to be (Lenny 10-07: "as you scroll, Carl hits the screens").
+  // Inside the portfolio swipe the homepage pins this slide and the page scroll drives it (Lenny 10-08): the desk
+  // is drawn at the phone's width with its top edge under the 68px site header (the freeze), and the scroll pans
+  // it down to him. The scene tells the swipe how far that pan is ({scene:"pan", px}).
   // Standalone it covers the screen, framed from the top (the words live in the sky).
-  const scrolling = document.documentElement.classList.contains("embed") && window.parent !== window;
-  let dpr = 1, cw = 1, ch = 1, s = 1, X = 0, Y = 0, asked = 0;
+  const embedded = document.documentElement.classList.contains("embed") && window.parent !== window;
+  const TOP = embedded ? 68 : 0;
+  const copyEl = document.getElementById("copy");
+  let dpr = 1, cw = 1, ch = 1, s = 1, X = 0, Y = 0, asked = -1, pan = 0, span = 0, driven = false;
+  function placeCopy() { if (embedded && copyEl) copyEl.style.transform = `translateY(${Math.round(Y - TOP)}px)`; }
   function layout() {
     dpr = Math.min(2, window.devicePixelRatio || 1);
     cw = view.clientWidth; ch = view.clientHeight;
     cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
-    if (scrolling) {
-      s = cw / W; X = 0; Y = 0;
-      const need = Math.ceil(view.getBoundingClientRect().top + H * s);
-      if (need !== asked) { asked = need; window.parent.postMessage({ scene: "height", h: need }, location.origin); }
+    if (embedded) {
+      s = cw / W; X = 0;
+      span = Math.max(0, Math.round(H * s - (ch - TOP)));
+      if (span !== asked) { asked = span; window.parent.postMessage({ scene: "pan", px: span }, location.origin); }
+      Y = TOP - pan * span;
+      placeCopy();
     } else {
       s = Math.max(cw / W, ch / H);
       X = (cw - W * s) / 2;
@@ -129,6 +135,7 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   // scrolling a screen through the middle of the phone makes Carl strike it
   let lastHit = {};
   function strikeScreen(k) {
+    if (driven) return;
     const t = performance.now();
     if (t - (lastHit[k] || -1e9) < 1400) return;
     lastHit[k] = t;
@@ -148,6 +155,15 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     for (const [k, d] of Object.entries(sentinels)) { const b = L.warped[k]; d.style.top = Y + (b.y + b.h / 2) * s + "px"; }
   }
   placeSentinels();
+  // scroll strikes: the top screen, the bottom screen, then both at once (the mirrored bolts take turns)
+  let lastA = 0;
+  function scrollStrike(k) {
+    const t = performance.now(), which = k === 0 ? ["T"] : k === 1 ? ["B"] : ["T", "B"];
+    for (const scr of which) {
+      const list = byScreen[scr]; pickN[scr] = (pickN[scr] || 0) + 1;
+      fire(list[pickN[scr] % list.length], t);
+    }
+  }
   const CHARGE = 600, TRAVEL = 160, HOLD = 700, FADE = 420;
   function advance(k, t) {
     const sc = screens[k]; sc.prev = sc.cur; sc.cur = (sc.cur + 1) % sc.imgs.length; sc.fadeAt = t;
@@ -278,7 +294,7 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
     if (!running) return;
     if (now - lastDraw >= 32) {
       lastDraw = now;
-      if (now > nextStrike) schedule(now);
+      if (!driven && now > nextStrike) schedule(now);
       draw(now);
     }
     requestAnimationFrame(frame);
@@ -289,7 +305,18 @@ export async function run({ L, DIR, SHOTS, view, stage, reduced }) {
   addEventListener("message", (e) => {
     if (e.origin !== location.origin) return;
     if (e.data === "scene:pause") stop();
-    if (e.data === "scene:play") { asked = 0; layout(); start(); }   // re-send the height each time the slide shows
+    if (e.data === "scene:play") { asked = -1; layout(); start(); }   // re-send the pan each time the slide shows
+    // the homepage scroll: a = how far through the freeze (three strikes), pan = how far down the desk
+    if (e.data && e.data.scene === "scroll") {
+      driven = true;
+      const a = Math.max(0, Math.min(1, +e.data.a || 0));
+      [1 / 6, 1 / 2, 5 / 6].forEach((th, k) => { if ((lastA < th) !== (a < th)) scrollStrike(k); });
+      lastA = a;
+      pan = Math.max(0, Math.min(1, +e.data.pan || 0));
+      Y = TOP - pan * span;
+      placeCopy(); placeCallouts();
+      if (!running) draw(performance.now());
+    }
   });
   addEventListener("resize", () => { if (!running) draw(performance.now()); });
   draw(0);

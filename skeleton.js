@@ -32,7 +32,7 @@ const sectionObs = new IntersectionObserver((entries) => {
 // ---------- 1. product swipe ----------
 {
   const track = $(".sk-products__track");
-  const dots = $("#platforms > .sk-dots");
+  const dots = $("#platforms .sk-dots");
   const mobileFilm = matchMedia("(max-width: 640px)");
   const sourceFor = (p) => mobileFilm.matches && p.videoMobile ? p.videoMobile : p.video;
   const posterFor = (p) => mobileFilm.matches && p.posterMobile ? p.posterMobile : p.poster;
@@ -60,26 +60,78 @@ const sectionObs = new IntersectionObserver((entries) => {
   });
   const slides = [...track.children];
   let cur = 0;
-  const go = (i) => { i = (i + slides.length) % slides.length; track.scrollTo({ left: i * track.clientWidth, behavior: reduced ? "auto" : "smooth" }); };
+  const go = (i) => {
+    i = (i + slides.length) % slides.length;
+    // inside the story, RIR and PlayLetter are places on the page, not just slides: scroll there
+    if (story && phases && i <= 1) {
+      const top = section.getBoundingClientRect().top + scrollY;
+      scrollTo({ top: top + (i === 0 ? phases.A * 0.08 : phases.A + phases.B + phases.C + 2), behavior: reduced ? "auto" : "smooth" });
+      return;
+    }
+    track.scrollTo({ left: i * track.clientWidth, behavior: reduced ? "auto" : "smooth" });
+  };
   const sync = () => {
     const i = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
     if (i === cur) return;
     cur = i;
     [...dots.children].forEach((d, j) => d.setAttribute("aria-selected", j === i ? "true" : "false"));
-    fitSection();
     playVisible();
   };
   track.addEventListener("scroll", () => requestAnimationFrame(sync), { passive: true });
-  // A scene can ask for more height on a phone (the RIR desk is taller than a screen; scrolling through it
-  // makes Carl strike each monitor). The swipe grows while that slide is showing, and is a screen tall otherwise.
-  const section = $("#platforms"), sceneHeights = {};
-  const fitSection = () => { const h = mobileFilm.matches && sceneHeights[cur]; section.style.height = h ? `max(100svh, ${h}px)` : ""; };
+  // ---------- the story: RIR, then PlayLetter, driven by the page scroll (Lenny, 10-08) ----------
+  // The swipe pins under the header. Scrolling first makes Carl strike the screens three times (the desk is frozen),
+  // then runs the RIR desk down to him, then slides PlayLetter in from the right out of a fade, then runs
+  // PlayLetter's day from morning to midnight. Then the page moves on. Each scene gets its own progress by
+  // postMessage ({scene:"scroll", a, pan} for RIR, {scene:"scroll", p} for PlayLetter); RIR reports how far its
+  // desk runs below the screen ({scene:"pan", px}), which is how long that part of the scroll is.
+  const section = $("#platforms"), pin = section.querySelector(".sk-products__pin");
+  const story = !reduced && !!(products[0]?.scene && products[1]?.scene);
+  let rirPan = 0, phases = null, storyY = -1, storyPhase = "", moving = false;
+  const frameOf = (i) => slides[i]?.querySelector("iframe.sk-scene");
+  const send = (i, msg) => { const f = frameOf(i); if (f && f.src) f.contentWindow?.postMessage(msg, location.origin); };
+  function measure() {
+    if (!story) return;
+    const vh = pin.clientHeight || innerHeight;
+    const A = Math.round(1.25 * vh), B = rirPan, C = Math.round(0.9 * vh), D = Math.round(1.8 * vh);
+    phases = { A, B, C, D, total: A + B + C + D };
+    section.style.height = `${vh + phases.total}px`;
+  }
+  function drive() {
+    if (!phases) return;
+    const y = Math.max(0, Math.min(phases.total, Math.round(-section.getBoundingClientRect().top)));
+    if (y === storyY) return;
+    storyY = y;
+    const { A, B, C, D } = phases, w = track.clientWidth;
+    const phase = y < A + B ? "rir" : y < A + B + C ? "move" : "pl";
+    let t = 0;
+    if (phase === "rir") send(0, { scene: "scroll", a: Math.min(1, y / A), pan: B > 0 ? Math.max(0, Math.min(1, (y - A) / B)) : 1 });
+    if (phase === "move") { t = (y - A - B) / C; send(0, { scene: "scroll", a: 1, pan: 1 }); send(1, { scene: "scroll", p: 0 }); }
+    if (phase === "pl") { t = 1; send(1, { scene: "scroll", p: Math.min(1, (y - A - B - C) / D) }); }
+    // the hand-off: RIR slides off to the left and dims, PlayLetter comes in out of the dark
+    slides[0].style.opacity = String(1 - 0.6 * t);
+    slides[0].style.transform = t ? `scale(${1 - 0.06 * t})` : "";
+    slides[1].style.opacity = phase === "rir" ? "" : String(0.4 + 0.6 * t);
+    if (phase === "move" || phase !== storyPhase) {
+      track.style.scrollSnapType = phase === "move" ? "none" : "";
+      track.scrollLeft = phase === "rir" ? 0 : phase === "pl" ? w : t * w;
+    }
+    const wasMoving = moving;
+    moving = phase === "move";
+    if (phase !== storyPhase || moving !== wasMoving) { storyPhase = phase; playVisible(); }
+  }
   addEventListener("message", (e) => {
-    if (e.origin !== location.origin || !e.data || e.data.scene !== "height") return;
-    const i = slides.findIndex((s) => s.querySelector("iframe.sk-scene")?.contentWindow === e.source);
-    if (i < 0) return;
-    sceneHeights[i] = e.data.h; fitSection();
+    if (e.origin !== location.origin || !e.data || e.data.scene !== "pan") return;
+    if (frameOf(0)?.contentWindow !== e.source) return;
+    rirPan = Math.max(0, +e.data.px || 0); measure(); storyY = -1; drive();
   });
+  if (story) {
+    section.classList.add("is-story");
+    measure();
+    addEventListener("scroll", () => requestAnimationFrame(drive), { passive: true });
+    addEventListener("resize", () => { measure(); storyY = -1; drive(); });
+    // a scene that has just loaded gets told where the scroll is
+    [0, 1].forEach((i) => frameOf(i)?.addEventListener("load", () => { storyY = -1; drive(); playVisible(); }));
+  }
   $("#platforms .sk-arrow--prev").addEventListener("click", () => go(cur - 1));
   $("#platforms .sk-arrow--next").addEventListener("click", () => go(cur + 1));
   track.addEventListener("keydown", (e) => {
@@ -91,9 +143,10 @@ const sectionObs = new IntersectionObserver((entries) => {
   const playVisible = () => slides.forEach((s, j) => {
     const f = s.querySelector("iframe.sk-scene");
     if (f) {
-      // the ambient room loads the first time its slide shows, and sleeps while off screen
-      const active = onScreen && j === cur && !document.hidden;
-      if (active && !f.src) f.src = f.dataset.src;
+      // the ambient room loads the first time its slide shows, and sleeps while off screen;
+      // in the story both scenes load with the section and both run while one slides into the other
+      const active = onScreen && (j === cur || (moving && j <= 1)) && !document.hidden;
+      if ((active || (story && onScreen && j <= 1)) && !f.src) f.src = f.dataset.src;
       f.contentWindow?.postMessage(active ? "scene:play" : "scene:pause", location.origin);
       return;
     }
@@ -110,10 +163,9 @@ const sectionObs = new IntersectionObserver((entries) => {
       if (!reduced) v.play().catch(() => {});
     } else v.pause();
   });
-  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; playVisible(); }, { threshold: 0.4 }).observe($("#platforms"));
+  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; playVisible(); }, { threshold: 0.4 }).observe(pin);
   document.addEventListener("visibilitychange", playVisible);
   mobileFilm.addEventListener("change", () => {
-    fitSection();
     slides.forEach((s, j) => {
       const v = s.querySelector("video");
       if (v) v.poster = posterFor(products[j]) || "";

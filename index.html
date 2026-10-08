@@ -21,7 +21,7 @@ window.addEventListener("load", function () {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=20260926a" />
-  <link rel="stylesheet" href="skeleton.css?v=20261007a" />
+  <link rel="stylesheet" href="skeleton.css?v=20261008a" />
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="agents/agent-select.css?v=20261007c" />
 </head>
@@ -57,10 +57,12 @@ window.addEventListener("load", function () {
 
     <!-- 1. THE PRODUCT SWIPE -->
     <section id="platforms" class="sk-section sk-products" aria-label="Platforms">
-      <div class="sk-products__track" tabindex="0" aria-roledescription="carousel"></div>
-      <button class="sk-arrow sk-arrow--prev" type="button" aria-label="Previous product">‹</button>
-      <button class="sk-arrow sk-arrow--next" type="button" aria-label="Next product">›</button>
-      <div class="sk-dots" role="tablist" aria-label="Choose a product"></div>
+      <div class="sk-products__pin">
+        <div class="sk-products__track" tabindex="0" aria-roledescription="carousel"></div>
+        <button class="sk-arrow sk-arrow--prev" type="button" aria-label="Previous product">‹</button>
+        <button class="sk-arrow sk-arrow--next" type="button" aria-label="Next product">›</button>
+        <div class="sk-dots" role="tablist" aria-label="Choose a product"></div>
+      </div>
     </section>
 
     <!-- 2. AGENT SELECT — pinned: scrolling moves through the roster (agents/agent-select.js) -->
@@ -154,7 +156,7 @@ window.addEventListener("load", function () {
   </main>
 
   <script type="module" src="hero.js"></script>
-  <script type="module" src="skeleton.js?v=20261007c"></script>
+  <script type="module" src="skeleton.js?v=20261008a"></script>
   <script type="module" src="agents/agent-select.js?v=20261007d"></script>
 </body>
 </html>
