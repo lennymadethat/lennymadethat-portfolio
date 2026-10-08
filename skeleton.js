@@ -115,15 +115,16 @@ const sectionObs = new IntersectionObserver((entries) => {
     // down the desk: the tall frame slides up (a GPU move, in step with the finger)
     if (f0) f0.style.transform = B ? `translate3d(0, ${-Math.round((phase === "rir" ? pan : 1) * B)}px, 0)` : "";
     // the hand-off: RIR slides off to the left and dims, PlayLetter comes in out of the dark.
-    // While it moves, the track itself is translated (GPU); at rest the track's own scroll position holds the slide.
+    // While it moves the two slides are translated inside the track (GPU; the track is a scroll container and clips
+    // anything outside its own box, so it can't be the thing that moves); at rest its scroll position holds the slide.
     slides[0].style.opacity = String(1 - 0.6 * t);
-    slides[0].style.transform = t ? `scale(${1 - 0.06 * t})` : "";
     slides[1].style.opacity = phase === "rir" ? "" : String(0.4 + 0.6 * t);
     if (phase === "move") {
       if (storyPhase !== "move") { track.style.scrollSnapType = "none"; track.scrollLeft = 0; }
-      track.style.transform = `translate3d(${-t * w}px, 0, 0)`;
+      slides[0].style.transform = `translate3d(${-t * w}px, 0, 0) scale(${1 - 0.06 * t})`;
+      slides[1].style.transform = `translate3d(${-t * w}px, 0, 0)`;
     } else if (phase !== storyPhase) {
-      track.style.transform = "";
+      slides[0].style.transform = slides[1].style.transform = "";
       track.style.scrollSnapType = "";
       track.scrollLeft = phase === "pl" ? w : 0;
     }

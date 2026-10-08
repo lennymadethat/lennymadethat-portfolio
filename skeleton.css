@@ -59,7 +59,6 @@ body { background: var(--sk-bg); color: var(--sk-text); }
 .sk-products.is-story { overflow: clip; }
 .sk-products.is-story .sk-products__pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .sk-products.is-story .sk-slide { transform-origin: 50% 40%; will-change: opacity, transform; }
-.sk-products.is-story .sk-products__track { will-change: transform; }
 .sk-products.is-story .sk-scene { will-change: transform; }
 .sk-products__track { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; outline: none; }
 .sk-products__track::-webkit-scrollbar { display: none; }
