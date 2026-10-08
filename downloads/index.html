@@ -35,36 +35,48 @@
     .back { font: 600 13px/1 var(--mono); letter-spacing: .08em; color: var(--soft); text-decoration: none; }
     .back:hover { color: var(--blue); }
 
-    header.hero { padding-block: clamp(40px, 7vw, 80px) 8px; }
-    .eyebrow { font: 600 13px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--blue); margin: 0 0 12px; }
-    h1 { font: 800 clamp(40px, 6.5vw, 80px)/.95 var(--display); text-transform: uppercase; margin: 0 0 16px; }
-    .lede { font-size: clamp(18px, 2vw, 21px); color: var(--soft); max-width: 52ch; margin: 0; }
-    h2 { font: 800 clamp(22px, 2.6vw, 30px)/1.1 var(--display); text-transform: uppercase; letter-spacing: .02em; margin: clamp(44px, 6vw, 72px) 0 6px; }
-    .sub { color: var(--dim); margin: 0 0 20px; font-size: 16px; }
+    header.hero { padding-block: clamp(20px, 3.5vh, 40px) clamp(14px, 2.5vh, 26px); display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 24px; }
+    .eyebrow { font: 600 12px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--blue); margin: 0 0 6px; }
+    h1 { font: 800 clamp(30px, 4vw, 52px)/.95 var(--display); text-transform: uppercase; margin: 0; }
+    .lede { font-size: 15.5px; color: var(--soft); max-width: 46ch; margin: 0; }
 
-    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); }
-    .tile { --t: var(--blue); position: relative; display: grid; grid-template-rows: auto 1fr auto; background: linear-gradient(180deg, rgba(255,255,255,.035), transparent 50%), var(--panel);
-      border: 1px solid var(--edge); border-radius: 14px; overflow: hidden; transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
-    .tile:hover, .tile:focus-within { transform: translateY(-3px); border-color: color-mix(in srgb, var(--t) 60%, transparent); box-shadow: 0 14px 40px rgba(0,0,0,.4), 0 0 30px color-mix(in srgb, var(--t) 18%, transparent); }
-    .face { position: relative; height: 210px; display: grid; place-items: center; overflow: hidden;
-      background: radial-gradient(ellipse at 50% 85%, color-mix(in srgb, var(--t) 45%, transparent) 0%, transparent 62%), linear-gradient(180deg, #0b0d19, #141833); }
-    .face img.char { position: absolute; bottom: 0; height: 100%; width: auto; filter: drop-shadow(0 0 16px color-mix(in srgb, var(--t) 40%, transparent)); }
-    .face img.logo { width: 112px; height: 112px; object-fit: contain; border-radius: 22px; filter: drop-shadow(0 10px 24px rgba(0,0,0,.5)); }
-    .face svg.logo { width: 108px; height: 108px; }
-    .kind { position: absolute; top: 12px; left: 12px; font: 600 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink);
-      background: rgba(7,8,15,.7); border: 1px solid var(--edge); padding: 5px 8px; border-radius: 999px; }
-    .body { padding: 18px 20px 6px; }
-    .body h3 { font: 800 22px/1.1 var(--display); text-transform: uppercase; margin: 0 0 4px; }
-    .line { font: 600 15px/1.3 var(--display); color: var(--t); margin: 0 0 10px; letter-spacing: .02em; }
-    .desc { color: var(--soft); font-size: 15.5px; margin: 0; }
-    .acts { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 20px 20px; }
-    .btn { display: inline-flex; align-items: center; gap: 8px; font: 700 13.5px/1 var(--display); letter-spacing: .07em; text-transform: uppercase; text-decoration: none; padding: 12px 15px; border-radius: 7px; }
+    /* all nine on one screen: 3 x 3 compact tiles */
+    .grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .tile { --t: var(--blue); display: grid; grid-template-columns: clamp(96px, 9vw, 132px) 1fr; background: linear-gradient(180deg, rgba(255,255,255,.035), transparent 60%), var(--panel);
+      border: 1px solid var(--edge); border-radius: 14px; overflow: hidden; min-height: clamp(150px, 22vh, 210px); transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    .tile:hover, .tile:focus-within { transform: translateY(-2px); border-color: color-mix(in srgb, var(--t) 60%, transparent); box-shadow: 0 12px 34px rgba(0,0,0,.4), 0 0 26px color-mix(in srgb, var(--t) 18%, transparent); }
+    .face { position: relative; display: grid; place-items: center; overflow: hidden;
+      background: radial-gradient(ellipse at 50% 90%, color-mix(in srgb, var(--t) 45%, transparent) 0%, transparent 65%), linear-gradient(180deg, #0b0d19, #141833); }
+    .face img.char { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 100%; width: auto; max-width: none; filter: drop-shadow(0 0 12px color-mix(in srgb, var(--t) 40%, transparent)); }
+    .face img.logo { width: 68%; height: auto; aspect-ratio: 1; object-fit: contain; border-radius: 18px; filter: drop-shadow(0 8px 18px rgba(0,0,0,.5)); }
+    .face svg.logo { width: 68%; height: auto; }
+    .body { padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .kind { align-self: flex-start; font: 600 10.5px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--t);
+      border: 1px solid color-mix(in srgb, var(--t) 45%, transparent); padding: 4px 7px; border-radius: 999px; margin-bottom: 4px; }
+    .body h3 { font: 800 clamp(17px, 1.5vw, 21px)/1.1 var(--display); text-transform: uppercase; margin: 0; }
+    .line { font: 500 14.5px/1.35 var(--body); color: var(--soft); margin: 0; }
+    .acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 10px; }
+    .btn { display: inline-flex; align-items: center; gap: 7px; font: 700 12px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; padding: 9px 11px; border-radius: 6px; }
     .btn--main { background: var(--t); color: #08101c; }
     .btn--ghost { border: 1px solid var(--edge); color: var(--ink); }
     .btn:hover, .btn:focus-visible { filter: brightness(1.12); outline: 2px solid var(--ink); outline-offset: 2px; }
-    .btn svg { width: 16px; height: 16px; }
-    footer { padding-block: 64px 48px; color: var(--dim); font: 500 13px/1.6 var(--mono); }
-    @media (max-width: 760px) { .face { height: 180px; } }
+    .btn svg { width: 14px; height: 14px; }
+    @media (max-width: 1050px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 640px) {
+      header.hero { padding-block: 16px 12px; } h1 { font-size: 30px; } .lede { font-size: 14px; }
+      .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .tile { grid-template-columns: 1fr; grid-template-rows: auto 1fr; min-height: 0; border-radius: 12px; }
+      .face { height: 24vw; }
+      .face img.logo, .face svg.logo { width: auto; height: 62%; max-width: 62%; }
+      .body { padding: 8px 8px 10px; gap: 2px; text-align: center; }
+      .kind, .line, .btn--ghost { display: none; }
+      .body h3 { font-size: 12.5px; line-height: 1.15; min-height: 2.3em; display: grid; place-items: center; }
+      .acts { justify-content: center; padding-top: 6px; }
+      .btn--main { width: 100%; justify-content: center; padding: 8px 4px; font-size: 10.5px; }
+      footer { padding-block: 14px; font-size: 11px; }
+    }
+    @media (min-width: 641px) and (max-height: 760px) { .tile { min-height: 0; } .body { padding-block: 10px; } header.hero { padding-block: 14px 12px; } }
+    footer { padding-block: 22px 24px; color: var(--dim); font: 500 13px/1.6 var(--mono); }
   </style>
 </head>
 <body>
@@ -75,22 +87,10 @@
 
   <main class="wrap">
     <header class="hero">
-      <p class="eyebrow">Downloads</p>
-      <h1>Take them home</h1>
-      <p class="lede">Every agent and tool I give away, in one place. The code is on GitHub, free, with a setup guide and a paste-in prompt that walks any coding agent through the install.</p>
+      <div><p class="eyebrow">Downloads</p><h1>Take them home</h1></div>
+      <p class="lede">Every agent and tool I give away. Free on GitHub, each with a setup guide any coding agent can follow.</p>
     </header>
-
-    <h2>Agents</h2>
-    <p class="sub">Characters with one job each. Download one, run it on your own accounts.</p>
-    <div class="grid" id="agents"></div>
-
-    <h2>Tools</h2>
-    <p class="sub">The systems the agents run on.</p>
-    <div class="grid" id="tools"></div>
-
-    <h2>Apps</h2>
-    <p class="sub">Finished products you can install or open today.</p>
-    <div class="grid" id="apps"></div>
+    <div class="grid" id="all"></div>
   </main>
   <footer><div class="wrap">Lenny Made That · everything here is MIT-licensed unless the repo says otherwise.</div></footer>
 
@@ -104,46 +104,45 @@
           gh: "https://github.com/lennymadethat/sellstuff", more: { label: "How he works", href: "/agents/sellstuff" } },
         { name: "Harry the Harvester", kind: "Agent", tint: "#3fe6d2", face: "/img/downloads/faces/harvester.webp", line: "Paste a link. Get the lessons.",
           desc: "A YouTube video, an article, a post. He watches the whole thing, reads it through your lens, and files a page with the to-dos in your library.",
-          gh: "https://github.com/lennymadethat/harvester", more: { label: "Setup guide", href: "https://github.com/lennymadethat/harvester/blob/main/KIT.md" } },
+          gh: "https://github.com/lennymadethat/harvester", more: { label: "Setup", href: "https://github.com/lennymadethat/harvester/blob/main/KIT.md" } },
         { name: "The Ingester", kind: "Agent", tint: "#ff9d5c", face: "/img/downloads/faces/ingester.webp", line: "Drop a file. Get a memory.",
           desc: "Receipts, scans, voice memos, PDFs. One inbox, read and sorted by a squad of small agents, filed onto the right project page.",
-          gh: "https://github.com/lennymadethat/ingester", more: { label: "Setup guide", href: "https://github.com/lennymadethat/ingester/blob/main/KIT.md" } },
+          gh: "https://github.com/lennymadethat/ingester", more: { label: "Setup", href: "https://github.com/lennymadethat/ingester/blob/main/KIT.md" } },
       ],
       tools: [
         { name: "Second Brain", kind: "Memory", tint: "#56c2ff", logo: "/img/products/vault.svg", line: "Persistent memory for any AI agent.",
           desc: "A rulebook, a memory server and a hosted library with a search index. Claude, ChatGPT, Gemini, any tool that speaks MCP remembers.",
-          gh: "https://github.com/lennymadethat/second-brain", more: { label: "Setup guide", href: "https://github.com/lennymadethat/second-brain/blob/master/KIT.md" } },
+          gh: "https://github.com/lennymadethat/second-brain", more: { label: "Setup", href: "https://github.com/lennymadethat/second-brain/blob/master/KIT.md" } },
         { name: "Mothership", kind: "Remote control", tint: "#5b9dff", logo: "/img/products/mothership-512.png", line: "Your machines, in your pocket.",
           desc: "Chat with a coding agent, open a terminal and watch your always-on computers from your phone, through one relay. No open ports, no VPN.",
-          gh: "https://github.com/lennymadethat/mothership", more: { label: "Setup guide", href: "https://github.com/lennymadethat/mothership/blob/main/KIT.md" } },
+          gh: "https://github.com/lennymadethat/mothership", more: { label: "Setup", href: "https://github.com/lennymadethat/mothership/blob/main/KIT.md" } },
         { name: "Skills", kind: "Claude Code", tint: "#56c2ff", svg: SKILLS, line: "Six ways of working, installable.",
           desc: "A loop that finishes a build on its own, a review that catches systems doing the wrong thing, a redesign method, and three design skills.",
-          gh: "https://github.com/lennymadethat/skills", more: { label: "Setup guide", href: "https://github.com/lennymadethat/skills/blob/main/KIT.md" } },
+          gh: "https://github.com/lennymadethat/skills", more: { label: "Setup", href: "https://github.com/lennymadethat/skills/blob/main/KIT.md" } },
       ],
       apps: [
         { name: "PlayLetter", kind: "Desktop app", tint: "#5fb089", logo: "/img/products/playletter-512.png", line: "Your newsletters, read aloud.",
           desc: "Every issue in your inbox, voiced and karaoke-synced. The Windows installer is on GitHub; phones get it from the stores.",
-          gh: "https://github.com/lennymadethat/playletter-releases/releases/latest", ghLabel: "Download for Windows", more: { label: "playletter.com", href: "https://playletter.com" } },
+          gh: "https://github.com/lennymadethat/playletter-releases/releases/latest", ghLabel: "Windows", more: { label: "Site", href: "https://playletter.com" } },
         { name: "Retail Investor Report", kind: "Web app", tint: "#8ac7de", logo: "/img/products/rir-512.png", line: "Income investing, with the data on screen.",
           desc: "The Income Board, the research desk and CARL, the market-research agent you can ask anything about a fund. Nothing to install.",
-          site: { label: "Open RIR", href: "https://retailinvestorreport.com" } },
+          site: { label: "Open", href: "https://retailinvestorreport.com" } },
         { name: "Yield Agents", kind: "Web app", tint: "#7dc8e8", logo: "/img/products/yield-agents-180.png", line: "Agents that manage yield, with real money.",
           desc: "Autonomous agents that run yield strategies with real money. Nothing to install, open it in your browser.",
-          site: { label: "Open Yield Agents", href: "https://yieldagents.io" } },
+          site: { label: "Open", href: "https://yieldagents.io" } },
       ],
     };
     const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     const tile = (x) => {
-      const art = x.face ? `<img class="char" src="${esc(x.face)}" alt="${esc(x.name)}" loading="lazy" width="360" height="360">`
-        : x.svg ? x.svg : `<img class="logo" src="${esc(x.logo)}" alt="${esc(x.name)} logo" loading="lazy">`;
-      const main = x.gh ? `<a class="btn btn--main" href="${esc(x.gh)}" target="_blank" rel="noopener">${GH}${esc(x.ghLabel || "Download on GitHub")}</a>`
+      const art = x.face ? `<img class="char" src="${esc(x.face)}" alt="${esc(x.name)}" width="360" height="360">`
+        : x.svg ? x.svg : `<img class="logo" src="${esc(x.logo)}" alt="${esc(x.name)} logo">`;
+      const main = x.gh ? `<a class="btn btn--main" href="${esc(x.gh)}" target="_blank" rel="noopener" aria-label="${esc((x.ghLabel || "Download") + " " + x.name)}">${GH}${esc(x.ghLabel || "Download")}</a>`
         : `<a class="btn btn--main" href="${esc(x.site.href)}" target="_blank" rel="noopener">${esc(x.site.label)} →</a>`;
       const more = x.more ? `<a class="btn btn--ghost" href="${esc(x.more.href)}"${x.more.href.startsWith("http") ? ' target="_blank" rel="noopener"' : ""}>${esc(x.more.label)}</a>` : "";
-      return `<article class="tile" style="--t:${x.tint}"><div class="face">${art}<span class="kind">${esc(x.kind)}</span></div>
-        <div class="body"><h3>${esc(x.name)}</h3><p class="line">${esc(x.line)}</p><p class="desc">${esc(x.desc)}</p></div>
-        <div class="acts">${main}${more}</div></article>`;
+      return `<article class="tile" style="--t:${x.tint}" title="${esc(x.desc)}"><div class="face">${art}</div>
+        <div class="body"><span class="kind">${esc(x.kind)}</span><h3>${esc(x.name)}</h3><p class="line">${esc(x.line)}</p><div class="acts">${main}${more}</div></div></article>`;
     };
-    for (const k of ["agents", "tools", "apps"]) document.getElementById(k).innerHTML = D[k].map(tile).join("");
+    document.getElementById("all").innerHTML = [...D.agents, ...D.tools, ...D.apps].map(tile).join("");
   </script>
 </body>
 </html>
