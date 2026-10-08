@@ -170,7 +170,6 @@
   #clock { padding: 0 12px; height: 38px; display: flex; align-items: center; border-radius: 999px; background: var(--glass); border: 1px solid var(--glass-line); font: 500 13px/1 Inter, sans-serif; font-variant-numeric: tabular-nums; color: #3A3A36; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 
   /* inside the portfolio swipe the site header sits over the top 76px */
-  .embed #controls { top: 84px; }
   .tall #brand, .tall .fshadow { display: none; }
   html.tall #copy { left: 0; right: 0; max-width: none; padding: 0 18px; background: none; text-align: center; }
   html.tall .lockup { display: flex; }
@@ -354,10 +353,15 @@ $("#handScreen").style.transform = quadMatrix(120, 280,
 // ---------- fit + pan ----------
 const view = $("#view"), stage = $("#stage");
 let fit = { s: 1, ox: 0, oy: 0, pan: 0 };
+// inside the portfolio, the site's own header height (68px on desktop, shorter on phones); 0 when standalone
+function headerHeight() {
+  if (!qs.has("embed")) return 0;
+  try { return window.parent.document.querySelector(".sk-nav")?.offsetHeight ?? 68; } catch { return 68; }
+}
 function layout() {
   const vw = view.clientWidth, vh = view.clientHeight;
   // inside the portfolio its header covers the top 68px once it slides in; the room simply runs up behind it
-  const pad = qs.has("embed") ? 68 : 0, avail = vh - pad;
+  const pad = headerHeight(), avail = vh - pad;
   let s, y;
   if (TALL) {
     // phones: fit the width so every print shows; trim only plain wall above the prints if it is too tall
@@ -373,6 +377,7 @@ function layout() {
     y = pad - top * s;
   }
   fit = { s, overX: W * s - vw, y, vw, vh };
+  if (qs.has("embed") && !TALL) document.getElementById("controls").style.top = pad + 16 + "px";
   // on phones the brand and words sit on the empty wall between the prints and the floating phones
   if (TALL) document.getElementById("copy").style.top = Math.round(y + 530 * s) + "px";
 }
