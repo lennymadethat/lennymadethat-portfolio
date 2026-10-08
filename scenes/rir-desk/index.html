@@ -152,6 +152,10 @@
   .tall .callout .k { margin-bottom: 4px; font-size: 9.5px; }
   .tall .callout .t { font-size: 12.5px; }
   .tall .callout .s { display: none; }
+  .narrow #tape, .narrow .btn--ghost, .narrow .callout, .narrow .stat { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .narrow .btn--ghost { background: rgba(18,27,42,.88); }
+  .narrow .callout { background: rgba(10,18,30,.9); }
+  .narrow #tape { background: rgba(7,11,18,.92); }
   @media (max-width: 380px) { .tall .btn { height: 38px; padding: 0 12px; font-size: 13px; } .tall .ctas { gap: 8px; flex-wrap: nowrap; } }
 </style>
 </head>
@@ -234,6 +238,22 @@ const ROTA = Object.assign({
   C: ["backtester", "stage", "income-board", "factory"],
 }, L.rota || {});
 
+// ---------- the tape ----------
+const TAPE = [["MSTY", "weekly"], ["PLTY", "weekly"], ["JEPQ", "monthly"], ["ULTY", "weekly"], ["NFLY", "weekly"], ["SLVO", "monthly"],
+  ["HOOW", "weekly"], ["ARMW", "weekly"], ["MRNY", "weekly"], ["QQQI", "monthly"], ["QDTE", "weekly"], ["FIAT", "weekly"]];
+const BRAGS = ["450+ income ETFs", "live distributions · updated daily", "free, not free-trial free", "backtest the real payouts"];
+let tapeHtml = "";
+TAPE.forEach(([t, f], i) => {
+  tapeHtml += `<span><b>$${t}</b> <i>${f} payer</i></span>`;
+  if (i % 3 === 2) tapeHtml += `<span class="brag">${BRAGS[Math.floor(i / 3) % BRAGS.length]}</span>`;
+});
+$("#tapeRun").innerHTML = tapeHtml + tapeHtml;
+
+// ---------- the tall desk (phones) draws into one canvas; the wide desk builds DOM layers ----------
+if (desk.tall) {
+  const { run } = await import("./tall.js");
+  await run({ L, DIR, SHOTS, view, stage, reduced });
+} else {
 // ---------- the glass ----------
 function quadMatrix(w, h, q) {
   const [[x0, y0], [x1, y1], [x2, y2], [x3, y3]] = q; // TL, TR, BR, BL
@@ -346,17 +366,6 @@ const strikes = strikeList.map((st, i) => {
   }
   return { ...st, wrap, impact, spill, i };
 });
-
-// ---------- the tape ----------
-const TAPE = [["MSTY", "weekly"], ["PLTY", "weekly"], ["JEPQ", "monthly"], ["ULTY", "weekly"], ["NFLY", "weekly"], ["SLVO", "monthly"],
-  ["HOOW", "weekly"], ["ARMW", "weekly"], ["MRNY", "weekly"], ["QQQI", "monthly"], ["QDTE", "weekly"], ["FIAT", "weekly"]];
-const BRAGS = ["450+ income ETFs", "live distributions · updated daily", "free, not free-trial free", "backtest the real payouts"];
-let tapeHtml = "";
-TAPE.forEach(([t, f], i) => {
-  tapeHtml += `<span><b>$${t}</b> <i>${f} payer</i></span>`;
-  if (i % 3 === 2) tapeHtml += `<span class="brag">${BRAGS[Math.floor(i / 3) % BRAGS.length]}</span>`;
-});
-$("#tapeRun").innerHTML = tapeHtml + tapeHtml;
 
 // ---------- callouts: the platform's own words, rising off the struck screen ----------
 const callouts = {};
@@ -570,6 +579,7 @@ if (reduced) {
   applyCamera(16); carl(0, 0); if (askEl) askEl.textContent = ASKS[0];
   document.querySelectorAll(".stat b").forEach((el) => (el.textContent = el.dataset.fmt.replace("{}", el.dataset.to)));
 } else start();
+}
 </script>
 </body>
 </html>
