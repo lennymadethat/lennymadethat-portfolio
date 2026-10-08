@@ -152,7 +152,7 @@ export const downloads = [
     code: "https://github.com/lennymadethat/skills", setup: "https://github.com/lennymadethat/skills/blob/main/KIT.md" },
   { name: "Agent Sell Stuff", line: "Snap a pic. He sells it.", img: null,
     desc: "Send a photo. He writes the listing and prices it. You tap once and it posts. Same tap to drop the price or take it down.",
-    code: null, setup: null, todo: "A4" },
+    code: "https://github.com/lennymadethat/sellstuff", setup: "https://github.com/lennymadethat/sellstuff/blob/main/KIT.md" },
 ];
 
 // ---------- 5. CONTACT / FOLLOW ----------

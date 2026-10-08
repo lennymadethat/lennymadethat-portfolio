@@ -1,6 +1,6 @@
 // lennymadethat.com — SKELETON (F0). Renders data/site.js into the five sections and runs the
 // mechanics: nav, product swipe, pinned agent select, scroll-scrubbed Second Brain, downloads.
-import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20260929b";
+import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20261008a";
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (tag, attrs = {}, html = "") => {
