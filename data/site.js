@@ -41,6 +41,10 @@ export const products = [
     name: "Assembly Floor",
     hook: "Agents installed in your company, by the person who built them.",
     logo: "/img/products/assembly-floor.svg",
+    // The scroll story (scenes/assembly-floor-story): the numbers assemble, the OS opens, a kit is packed and shipped
+    // on the 3D floor, then Foreman (the company AI) answers for it. The film stays as the fallback.
+    scene: "/scenes/assembly-floor-story/?embed=1",
+    sceneBg: "#0B1017",
     // Original film is a temporary stand-in while the showcase is reworked.
     film: true,
     video: "/media/films/assembly-floor-placeholder-v1.mp4",

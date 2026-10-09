@@ -1,6 +1,6 @@
 // lennymadethat.com — SKELETON (F0). Renders data/site.js into the five sections and runs the
 // mechanics: nav, product swipe, pinned agent select, scroll-scrubbed Second Brain, downloads.
-import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20261008b";
+import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20261008c";
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (tag, attrs = {}, html = "") => {
@@ -63,9 +63,10 @@ const sectionObs = new IntersectionObserver((entries) => {
   const go = (i) => {
     i = (i + slides.length) % slides.length;
     // inside the story, RIR and PlayLetter are places on the page, not just slides: scroll there
-    if (story && phases && i <= 1) {
+    if (story && phases && (i <= 1 || (i === 2 && phases.F))) {
       const top = section.getBoundingClientRect().top + scrollY;
-      scrollTo({ top: top + (i === 0 ? phases.A * 0.08 : phases.A + phases.B + phases.C + 2), behavior: reduced ? "auto" : "smooth" });
+      const at = i === 0 ? phases.A * 0.08 : i === 1 ? phases.A + phases.B + phases.C + 2 : phases.A + phases.B + phases.C + phases.D + phases.E + 2;
+      scrollTo({ top: top + at, behavior: reduced ? "auto" : "smooth" });
       return;
     }
     track.scrollTo({ left: i * track.clientWidth, behavior: reduced ? "auto" : "smooth" });
@@ -86,6 +87,9 @@ const sectionObs = new IntersectionObserver((entries) => {
   // desk runs below the screen ({scene:"pan", px}), which is how long that part of the scroll is.
   const section = $("#platforms"), pin = section.querySelector(".sk-products__pin");
   const story = !reduced && !!(products[0]?.scene && products[1]?.scene);
+  // Assembly Floor is the third act when its scene exists: PlayLetter slides off, the AF story runs on the scroll (Lenny 10-08)
+  const afAct = story && !!products[2]?.scene;
+  const actN = afAct ? 3 : 2;
   let rirNeed = 0, phases = null, storyY = -1, storyPhase = "", moving = false;
   const frameOf = (i) => slides[i]?.querySelector("iframe.sk-scene");
   const send = (i, msg) => { const f = frameOf(i); if (f && f.src) f.contentWindow?.postMessage(msg, location.origin); };
@@ -98,7 +102,9 @@ const sectionObs = new IntersectionObserver((entries) => {
     // PlayLetter's day gets 3.6 screens of scroll (1.8 felt far too fast on his phone, 10-08)
     // the freeze takes six strikes now (Lenny 10-08: "at least four or five bolts, keep scrolling down")
     const A = Math.round(2.4 * vh), C = Math.round(0.9 * vh), D = Math.round(3.6 * vh);
-    phases = { A, B, C, D, total: A + B + C + D };
+    // Assembly Floor: a hand-off like PlayLetter's, then 6 screens for the whole story (intro, sidebar, floor, van, Foreman)
+    const E = afAct ? Math.round(0.9 * vh) : 0, F = afAct ? Math.round(6 * vh) : 0;
+    phases = { A, B, C, D, E, F, total: A + B + C + D + E + F };
     section.style.height = `${vh + phases.total}px`;
   }
   function drive() {
@@ -106,31 +112,39 @@ const sectionObs = new IntersectionObserver((entries) => {
     const y = Math.max(0, Math.min(phases.total, Math.round(-section.getBoundingClientRect().top)));
     if (y === storyY) return;
     storyY = y;
-    const { A, B, C, D } = phases, w = track.clientWidth;
-    const phase = y < A + B ? "rir" : y < A + B + C ? "move" : "pl";
+    const { A, B, C, D, E, F } = phases, w = track.clientWidth;
+    const phase = y < A + B ? "rir" : y < A + B + C ? "move" : y < A + B + C + D || !F ? "pl" : y < A + B + C + D + E ? "move2" : "af";
     let t = 0;
     const f0 = frameOf(0), pan = B > 0 ? Math.max(0, Math.min(1, (y - A) / B)) : 0;
     if (phase === "rir") send(0, { scene: "scroll", a: Math.min(1, y / A), pan });
     if (phase === "move") { t = (y - A - B) / C; send(0, { scene: "scroll", a: 1, pan: 1 }); send(1, { scene: "scroll", p: 0 }); }
     if (phase === "pl") { t = 1; send(1, { scene: "scroll", p: Math.min(1, (y - A - B - C) / D) }); }
+    let t2 = 0;
+    if (phase === "move2") { t = 1; t2 = (y - A - B - C - D) / E; send(1, { scene: "scroll", p: 1 }); send(2, { scene: "scroll", p: 0 }); }
+    if (phase === "af") { t = 1; t2 = 1; send(2, { scene: "scroll", p: Math.min(1, (y - A - B - C - D - E) / F) }); }
     // down the desk: the tall frame slides up (a GPU move, in step with the finger)
     if (f0) f0.style.transform = B ? `translate3d(0, ${-Math.round((phase === "rir" ? pan : 1) * B)}px, 0)` : "";
     // the hand-off: RIR slides off to the left and dims, PlayLetter comes in out of the dark.
     // While it moves the two slides are translated inside the track (GPU; the track is a scroll container and clips
     // anything outside its own box, so it can't be the thing that moves); at rest its scroll position holds the slide.
     slides[0].style.opacity = String(1 - 0.6 * t);
-    slides[1].style.opacity = phase === "rir" ? "" : String(0.4 + 0.6 * t);
+    slides[1].style.opacity = phase === "rir" ? "" : String((0.4 + 0.6 * t) * (1 - 0.6 * t2));
+    if (afAct) slides[2].style.opacity = phase === "move2" || phase === "af" ? String(0.4 + 0.6 * t2) : "";
     if (phase === "move") {
       if (storyPhase !== "move") { track.style.scrollSnapType = "none"; track.scrollLeft = 0; }
       slides[0].style.transform = `translate3d(${-t * w}px, 0, 0) scale(${1 - 0.06 * t})`;
       slides[1].style.transform = `translate3d(${-t * w}px, 0, 0)`;
+    } else if (phase === "move2") {
+      if (storyPhase !== "move2") { track.style.scrollSnapType = "none"; slides[0].style.transform = ""; track.scrollLeft = w; }
+      slides[1].style.transform = `translate3d(${-t2 * w}px, 0, 0) scale(${1 - 0.06 * t2})`;
+      slides[2].style.transform = `translate3d(${-t2 * w}px, 0, 0)`;
     } else if (phase !== storyPhase) {
-      slides[0].style.transform = slides[1].style.transform = "";
+      slides.slice(0, actN).forEach((s) => (s.style.transform = ""));
       track.style.scrollSnapType = "";
-      track.scrollLeft = phase === "pl" ? w : 0;
+      track.scrollLeft = phase === "af" ? 2 * w : phase === "pl" ? w : 0;
     }
     const wasMoving = moving;
-    moving = phase === "move";
+    moving = phase === "move" || phase === "move2";
     if (phase !== storyPhase || moving !== wasMoving) { storyPhase = phase; playVisible(); }
   }
   addEventListener("message", (e) => {
@@ -144,7 +158,7 @@ const sectionObs = new IntersectionObserver((entries) => {
     addEventListener("scroll", () => requestAnimationFrame(drive), { passive: true });
     addEventListener("resize", () => { measure(); storyY = -1; drive(); });
     // a scene that has just loaded gets told where the scroll is
-    [0, 1].forEach((i) => frameOf(i)?.addEventListener("load", () => { storyY = -1; drive(); playVisible(); }));
+    [...Array(actN).keys()].forEach((i) => frameOf(i)?.addEventListener("load", () => { storyY = -1; drive(); playVisible(); }));
   }
   $("#platforms .sk-arrow--prev").addEventListener("click", () => go(cur - 1));
   $("#platforms .sk-arrow--next").addEventListener("click", () => go(cur + 1));
@@ -159,8 +173,9 @@ const sectionObs = new IntersectionObserver((entries) => {
     if (f) {
       // the ambient room loads the first time its slide shows, and sleeps while off screen;
       // in the story both scenes load with the section and both run while one slides into the other
-      const active = onScreen && (j === cur || (moving && j <= 1)) && !document.hidden;
-      if ((active || (story && onScreen && j <= 1)) && !f.src) f.src = f.dataset.src;
+      const pair = storyPhase === "move2" ? (j === 1 || j === 2) : j <= 1;
+      const active = onScreen && (j === cur || (moving && pair)) && !document.hidden;
+      if ((active || (story && onScreen && j < actN)) && !f.src) f.src = f.dataset.src;
       f.contentWindow?.postMessage(active ? "scene:play" : "scene:pause", location.origin);
       return;
     }
@@ -180,7 +195,7 @@ const sectionObs = new IntersectionObserver((entries) => {
   new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; playVisible(); }, { threshold: 0.4 }).observe(pin);
   if (story) new IntersectionObserver(([e]) => {
     if (!e.isIntersecting) return;
-    [0, 1].forEach((i) => { const f = frameOf(i); if (f && !f.src) f.src = f.dataset.src; });
+    [...Array(actN).keys()].forEach((i) => { const f = frameOf(i); if (f && !f.src) f.src = f.dataset.src; });
   }, { rootMargin: "150% 0px" }).observe(section);
   document.addEventListener("visibilitychange", playVisible);
   mobileFilm.addEventListener("change", () => {

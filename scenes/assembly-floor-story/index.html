@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Assembly Floor Story</title>
+<meta name="description" content="Assembly Floor OS in one scene: the numbers come together, the sidebar opens, a kit is packed and shipped on the 3D floor, and Foreman, the company AI, answers for it.">
+<link rel="icon" type="image/png" href="../assembly-floor-os/img/logo-64.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Oswald:wght@500;600;700&display=swap">
+<style>
+:root{
+  --bg:#0B1017;--surface:#141C27;--surface-2:#1A2431;--surface-3:#233040;--border:#233040;--border-strong:#324256;
+  --text:#E9EEF5;--text-2:#9DAEC2;--text-3:#657588;--brand:#3F9EE3;--brand-2:#5FB0EA;--brand-weak:#132B3F;
+  --accent:#25BACB;--ok:#40C08A;--warn:#E2A945;--danger:#F26670;--af:#0071BC;--orange:#e8792b;
+  --side:#0A0E15;--side-line:#1B2634;--glass:rgba(16,24,35,.78);--glass-line:rgba(63,158,227,.24);
+  --pad:0px;--top:54px;--sw:232px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+#stage{position:fixed;inset:0;overflow:hidden;perspective:1400px}
+
+/* backdrop: blueprint grid + glow */
+#bg{position:absolute;inset:0;background:
+  radial-gradient(60% 55% at 50% 45%,rgba(0,113,188,.28),transparent 70%),
+  linear-gradient(rgba(63,158,227,.07) 1px,transparent 1px) 0 0/44px 44px,
+  linear-gradient(90deg,rgba(63,158,227,.07) 1px,transparent 1px) 0 0/44px 44px,var(--bg)}
+
+/* the 3D floor */
+#world{position:absolute;border:0;display:block;opacity:0;background:#050b18}
+#dim{position:absolute;pointer-events:none;background:radial-gradient(80% 80% at 70% 50%,rgba(11,16,23,.55),rgba(11,16,23,.92));opacity:0}
+
+/* intro brand + headline */
+#brand{position:absolute;left:50%;display:flex;align-items:center;gap:14px;transform:translate(-50%,0);white-space:nowrap}
+#brand img{width:58px;height:58px;filter:drop-shadow(0 6px 18px rgba(0,113,188,.55))}
+#brand b{font:700 34px/1 Oswald,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+#brand b em{font-style:normal;color:var(--brand)}
+#brand i{font:600 12px/1 'IBM Plex Mono',monospace;letter-spacing:.12em;font-style:normal;background:var(--brand);color:#04121E;border-radius:4px;padding:5px 7px}
+#headline{position:absolute;left:0;right:0;text-align:center;font:700 clamp(22px,3.4vw,44px)/1.1 Oswald,sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:0 20px}
+#headline span{color:var(--brand)}
+#sub{position:absolute;left:0;right:0;text-align:center;font:500 clamp(13px,1.3vw,17px)/1.4 'Hanken Grotesk',sans-serif;color:var(--text-2);padding:0 24px}
+
+/* summary cards */
+.card{position:absolute;left:0;top:0;border-radius:14px;background:var(--glass);border:1px solid var(--glass-line);box-shadow:0 18px 50px rgba(0,0,0,.45);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:.9em 1em;overflow:hidden;will-change:transform;transform-origin:50% 50%}
+.card .l{font:700 .68em/1 'Hanken Grotesk',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);display:flex;align-items:center;gap:.5em;white-space:nowrap}
+.card .l i{width:.6em;height:.6em;border-radius:50%;background:var(--c);flex:none}
+.card .v{font:600 2.1em/1 'IBM Plex Mono',monospace;color:var(--c);margin-top:.35em;display:flex;align-items:baseline;gap:.25em;white-space:nowrap}
+.card .v small{font-size:.38em;color:var(--text-3);font-weight:500}
+.card .s{font:500 .78em/1.3 'Hanken Grotesk',sans-serif;color:var(--text-2);margin-top:.45em;white-space:nowrap}
+.card .bar{height:3px;border-radius:2px;background:var(--surface-3);margin-top:.7em;overflow:hidden}
+.card .bar b{display:block;height:100%;background:var(--c)}
+.card.tick{animation:tick .7s ease}
+@keyframes tick{40%{box-shadow:0 0 0 2px var(--c),0 18px 50px rgba(0,0,0,.45)}}
+
+/* the OS chrome */
+#top{position:absolute;left:0;right:0;height:var(--top);display:flex;align-items:center;gap:12px;padding:0 16px;background:#0E1620;border-bottom:1px solid var(--side-line);z-index:5}
+#top img{width:30px;height:30px}
+#top .wm{font:700 18px/1 Oswald,sans-serif;letter-spacing:.13em;text-transform:uppercase}
+#top .wm em{font-style:normal;color:var(--brand)}
+#top .crumb{margin-left:14px;font:600 12.5px 'Hanken Grotesk',sans-serif;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top .crumb b{color:var(--text)}
+#top .ask{margin-left:auto;display:flex;align-items:center;gap:8px;height:34px;width:min(300px,28vw);padding:0 12px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);font:500 12.5px 'Hanken Grotesk',sans-serif;color:var(--text-3);white-space:nowrap;overflow:hidden}
+#side{position:absolute;left:0;width:var(--sw);bottom:0;background:var(--side);border-right:1px solid var(--side-line);z-index:4;padding:10px 10px;overflow:hidden}
+#side .g{font:700 10px/1 'Hanken Grotesk',sans-serif;letter-spacing:.11em;text-transform:uppercase;color:#5A6A7D;padding:12px 10px 7px}
+#side .it{position:relative;display:flex;align-items:center;gap:10px;height:34px;padding:0 10px;border-radius:9px;font:600 13px/1 'Hanken Grotesk',sans-serif;color:#9DAEC2;white-space:nowrap;z-index:1;transition:color .2s}
+#side .it .ti{width:20px;text-align:center;font-size:15px;flex:none}
+#side .it.on{color:#EAF1F8}
+#side .sub{overflow:hidden;height:0;position:relative;z-index:1}
+#side .sub .it{height:30px;margin-left:19px;padding-left:18px;border-left:1.5px solid var(--side-line);border-radius:0 9px 9px 0;font-size:12.5px;color:#657588}
+#side .sub .it.on{color:#EAF1F8;border-left-color:var(--accent)}
+#hl{position:absolute;top:0;left:10px;right:10px;height:34px;transition:left .3s,transform .35s cubic-bezier(.3,.7,.2,1),height .3s;border-radius:9px;background:#152234;z-index:0;box-shadow:inset 0 0 0 1px rgba(63,158,227,.25)}
+#tap{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid var(--brand);opacity:0;z-index:2;pointer-events:none}
+
+/* KPI row + captions */
+#kpi{position:absolute;z-index:3}
+/* Foreman */
+.fm{position:absolute;z-index:6;pointer-events:none}
+.fm .bob{position:absolute;inset:0;animation:bob 4.2s ease-in-out infinite}
+.fm img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.fm .flame{transform-origin:50% 86%;animation:flame .16s steps(2) infinite}
+.fm .blink,.fm .eyes{opacity:0}
+.fm .eyes{filter:drop-shadow(0 0 6px #ff5fb0) brightness(1.25)}
+.fm.talk .eyes{animation:talk .9s ease-in-out 2}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-1.6deg)}50%{transform:translateY(-6%) rotate(1.6deg)}}
+@keyframes flame{0%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.86);opacity:.82}100%{transform:scaleY(1.06);opacity:1}}
+@keyframes talk{0%,100%{opacity:0}40%{opacity:1}}
+#say{position:absolute;z-index:6;max-width:330px;padding:10px 13px;border-radius:13px 13px 13px 3px;background:var(--surface-2);border:1px solid var(--border-strong);box-shadow:0 10px 30px rgba(0,0,0,.4);
+  font:500 13.5px/1.4 'Hanken Grotesk',sans-serif;color:var(--text);transition:opacity .3s}
+#say b{color:var(--brand-2)}
+#say .who{display:block;font:700 10px/1 'Hanken Grotesk',sans-serif;letter-spacing:.11em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+
+/* the company AI finale */
+#ai{position:absolute;z-index:7;opacity:0;pointer-events:none}
+#ai .eyebrow{font:700 11px/1 'Hanken Grotesk',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+#ai h2{font:700 clamp(26px,3.2vw,44px)/1.05 Oswald,sans-serif;letter-spacing:.04em;text-transform:uppercase;margin:.3em 0 .25em}
+#ai h2 em{font-style:normal;color:var(--orange)}
+#ai p.lede{font:500 clamp(13px,1.15vw,16px)/1.45 'Hanken Grotesk',sans-serif;color:var(--text-2);max-width:34em}
+#chat{margin-top:18px;display:flex;flex-direction:column;gap:10px;max-width:520px}
+.msg{padding:10px 13px;border-radius:13px;font:500 14px/1.42 'Hanken Grotesk',sans-serif;opacity:0;transform:translateY(8px)}
+.msg.q{align-self:flex-end;background:var(--af);color:#fff;border-radius:13px 13px 3px 13px;max-width:80%}
+.msg.a{align-self:flex-start;background:var(--surface-2);border:1px solid var(--border-strong);border-radius:13px 13px 13px 3px;max-width:92%}
+.msg.a b{color:var(--brand-2)}
+.msg .src{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.msg .src span{font:600 10.5px 'IBM Plex Mono',monospace;color:var(--text-3);border:1px solid var(--border-strong);border-radius:6px;padding:3px 6px}
+.msg .src span::before{content:'\25CF  ';color:var(--ok)}
+#models{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;opacity:0}
+#models span{font:600 11px 'Hanken Grotesk',sans-serif;color:var(--text-2);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:5px 10px}
+#links{position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0}
+#links path{fill:none;stroke:url(#lg);stroke-width:2;stroke-dasharray:6 7;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-26}}
+
+#hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);z-index:8;transition:opacity .4s}
+@media (min-width:760px) and (max-height:820px){#ai h2{font-size:30px}#ai p.lede{font-size:13px}.msg{font-size:13px;padding:8px 12px}#chat{gap:8px;margin-top:12px}}
+@media (max-width:759px){#brand{gap:10px}#brand img{width:40px;height:40px}#brand b{font-size:23px}#brand i{font-size:10px}#ai h2{font-size:25px}.msg{font-size:13px}}
+@media (prefers-reduced-motion:reduce){.fm .bob,.fm .flame,#links path{animation:none}}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg"></div>
+  <iframe id="world" title="The Assembly Floor: a kit is packed and shipped" src="../assembly-floor-os/world.html?ambient&amp;theme=dark"></iframe>
+  <div id="dim"></div>
+
+  <div id="brand"><img src="../assembly-floor-os/img/logo-128.webp" alt=""><b>Assembly <em>Floor</em></b><i>OS</i></div>
+  <div id="headline">Your whole rental fleet. <span>One screen.</span></div>
+  <div id="sub">Every device on rent, on the shelf, on the bench or on a van, with an AI that knows all of it.</div>
+
+  <div id="cards"></div>
+
+  <header id="top">
+    <img src="../assembly-floor-os/img/logo-128.webp" alt="">
+    <span class="wm">Assembly <em>Floor</em></span>
+    <span class="crumb" id="crumb">Operations &rsaquo; <b>Dashboard</b></span>
+    <span class="ask">&#128269;&nbsp; Ask Foreman anything&hellip;</span>
+  </header>
+  <nav id="side" aria-hidden="true">
+    <div id="hl"></div><div id="tap"></div>
+    <div class="g">Operations</div>
+    <div class="it on" data-i="dash"><span class="ti">&#128200;</span><span>Dashboard</span></div>
+    <div class="it"><span class="ti">&#128225;</span><span>Fleet Availability</span></div>
+    <div class="it"><span class="ti">&#128197;</span><span>Rentals</span></div>
+    <div class="it"><span class="ti">&#128736;</span><span>Field Service</span></div>
+    <div class="it"><span class="ti">&#128506;</span><span>Equipment Tracking</span></div>
+    <div class="it" data-i="ship"><span class="ti">&#127981;</span><span>Ship Station</span></div>
+    <div class="sub" id="shipSub">
+      <div class="it" data-i="build"><span>Build desk</span></div>
+      <div class="it" data-i="dock"><span>Dock &amp; carriers</span></div>
+      <div class="it"><span>Returns</span></div>
+    </div>
+    <div class="it"><span class="ti">&#129518;</span><span>Inventory</span></div>
+    <div class="it"><span class="ti">&#127915;</span><span>Tickets</span></div>
+    <div class="g">Intelligence</div>
+    <div class="it" data-i="ai"><span class="ti">&#129302;</span><span>Foreman Assistant</span></div>
+    <div class="it"><span class="ti">&#128229;</span><span>The Ingestor</span></div>
+  </nav>
+
+  <svg id="links" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#3F9EE3" stop-opacity=".15"/><stop offset="1" stop-color="#25BACB"/></linearGradient></defs><g id="linkG"></g></svg>
+
+  <section id="ai">
+    <div class="eyebrow">The company AI</div>
+    <h2>Meet <em>Foreman.</em><br>He knows the whole floor.</h2>
+    <p class="lede">He reads every table you approve: rentals, stock, shipments, service. Ask in plain English and he answers from your own records.</p>
+    <div id="chat">
+      <div class="msg q" id="q1">Where's the kit we just packed?</div>
+      <div class="msg a" id="a1"><span class="txt"></span><div class="src"><span>shipments</span><span>dock log</span><span>rentals</span></div></div>
+      <div class="msg q" id="q2">What stops us shipping next week?</div>
+      <div class="msg a" id="a2"><span class="txt"></span><div class="src"><span>inventory</span><span>reservations</span><span>purchasing</span></div></div>
+    </div>
+    <div id="models"><span>Runs on Claude</span><span>OpenAI</span><span>Gemini</span><span>Grok</span><span>Swapping is a setting</span></div>
+  </section>
+
+  <div class="fm" id="fm"><div class="bob">
+    <img class="flame" src="../assembly-floor-os/img/foreman-flame.webp" alt="">
+    <img class="body" src="../assembly-floor-os/img/foreman.webp" alt="Foreman, the Assembly Floor company AI">
+    <img class="eyes" src="../assembly-floor-os/img/foreman-eyes.webp" alt="">
+    <img class="blink" src="../assembly-floor-os/img/foreman-blink.webp" alt="">
+  </div></div>
+  <div id="say"><span class="who">Foreman</span><span id="sayT"></span></div>
+  <div id="hint">Scroll</div>
+</div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const qs = new URLSearchParams(location.search), EMBED = qs.has('embed');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (x, a, b) => Math.min(b, Math.max(a, x)), lerp = (a, b, u) => a + (b - a) * u;
+  const span = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+  const smooth = t => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
+  const outBack = t => { t = clamp(t, 0, 1); const c = 1.5; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+  const outCubic = t => 1 - Math.pow(1 - clamp(t, 0, 1), 3);
+
+  // ---------------------------------------------------------------- the numbers
+  const CARDS = [
+    {l:'Fleet', v:412, u:'devices', s:'38 sites · 3 depots', c:'#3F9EE3', bar:1},
+    {l:'On rent', v:286, u:'69%', s:'11 going out this week', c:'#5FB0EA', bar:.69, after:287},
+    {l:'Reporting', v:97.6, dec:1, u:'%', s:'3 gone quiet · tickets open', c:'#40C08A', bar:.976},
+    {l:'Service due', v:14, u:'devices', s:'9 calibrations · 5 batteries', c:'#E2A945', bar:.34},
+    {l:'Kits buildable', v:53, u:'today', s:'24 flow · 29 level', c:'#25BACB', bar:.6, after:52},
+    {l:'Ingested', v:14, u:'files', s:'photos + certs, filed by the Ingestor', c:'#e8792b', bar:.5},
+  ];
+  const cardsEl = $('#cards');
+  CARDS.forEach((c, i) => {
+    const d = document.createElement('div'); d.className = 'card'; d.style.setProperty('--c', c.c);
+    d.innerHTML = `<div class="l"><i></i>${c.l}</div><div class="v"><span class="n">0</span><small>${c.u}</small></div><div class="s">${c.s}</div><div class="bar"><b style="width:${c.bar*100}%"></b></div>`;
+    cardsEl.appendChild(d); c.el = d; c.n = d.querySelector('.n'); c.sEl = d.querySelector('.s'); c.barEl = d.querySelector('.bar');
+    // scattered start: each card comes in from its own corner, tumbling
+    const a = (i / CARDS.length) * Math.PI * 2 + .6;
+    c.from = {x: Math.cos(a) * 1.25, y: Math.sin(a) * 1.1, rx: (i % 2 ? 1 : -1) * 55, ry: (i % 3 - 1) * 70, rz: (i % 2 ? -1 : 1) * 18, z: -900};
+  });
+
+  // ---------------------------------------------------------------- layout
+  let L = {};
+  const side = $('#side'), world = $('#world');
+  function headerPad(){ if(!EMBED) return 0; try{ return window.parent.document.querySelector('.sk-nav')?.offsetHeight ?? 68; }catch(e){ return 68; } }
+  function layout(){
+    const W = innerWidth, H = innerHeight, pad = headerPad(), phone = W < 760;
+    const top = phone ? 50 : 54, sw = phone ? 56 : 232;
+    document.documentElement.style.setProperty('--top', top + 'px'); document.documentElement.style.setProperty('--sw', sw + 'px');
+    side.classList.toggle('rail', phone);
+    $$('#side .it span:not(.ti)').forEach(s => s.style.display = phone ? 'none' : '');
+    $$('#side .g').forEach(g => g.style.visibility = phone ? 'hidden' : '');
+    $('#top .ask').style.display = W < 1000 ? 'none' : '';
+    $('#top .crumb').style.display = W < 520 ? 'none' : '';
+    // intro grid
+    const cols = phone ? 2 : 3, rows = Math.ceil(CARDS.length / cols);
+    const gw = phone ? (W - 44) / 2 : Math.min(280, (W - 140) / 3), gh = phone ? 104 : 136, gap = phone ? 12 : 18;
+    const gridW = cols * gw + (cols - 1) * gap, gridH = rows * gh + (rows - 1) * gap;
+    const avail = H - pad;
+    const gy0 = pad + Math.max(phone ? 250 : 150, (avail - gridH) / 2 + (phone ? 50 : 30));
+    // main area (after the dashboard forms)
+    const mx = sw, my = pad + top, mw = W - sw, mh = H - my;
+    // KPI row inside main
+    const kc = phone ? 3 : 6, kr = Math.ceil(CARDS.length / kc), kgap = phone ? 6 : 10;
+    const kw = (mw - (kc + 1) * kgap) / kc, kh = phone ? 50 : 62;
+    const kpiH = kr * kh + (kr - 1) * kgap + kgap * 2;
+    L = {W, H, pad, phone, top, sw, cols, gw, gh, gap, gridW, gridH, gy0, mx, my, mw, mh, kc, kw, kh, kgap, kpiH};
+    CARDS.forEach((c, i) => {
+      c.grid = {x: (W - gridW) / 2 + (i % cols) * (gw + gap), y: gy0 + Math.floor(i / cols) * (gh + gap), w: gw, h: gh, f: phone ? 14 : 16};
+      c.kpi = {x: mx + kgap + (i % kc) * (kw + kgap), y: my + kgap + Math.floor(i / kc) * (kh + kgap), w: kw, h: kh, f: phone ? 10.5 : 12.5};
+    });
+    $('#top').style.top = pad + 'px'; side.style.top = (pad + top) + 'px';
+    // world fills main below the KPI row
+    const wy = my + kpiH;
+    Object.assign(world.style, {left: mx + 'px', top: wy + 'px', width: mw + 'px', height: (H - wy) + 'px'});
+    Object.assign($('#dim').style, {left: '0px', top: pad + 'px', width: W + 'px', height: (H - pad) + 'px'});
+    $('#brand').style.top = (pad + (phone ? 54 : Math.max(40, gy0 - pad - 170) + pad * 0)) + 'px';
+    if(!phone) $('#brand').style.top = Math.max(pad + 28, gy0 - 150) + 'px';
+    $('#headline').style.top = (phone ? pad + 108 : Math.max(pad + 96, gy0 - 82)) + 'px';
+    $('#sub').style.top = (gy0 + gridH + (phone ? 18 : 26)) + 'px';
+    // the sidebar rows, measured
+    L.rows = {};
+    $$('#side .it[data-i]').forEach(e => L.rows[e.dataset.i] = e);
+    // AI finale block
+    const ai = $('#ai');
+    if(phone){ Object.assign(ai.style, {left: '18px', right: '18px', top: (my + kpiH + 112) + 'px', width: 'auto'}); }
+    else { Object.assign(ai.style, {left: Math.round(W * .40) + 'px', right: 'auto', top: (my + kpiH + 14) + 'px', width: Math.round(Math.min(600, W * .52)) + 'px'}); }
+    frame(true);
+  }
+  addEventListener('resize', layout);
+
+  // ---------------------------------------------------------------- clock: intro is 5 s of time, the rest is the scroll
+  let P = 0, scrubbed = false, playing = !EMBED, introT = 0, introDone = false, last = performance.now(), auto = 0;
+  const INTRO = 5;
+  function setP(p){ P = clamp(p, 0, 1); if(P > .12 && !introDone){ introDone = true; introT = INTRO; } }
+
+  // Foreman's lines per beat
+  const LINES = [
+    [0, 'Morning. <b>412 devices</b>, 38 sites. I watched all of them overnight.'],
+    [.13, 'This is the whole operation on one screen. Let’s pack something.'],
+    [.24, '<b>Ship Station</b>. The build desk knows what the shelf can make.'],
+    [.33, 'A <b>Flow Monitor</b> kit. Eight parts, and the logger sets the pace: 24 on the shelf.'],
+    [.58, 'Packed. The shelf count ticks to <b>52</b> by itself. No spreadsheet.'],
+    [.63, 'Label printed. The dock opens when the box is on its way.'],
+    [.76, 'On the van. The customer gets <b>tracking</b> the moment it leaves.'],
+    [.90, ''],
+  ];
+  let sayIdx = -1;
+  function sayFor(p){
+    let i = 0; while(i < LINES.length - 1 && p >= LINES[i + 1][0]) i++;
+    if(i === sayIdx) return; sayIdx = i;
+    $('#sayT').innerHTML = LINES[i][1];
+    const fm = $('#fm'); fm.classList.remove('talk'); void fm.offsetWidth; fm.classList.add('talk');
+  }
+  const A1 = 'Kit <b>FM-24</b> left Dock 01 at 10:42 on the North Canal van. The customer has tracking, and it arrives <b>Friday</b>.';
+  const A2 = 'Flow sensors. <b>38</b> on the shelf for 60 loggers, and 3 rentals start Monday. I drafted a purchase order for <b>22</b>. Send it?';
+  function typed(el, html, u){
+    // reveal the answer word by word, keeping the markup intact
+    const parts = html.split(/(\s+)/), n = Math.round(parts.length * clamp(u, 0, 1));
+    const out = parts.slice(0, n).join('');
+    if(el._last !== n){ el._last = n; el.innerHTML = fixTags(out); }
+  }
+  function fixTags(s){ const open = (s.match(/<b>/g) || []).length - (s.match(/<\/b>/g) || []).length; return s + (open > 0 ? '</b>' : ''); }
+
+  let ticked = {};
+  function frame(force){
+    const {W, H, pad, phone, top, sw} = L;
+    const it = introDone ? INTRO : introT, p = P;
+    // ---- intro: brand, cards tumble in and lock into a grid, numbers count up, Foreman arrives
+    const bIn = outBack(span(it, 0, .7)), formB = smooth(span(p, .12, .22));
+    const brand = $('#brand'); brand.style.opacity = bIn * (1 - smooth(span(p, .12, .16)));
+    brand.style.transform = `translate(-50%,0) scale(${.7 + .3 * bIn})`;
+    const hd = smooth(span(it, 3.0, 3.6)) * (1 - smooth(span(p, .12, .15)));
+    $('#headline').style.opacity = hd; $('#headline').style.transform = `translateY(${(1 - hd) * 14}px)`;
+    $('#sub').style.opacity = smooth(span(it, 3.4, 4.0)) * (1 - smooth(span(p, .12, .14)));
+    CARDS.forEach((c, i) => {
+      const u = outCubic(span(it, .5 + i * .22, 1.9 + i * .22));
+      const f = c.from, g = c.grid, k = c.kpi;
+      const gx = lerp(W / 2 + f.x * W * .5 - g.w / 2, g.x, u), gy = lerp(H / 2 + f.y * H * .5 - g.h / 2, g.y, u);
+      const x = lerp(gx, k.x, formB), y = lerp(gy, k.y, formB), w = lerp(g.w, k.w, formB), h = lerp(g.h, k.h, formB);
+      const rx = f.rx * (1 - u), ry = f.ry * (1 - u), rz = f.rz * (1 - u), tz = f.z * (1 - u);
+      const float = (1 - formB) * Math.sin((performance.now() / 1000) * 1.3 + i) * 4 * u;
+      const el = c.el;
+      el.style.width = w + 'px'; el.style.height = h + 'px'; el.style.fontSize = lerp(g.f, k.f, formB) + 'px';
+      el.style.transform = `translate3d(${x}px,${y + float}px,${tz}px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
+      el.style.opacity = clamp(u * 1.4, 0, 1);
+      c.sEl.style.opacity = 1 - span(formB, 0, .4); c.barEl.style.opacity = 1 - span(formB, 0, .4);
+      const count = outCubic(span(it, 1.0 + i * .22, 2.8 + i * .22));
+      let val = c.v * count;
+      // the data moves with the story: a kit packed takes one off the buildable count, a van out puts one more on rent
+      const wt = span(p, .28, .80);
+      const done = c.after !== undefined && ((c.l === 'Kits buildable' && wt > .55) || (c.l === 'On rent' && wt > .95));
+      if(done) val = c.after;
+      if(done && !ticked[i]){ ticked[i] = true; el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick'); }
+      if(!done) ticked[i] = false;
+      c.n.textContent = c.dec ? val.toFixed(c.dec) : Math.round(val);
+    });
+    // ---- the OS forms: top bar drops, sidebar slides out, selection walks to Ship Station
+    const tb = smooth(span(p, .13, .18)), sb = smooth(span(p, .15, .21));
+    $('#top').style.transform = `translateY(${(tb - 1) * 110}%)`; $('#top').style.opacity = tb;
+    side.style.transform = `translateX(${(sb - 1) * 105}%)`; side.style.opacity = sb;
+    const subOpen = smooth(span(p, .235, .26));
+    $('#shipSub').style.height = (subOpen * 3 * 30) + 'px';
+    const sideTop = side.getBoundingClientRect().top;
+    const rowY = n => { const e = L.rows[n]; return e ? e.getBoundingClientRect().top - sideTop : 0; };
+    let target = 'dash';
+    if(p > .20) target = 'ship';
+    if(p > .255) target = 'build';
+    const wt = span(p, .28, .80);
+    if(wt > .62 && p < .80) target = 'dock';
+    if(p >= .80) target = 'ai';
+    const hlTo = rowY(target), hl = $('#hl');
+    hl.style.transform = `translateY(${hlTo}px)`; hl.style.height = (L.rows[target]?.offsetHeight || 34) + 'px';
+    hl.style.left = target === 'build' || target === 'dock' ? '29px' : '10px';
+    $$('#side .it').forEach(e => e.classList.toggle('on', e.dataset.i === target));
+    const tap = $('#tap'), tapU = Math.max(span(p, .225, .245), span(p, .25, .265) * (p > .25 ? 1 : 0));
+    tap.style.opacity = (tapU > 0 && tapU < 1) ? (1 - tapU) : 0; tap.style.transform = `scale(${.4 + tapU * 1.4})`;
+    tap.style.left = (phone ? 28 : 120) + 'px'; tap.style.top = (rowY(target) + 17) + 'px';
+    const crumbs = {dash:'Operations &rsaquo; <b>Dashboard</b>', ship:'Operations &rsaquo; <b>Ship Station</b>', build:'Ship Station &rsaquo; <b>Build desk</b>', dock:'Ship Station &rsaquo; <b>Dock &amp; carriers</b>', ai:'Intelligence &rsaquo; <b>Foreman</b>'};
+    if($('#crumb')._t !== target){ $('#crumb')._t = target; $('#crumb').innerHTML = crumbs[target]; }
+    // ---- the 3D floor
+    const wo = smooth(span(p, .25, .30));
+    world.style.opacity = wo; $('#bg').style.opacity = 1 - wo * .6;
+    if(wo > 0) send({type:'story', t: wt});
+    // ---- the company AI
+    const ai = smooth(span(p, .80, .85));
+    $('#dim').style.opacity = ai;
+    $('#ai').style.opacity = ai; $('#ai').style.transform = `translateY(${(1 - ai) * 24}px)`;
+    const show = (el, u) => { el.style.opacity = smooth(u); el.style.transform = `translateY(${(1 - smooth(u)) * 8}px)`; };
+    show($('#q1'), span(p, .85, .865)); show($('#a1'), span(p, .865, .88)); typed($('#a1 .txt'), A1, span(p, .87, .91));
+    show($('#q2'), span(p, .915, .93)); show($('#a2'), span(p, .93, .945)); typed($('#a2 .txt'), A2, span(p, .935, .975));
+    $$('#a1 .src span').forEach((s, i) => s.style.opacity = span(p, .905 + i * .004, .91 + i * .004));
+    $$('#a2 .src span').forEach((s, i) => s.style.opacity = span(p, .972 + i * .004, .978 + i * .004));
+    $('#models').style.opacity = span(p, .975, .99);
+    // data lines from the KPI cards into Foreman
+    const lk = span(p, .83, .87) * (1 - span(p, .99, 1));
+    $('#links').style.opacity = lk;
+    // ---- Foreman: intro beside the grid -> bottom of the sidebar -> big for the finale
+    const fmEl = $('#fm');
+    const sz0 = phone ? 96 : 150, sz1 = phone ? 82 : 120, sz2 = phone ? 104 : Math.min(300, (H - L.my - L.kpiH) * .78);
+    const a0 = phone ? {x: 10, y: L.gy0 - sz0 - 8} : {x: (W + L.gridW) / 2 + 10, y: L.gy0 + L.gridH - sz0 * .7};
+    const a1 = phone ? {x: sw + 4, y: H - sz1 - 70} : {x: (sw - sz1) / 2, y: H - sz1 - 14};
+    const a2 = phone ? {x: 12, y: L.my + L.kpiH + 2} : {x: W * .40 - sz2 - 30, y: L.my + L.kpiH + (H - L.my - L.kpiH - sz2) / 2};
+    const fin = outBack(span(it, 2.2, 3.2)), m1 = smooth(span(p, .14, .22)), m2 = smooth(span(p, .80, .86));
+    let fx = lerp(a0.x, a1.x, m1), fy = lerp(a0.y, a1.y, m1), fs = lerp(sz0, sz1, m1);
+    fx = lerp(fx, a2.x, m2); fy = lerp(fy, a2.y, m2); fs = lerp(fs, sz2, m2);
+    fy += (1 - fin) * 260; // flies up into place
+    Object.assign(fmEl.style, {left: fx + 'px', top: fy + 'px', width: fs + 'px', height: fs + 'px', opacity: fin});
+    // his speech bubble rides beside him until the finale, where the chat takes over
+    const say = $('#say'), sayOn = fin * (1 - m2) * (p < .80 ? 1 : 0);
+    say.style.opacity = sayOn; sayFor(p);
+    if(phone){ Object.assign(say.style, {left: (fx + fs * .75) + 'px', top: 'auto', bottom: (H - fy - fs * .55) + 'px', maxWidth: (W - fx - fs * .75 - 10) + 'px'}); }
+    else { Object.assign(say.style, {left: (fx + fs * .82) + 'px', top: 'auto', bottom: (H - fy - fs * .62) + 'px', maxWidth: '330px'}); }
+    if(lk > 0) drawLinks(fx + fs / 2, fy + fs * .45);
+    $('#hint').style.opacity = (EMBED ? 0 : 1) * (introDone || it >= INTRO ? 0 : 0) + (EMBED && it >= INTRO && p < .02 ? 1 : 0);
+  }
+  function drawLinks(tx, ty){
+    const g = $('#linkG'); let h = '';
+    CARDS.forEach(c => { const r = c.el.getBoundingClientRect(); const sx = r.left + r.width / 2, sy = r.bottom;
+      h += `<path d="M${sx},${sy} C${sx},${sy + 120} ${tx},${ty - 140} ${tx},${ty}"/>`; });
+    g.innerHTML = h;
+  }
+
+  // ---------------------------------------------------------------- the 3D floor gets its frame by message
+  let lastT = -1;
+  function send(m){
+    if(m.type === 'story'){ const t = Math.round(m.t * 2000) / 2000; if(t === lastT) return; lastT = t; m.t = t; }
+    try{ world.contentWindow.postMessage(Object.assign({src:'af-host'}, m), location.origin); }catch(e){}
+  }
+  world.addEventListener('load', () => { lastT = -1; });
+  addEventListener('message', e => {
+    if(e.origin !== location.origin) return;
+    if(e.source === world.contentWindow){ if(e.data && e.data.type === 'ready'){ lastT = -1; send({type:'story', t: span(P, .28, .80)}); } return; }
+    if(e.data === 'scene:pause') playing = false;
+    if(e.data === 'scene:play'){ playing = true; last = performance.now(); }
+    if(e.data && e.data.scene === 'scroll'){ scrubbed = true; setP(+e.data.p || 0); }
+  });
+
+  // ---------------------------------------------------------------- blink
+  (function blink(){ const b = document.querySelector('#fm .blink'); if(b){ b.style.opacity = 1; setTimeout(() => b.style.opacity = 0, 130); } setTimeout(blink, 2600 + Math.random() * 3600); })();
+
+  // ---------------------------------------------------------------- loop
+  function loop(now){
+    const dt = Math.min(.1, (now - last) / 1000); last = now;
+    if(playing){
+      if(!introDone){ introT += dt; if(introT >= INTRO){ introT = INTRO; introDone = true; } }
+      // standalone: after the intro the story plays itself, 42 s end to end, then holds and loops
+      if(!scrubbed && introDone && !reduced){ auto += dt; const u = auto / 42; setP(u < 1 ? .12 + u * .88 : 1); if(auto > 48){ auto = 0; introDone = false; introT = 0; P = 0; ticked = {}; } }
+    }
+    frame(false);
+    requestAnimationFrame(loop);
+  }
+  if(reduced){ introDone = true; introT = INTRO; }
+  layout();
+  requestAnimationFrame(loop);
+  window.AFStory = { setP: p => { scrubbed = true; setP(p); }, state: () => ({P, introT, introDone}) };
+})();
+</script>
+</body>
+</html>
