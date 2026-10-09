@@ -379,7 +379,7 @@ body.light .fm-float .say b{color:var(--brand)}
 (function(){
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
   const world = $('#world');
-  const send = m => { try{ world.contentWindow.postMessage(Object.assign({src:'af-host'}, m), '*'); }catch(e){} };
+  const send = m => { try{ world.contentWindow.postMessage(Object.assign({src:'af-host'}, m), location.origin); }catch(e){} };
 
   // ---------------------------------------------------------------- theme (dark default)
   let theme = 'dark';
@@ -483,28 +483,30 @@ body.light .fm-float .say b{color:var(--brand)}
   let curK = null;
   function setPips(n, on, k){
     const p = $('#pips'); if(p.children.length !== n) p.innerHTML = '<i></i>'.repeat(n);
-    [...p.children].forEach((x,i) => x.classList.toggle('on', i < on)); p.style.setProperty('--k', KC[k] || 'var(--brand)');
+    [...p.children].forEach((x,i) => x.classList.toggle('on', i < on)); p.style.setProperty('--k', KC.hasOwnProperty(k) ? KC[k] : 'var(--brand)');
   }
   addEventListener('message', e => {
+    if(e.source !== world.contentWindow || e.origin !== location.origin) return;
     const d = e.data || {}; if(d.src !== 'af-world') return;
+    const t = v => esc(String(v == null ? '' : v)), n = v => (Number.isFinite(+v) ? +v : 0);
     if(d.type === 'ready'){ document.body.classList.add('ready'); send({type:'theme', theme}); }
     if(d.type === 'kit-start'){
       building = true; curK = d.k;
       $$('.kit').forEach(b => b.classList.toggle('on', b.dataset.k === d.k));
       $('#actT').textContent = 'Packing a ' + d.name + ' kit';
-      $('#actP').innerHTML = d.limit ? `<b>${d.limit.label}</b> sets the pace: ${d.limit.stock} on the shelf.` : `Built from the flex pool. ${d.ready} already boxed.`;
-      setPips(d.parts, 0, d.k);
-      say(d.limit ? `Packing a <b>${d.name}</b>. ${d.limit.label} is the limit: ${d.limit.stock} on the shelf.` : `Packing an <b>${d.name}</b> from the flex pool. A SIM swap, no epoxy.`, true);
+      $('#actP').innerHTML = d.limit ? `<b>${t(d.limit.label)}</b> sets the pace: ${n(d.limit.stock)} on the shelf.` : `Built from the flex pool. ${n(d.ready)} already boxed.`;
+      setPips(Math.min(n(d.parts), 12), 0, d.k);
+      say(d.limit ? `Packing a <b>${t(d.name)}</b>. ${t(d.limit.label)} is the limit: ${n(d.limit.stock)} on the shelf.` : `Packing an <b>${t(d.name)}</b> from the flex pool. A SIM swap, no epoxy.`, true);
     }
     if(d.type === 'part'){
-      setPips(d.n, d.i + 1, d.k);
-      $('#actP').innerHTML = `Part ${d.i + 1} of ${d.n}: <b>${d.label}</b>, into the box.`;
+      setPips(Math.min(n(d.n), 12), n(d.i) + 1, d.k);
+      $('#actP').innerHTML = `Part ${n(d.i) + 1} of ${n(d.n)}: <b>${t(d.label)}</b>, into the box.`;
     }
     if(d.type === 'kit-done'){
       building = false;
       $('#actT').textContent = d.name + ': packed';
-      $('#actP').innerHTML = `<b>${d.buildable}</b> more buildable &middot; <b>${d.ready}</b> boxed and ready to rent.`;
-      say(`Done. <b>${d.name}</b> boxed. ${d.ready} ready to rent, ${d.buildable} more on the shelf.`, true);
+      $('#actP').innerHTML = `<b>${n(d.buildable)}</b> more buildable &middot; <b>${n(d.ready)}</b> boxed and ready to rent.`;
+      say(`Done. <b>${t(d.name)}</b> boxed. ${n(d.ready)} ready to rent, ${n(d.buildable)} more on the shelf.`, true);
     }
   });
   $$('.kit').forEach(b => b.addEventListener('click', () => send({type:'kit', k:b.dataset.k})));

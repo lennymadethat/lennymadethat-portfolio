@@ -667,10 +667,11 @@ function boot(gltf){
 // ------------------------------------------------------------ ambient mode (host page drives / follows)
 const AMB = document.documentElement.classList.contains('ambient');
 let ambIdx = 0, ambTimer = null, idleOrbit = false;
-function post(m){ try{ if(parent !== window) parent.postMessage(Object.assign({src:'af-world'}, m), '*'); }catch(e){} }
+function post(m){ try{ if(parent !== window) parent.postMessage(Object.assign({src:'af-world'}, m), location.origin); }catch(e){} }
 function ambientNext(){ clearTimeout(ambTimer); idleOrbit = false; const k = ORDER[ambIdx++ % ORDER.length]; autoCam = true; startKit(k); }
 function ambientIdle(ms){ idleOrbit = true; ambTimer = setTimeout(ambientNext, ms); }
 addEventListener('message', e => {
+  if(e.source !== parent || e.origin !== location.origin) return;
   const d = e.data || {}; if(d.src !== 'af-host') return;
   if(d.type === 'theme' && (d.theme === 'dark' || d.theme === 'light')) applyTheme(d.theme);
   if(d.type === 'kit' && ORDER.includes(d.k)){ ambIdx = ORDER.indexOf(d.k); ambientNext(); }
