@@ -21,7 +21,7 @@ window.addEventListener("load", function () {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=20260926a" />
-  <link rel="stylesheet" href="skeleton.css?v=20260929a" />
+  <link rel="stylesheet" href="skeleton.css?v=20261010b" />
   <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="agents/agent-select.css?v=20261007c" />
   <link rel="stylesheet" href="downloads/wall.css?v=20261008a" />
@@ -44,15 +44,36 @@ window.addEventListener("load", function () {
   </nav>
 
   <main id="main">
-    <!-- 0. OPENING — the forge Lenny kept (F2 decides what the first 2–3 seconds are). -->
+    <!-- 0. OPENING — the forge, then the shared-memory film. -->
     <section id="top" class="forge" aria-labelledby="hero-heading">
       <canvas id="forge-canvas" aria-hidden="true"></canvas>
       <div class="forge-glow" aria-hidden="true"></div>
       <div class="forge-content">
         <h1 id="hero-heading" class="forge-title">LENNY MADE <span>THAT.</span></h1>
-        <a class="sk-scrollcue" href="#platforms">Scroll <span aria-hidden="true">↓</span></a>
+        <a class="sk-scrollcue" href="#second-brain">Scroll <span aria-hidden="true">↓</span></a>
       </div>
-      <span class="sk-todo sk-todo--corner">F2 · opening</span>
+    </section>
+
+    <section id="second-brain" class="sk-section sk-brain" aria-labelledby="brain-heading">
+      <div class="sk-brain__stage">
+        <video id="brain-film" class="sk-brain__video" controls muted playsinline preload="metadata"
+          poster="/frames/second-brain/f001.webp"
+          aria-label="Second Brain: a memory is saved and retrieved by another AI">
+          <source src="/media/films/second-brain-v2.mp4" type="video/mp4">
+        </video>
+        <div class="sk-brain__copy">
+          <div>
+            <p class="sk-eyebrow">The Second Brain</p>
+            <h2 id="brain-heading" class="sk-h2 sk-brain__beat">Tell one AI something.</h2>
+            <p class="sk-brain__description">A shared memory for your connected AI tools.</p>
+          </div>
+          <div class="sk-brain__actions">
+            <button class="sk-btn" id="brain-play" type="button" aria-controls="brain-film" hidden>Play film</button>
+            <a class="sk-btn sk-btn--ghost" href="#platforms">Continue to the platforms ↓</a>
+            <a class="sk-brain__source" href="https://github.com/lennymadethat/second-brain" target="_blank" rel="noopener">Get Second Brain</a>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 1. THE PRODUCT SWIPE -->
@@ -132,19 +153,6 @@ window.addEventListener("load", function () {
       </div>
     </section>
 
-    <!-- 3. THE SECOND BRAIN — scroll-scrubbed film -->
-    <section id="second-brain" class="sk-section sk-brain" aria-labelledby="brain-heading">
-      <div class="sk-brain__stage">
-        <canvas class="sk-brain__canvas" aria-hidden="true"></canvas>
-        <div class="sk-brain__copy">
-          <p class="sk-eyebrow">The Second Brain</p>
-          <h2 id="brain-heading" class="sk-h2 sk-brain__beat">Tell one AI something.</h2>
-          <a class="sk-btn sk-brain__dl" href="#">Get Second Brain</a>
-        </div>
-        <span class="sk-todo sk-todo--corner"></span>
-      </div>
-    </section>
-
     <!-- 5. CONTACT / FOLLOW -->
     <section id="contact" class="sk-section sk-contact" aria-labelledby="contact-heading">
       <div class="sk-container">
@@ -155,7 +163,7 @@ window.addEventListener("load", function () {
   </main>
 
   <script type="module" src="hero.js"></script>
-  <script type="module" src="skeleton.js?v=20261008n"></script>
+  <script type="module" src="skeleton.js?v=20261010b"></script>
   <script type="module">import { renderWall } from "/downloads/wall.js?v=20261008a"; renderWall(document.getElementById("dl-wall"));</script>
   <script type="module" src="agents/agent-select.js?v=20261008a"></script>
 </body>

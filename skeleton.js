@@ -1,6 +1,6 @@
 // lennymadethat.com — SKELETON (F0). Renders data/site.js into the five sections and runs the
-// mechanics: nav, product swipe, pinned agent select, scroll-scrubbed Second Brain, downloads.
-import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20261008a";
+// mechanics: nav, product swipe, pinned agent select, Second Brain opening film, downloads.
+import { products, agents, crews, secondBrain, downloads, contact } from "./data/site.js?v=20261010b";
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (tag, attrs = {}, html = "") => {
@@ -112,42 +112,36 @@ const sectionObs = new IntersectionObserver((entries) => {
 $(".sk-crews__row").innerHTML = crews.map((c) =>
   `<${c.href ? `a href="${esc(c.href)}"` : "div"} class="sk-crew"><h3>${esc(c.name)}</h3><p>${esc(c.line)}</p>${c.href ? "" : todo(c.todo, "explainer chapter")}</${c.href ? "a" : "div"}>`).join("");
 
-// ---------- 3. second brain: scroll-scrubbed frames ----------
+// ---------- second brain: play once when the opening film comes into view ----------
 {
-  const section = $("#second-brain"), canvas = $(".sk-brain__canvas"), ctx = canvas.getContext("2d");
-  const beatEl = $(".sk-brain__beat"), f = secondBrain.frames;
-  $(".sk-brain__dl").outerHTML = linkBtn(secondBrain.download);
-  $("#second-brain .sk-todo--corner").textContent = `${secondBrain.todo} · draft film, stand-in`;
-  const imgs = Array.from({ length: f.count }, (_, i) => {
-    const im = new Image();
-    im.decoding = "async";
-    im.src = `${f.dir}f${String(i + 1).padStart(f.pad, "0")}.${f.ext}`;
-    return im;
-  });
-  let last = -1, beat = -1;
-  const size = () => { const r = devicePixelRatio || 1; canvas.width = canvas.clientWidth * r; canvas.height = canvas.clientHeight * r; last = -1; draw(); };
-  const draw = () => {
-    const top = section.offsetTop, len = section.offsetHeight - innerHeight;
-    const p = reduced ? 0.6 : Math.max(0, Math.min(1, (scrollY - top) / len));
-    let i = Math.min(f.count - 1, Math.floor(p * f.count));
-    while (i > 0 && !imgs[i].complete) i--;               // show the nearest loaded frame
-    if (i !== last && imgs[i].complete) {
-      last = i;
-      const cw = canvas.width, ch = canvas.height, s = Math.max(cw / f.width, ch / f.height);
-      const w = f.width * s, h = f.height * s;
-      ctx.drawImage(imgs[i], (cw - w) / 2, (ch - h) / 2, w, h);
-    }
-    const b = secondBrain.beats.reduce((k, x, j) => (p >= x.at ? j : k), 0);
-    if (b !== beat) {
-      beat = b;
-      beatEl.classList.add("is-out");
-      setTimeout(() => { beatEl.textContent = secondBrain.beats[b].text; beatEl.classList.remove("is-out"); }, 150);
-    }
+  const section = $("#second-brain"), film = $("#brain-film"), play = $("#brain-play");
+  const beatEl = $(".sk-brain__beat"), source = $(".sk-brain__source");
+  source.href = secondBrain.download.href;
+  source.textContent = secondBrain.download.label;
+  let onScreen = false, userPaused = false;
+  const syncButton = () => { play.textContent = film.ended ? "Replay film" : film.paused ? "Play film" : "Pause film"; };
+  const start = () => film.play().catch(syncButton);
+  const syncPlayback = () => {
+    if (!onScreen || document.hidden) film.pause();
+    else if (!reduced && !userPaused && !film.ended) start();
   };
-  imgs[0].onload = size;
-  addEventListener("scroll", () => requestAnimationFrame(draw), { passive: true });
-  addEventListener("resize", size);
-  imgs.forEach((im) => im.addEventListener("load", () => { if (last < 0) draw(); }));
+  play.addEventListener("click", () => {
+    if (!film.paused) { userPaused = true; film.pause(); }
+    else { userPaused = false; if (film.ended) film.currentTime = 0; start(); }
+  });
+  ["play", "pause", "ended"].forEach((event) => film.addEventListener(event, syncButton));
+  film.addEventListener("timeupdate", () => {
+    const progress = film.duration ? film.currentTime / film.duration : 0;
+    const beat = secondBrain.beats.reduce((current, next) => progress >= next.at ? next : current);
+    if (beatEl.textContent !== beat.text) beatEl.textContent = beat.text;
+  });
+  new IntersectionObserver(([entry]) => {
+    onScreen = entry.isIntersecting && entry.intersectionRatio >= 0.5;
+    syncPlayback();
+  }, { threshold: 0.5 }).observe(section);
+  document.addEventListener("visibilitychange", syncPlayback);
+  film.controls = false;
+  play.hidden = false;
 }
 
 // ---------- 4. downloads: the wall lives in downloads/wall.js ----------
