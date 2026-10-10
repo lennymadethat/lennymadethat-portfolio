@@ -132,15 +132,13 @@ export const crews = [
 ];
 
 // ---------- 3. THE SECOND BRAIN ----------
-// Scroll-scrubbed frame sequence. Stand-in = the v2 draft film (V7 replaces it).
+// The existing v2 film opens the portfolio after the wordmark. Captions follow playback.
 export const secondBrain = {
-  frames: { dir: "/frames/second-brain/", count: 145, pad: 3, ext: "webp", width: 854, height: 480 },
-  todo: "V7",
   beats: [
     { at: 0.00, text: "Tell one AI something." },
-    { at: 0.25, text: "The rulebook checks it at the door." },
-    { at: 0.50, text: "The librarian files it by meaning." },
-    { at: 0.75, text: "Ask any other AI. Same memory comes back." },
+    { at: 0.25, text: "Your rules guide how it is saved." },
+    { at: 0.50, text: "The librarian stores and indexes it." },
+    { at: 0.75, text: "Different AI. Same memory." },
   ],
   download: { label: "Get Second Brain", href: "https://github.com/lennymadethat/second-brain" },
 };

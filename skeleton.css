@@ -178,16 +178,28 @@ body { background: var(--sk-bg); color: var(--sk-text); }
 .sk-crew p { margin: 0; color: var(--sk-muted); }
 .sk-crew .sk-todo { margin-top: auto; align-self: flex-start; }
 
-/* ---------- 3. second brain (scroll-scrub) ---------- */
-.sk-brain { height: 320svh; background: #f2f2f2; }
-.sk-brain__stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-.sk-brain__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.sk-brain__copy { position: absolute; left: var(--sk-gutter); bottom: 48px; z-index: 2; max-width: 520px; padding: 20px 22px; border-radius: var(--sk-radius);
-  background: rgba(17,18,20,.82); backdrop-filter: blur(10px); }
-.sk-brain__beat { font-size: clamp(24px, 3.4vw, 40px); transition: opacity .3s var(--sk-ease); }
-.sk-brain__beat.is-out { opacity: 0; }
-.sk-brain .sk-btn { margin-top: 8px; }
-@media (max-width: 640px) { .sk-brain__copy { left: 12px; right: 12px; bottom: 20px; } }
+/* ---------- second brain: opening film ---------- */
+#second-brain { scroll-margin-top: 0; }
+.sk-brain { height: calc(100svh - 76px); min-height: 500px; background: #dedede; }
+.sk-brain__stage { position: relative; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+.sk-brain__video { display: block; flex: 1; min-height: 0; width: 100%; object-fit: contain; }
+.sk-brain__copy { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 32px;
+  width: 100%; padding: 24px max(28px, calc((100vw - 1220px) / 2)); background: #111214; flex: none; }
+.sk-brain__beat { font-size: clamp(25px, 3vw, 38px); margin: 0; }
+.sk-brain__description { font-size: 15px; margin: 10px 0 0; color: #c1c2c5; }
+.sk-brain__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 12px; max-width: 450px; }
+.sk-brain__actions .sk-btn { margin: 0; }
+.sk-brain__actions [hidden] { display: none; }
+.sk-brain__source { font: 500 13px/1.5 var(--sk-font); color: #c1c2c5; text-underline-offset: 4px; }
+@media (max-width: 640px) {
+  #second-brain { scroll-margin-top: -36px; }
+  .sk-brain { height: auto; min-height: 0; }
+  .sk-brain__video { flex: none; aspect-ratio: 854 / 480; }
+  .sk-brain__stage { height: auto; }
+  .sk-brain__copy { display: block; padding: 24px 20px 30px; }
+  .sk-brain__actions { margin-top: 20px; justify-content: flex-start; gap: 10px; }
+  .sk-brain__description { font-size: 14px; }
+}
 
 /* ---------- 4. downloads ---------- */
 .sk-accordion { display: grid; gap: 10px; }
